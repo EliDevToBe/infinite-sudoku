@@ -7,11 +7,18 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "db:start": "docker compose up",
+    "db:start": "docker compose up -d",
     "db:clean": "docker compose down --rmi all",
-    "db:reset": "docker compose down --rmi all -v"
+    "db:reset": "docker compose down --rmi all -v",
+    "db:restart": "npm run db:reset && npm run db:start",
+    "db:pull": "prisma db pull",
+    "db:client": "prisma generate",
+    "db:migrate": "prisma migrate dev --name",
+    "db:migrate:new": "prisma migrate dev --create-only --name",
+    "db:apply-migrations": "prisma migrate deploy && npm run db:client"
   },
   "dependencies": {
+    "@prisma/client": "^6.9.0",
     "prisma": "^6.9.0"
   }
 }
