@@ -1,5 +1,5 @@
 # Node modules and build output
-node_modules/
+**/node_modules/
 dist/
 build/
 
@@ -37,9 +37,8 @@ pgdata/
 *.db
 *.sqlite
 
-# Monorepo specific
-packages/*/node_modules/
-apps/*/node_modules/
+# Turbo specific
+.turbo/
 
 # Vue specific
 **/dist/

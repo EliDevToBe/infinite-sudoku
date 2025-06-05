@@ -3,6 +3,10 @@
   "type": "module",
   "version": "1.0.0",
   "packageManager": "npm@11.4.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "description": "",
   "homepage": "https://github.com/EliDevToBe/sudoking#readme",
   "bugs": {
@@ -16,6 +20,7 @@
   "author": "",
   "main": "index.js",
   "scripts": {
+    "dev": "turbo dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint . --config ./eslint.config.js",
     "format": "npx prettier --check .",
@@ -28,6 +33,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.1",
     "prettier": "^3.5.3",
+    "turbo": "^2.5.4",
     "typescript": "^5.8.3"
   }
 }
