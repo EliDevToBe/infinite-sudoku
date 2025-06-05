@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "fastify": "^5.3.3",
-    "fastify-plugin": "^5.0.1"
+    "fastify-plugin": "^5.0.1",
+    "prisma": "^6.9.0"
   }
 }
