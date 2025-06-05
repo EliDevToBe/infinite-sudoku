@@ -35,5 +35,6 @@
       ".vscode",
       ".env",
     ],
+    "cSpell.words": ["datasource", "postgresql", "prisma"],
   },
 }
