@@ -1,0 +1,33 @@
+{
+  "name": "rncp-sudoku",
+  "type": "module",
+  "version": "1.0.0",
+  "packageManager": "npm@11.4.0",
+  "description": "",
+  "homepage": "https://github.com/EliDevToBe/sudoking#readme",
+  "bugs": {
+    "url": "https://github.com/EliDevToBe/sudoking/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EliDevToBe/sudoking.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint . --config ./eslint.config.js",
+    "format": "npx prettier --check .",
+    "format:write": "npx prettier --write ."
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  }
+}
