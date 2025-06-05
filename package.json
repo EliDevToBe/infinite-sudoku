@@ -21,6 +21,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=web",
+    "dev:api": "turbo dev --filter=api",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint . --config ./eslint.config.js",
     "format": "npx prettier --check .",

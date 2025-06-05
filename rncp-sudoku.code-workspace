@@ -1,10 +1,6 @@
 {
   "folders": [
     {
-      "name": "✨ Root",
-      "path": ".",
-    },
-    {
       "name": "🏠 Frontend",
       "path": "apps/web",
     },
@@ -15,6 +11,10 @@
     {
       "name": "🤝 Shared",
       "path": "packages/shared",
+    },
+    {
+      "name": "✨ Root",
+      "path": ".",
     },
   ],
   "settings": {
