@@ -35,6 +35,6 @@
       ".vscode",
       ".env",
     ],
-    "cSpell.words": ["datasource", "postgresql", "prisma"],
+    "cSpell.words": ["datasource", "postgresql", "prisma", "Uuid"],
   },
 }

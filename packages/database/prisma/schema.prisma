@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  member
+  admin
+}
+
+enum Quality {
+  basic
+  premium
+}
+
 model grid {
   id         String      @id @db.Uuid
   puzzle     Json
@@ -23,8 +33,8 @@ model user {
   email               String      @unique(map: "user_email_unique")
   password            String
   avatar              String?
-  role                String      @default("member") @db.VarChar(255)
-  quality             String      @default("basic") @db.VarChar(255)
+  role                Role        @default(member)
+  quality             Quality     @default(basic)
   has_confirmed_email Boolean
   created_at          DateTime    @db.Timestamp(0)
   updated_at          DateTime    @db.Timestamp(0)

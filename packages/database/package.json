@@ -11,11 +11,11 @@
     "db:clean": "docker compose down --rmi all",
     "db:reset": "docker compose down --rmi all -v",
     "db:restart": "npm run db:reset && npm run db:start",
-    "db:pull": "prisma db pull",
-    "db:client": "prisma generate",
-    "db:migrate": "prisma migrate dev --name",
-    "db:migrate:new": "prisma migrate dev --create-only --name",
-    "db:apply-migrations": "prisma migrate deploy && npm run db:client"
+    "db:pull": "npx prisma db pull",
+    "db:client": "npx prisma generate",
+    "db:migrate": "npx prisma migrate dev --name",
+    "db:migrate:new": "npx prisma migrate dev --create-only --name",
+    "db:apply-migrations": "npx prisma migrate deploy && npm run db:client"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
