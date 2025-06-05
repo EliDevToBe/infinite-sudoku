@@ -4,8 +4,10 @@
   "version": "1.0.0",
   "packageManager": "npm@11.4.0",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/api/*",
+    "apps/web/*",
+    "packages/database/*",
+    "packages/shared/*"
   ],
   "description": "",
   "homepage": "https://github.com/EliDevToBe/sudoking#readme",
