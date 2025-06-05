@@ -13,6 +13,10 @@
       "path": "packages/shared",
     },
     {
+      "name": "💾 Database",
+      "path": "packages/database",
+    },
+    {
       "name": "✨ Root",
       "path": ".",
     },
@@ -48,6 +52,7 @@
       "postgres",
       "postgresql",
       "prisma",
+      "uuid",
       "Uuid",
     ],
   },
