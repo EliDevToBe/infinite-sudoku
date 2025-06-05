@@ -1,0 +1,39 @@
+services:
+  database:
+    platform: linux/amd64
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: ghcr.io/jeliebig/adminer-autologin
+    platform: linux/amd64
+    ports:
+      - "5050:8080"
+    depends_on:
+      - database
+    environment:
+      ADMINER_PLUGINS: login-env-vars
+      ADMINER_DRIVER: pgsql
+      ADMINER_SERVER: host.docker.internal:5432
+      ADMINER_USERNAME: ${POSTGRES_USER}
+      ADMINER_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMINER_DB: ${POSTGRES_DB}
+      ADMINER_DESIGN: dracula
+    restart: unless-stopped
+
+volumes:
+  database-data:
