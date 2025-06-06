@@ -1,42 +1,42 @@
 {
-  "name": "rncp-sudoku",
-  "type": "module",
-  "version": "1.0.0",
-  "packageManager": "npm@11.4.0",
-  "workspaces": [
-    "apps/api",
-    "apps/web",
-    "packages/database",
-    "packages/shared"
-  ],
-  "description": "",
-  "homepage": "https://github.com/EliDevToBe/sudoking#readme",
-  "bugs": {
-    "url": "https://github.com/EliDevToBe/sudoking/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EliDevToBe/sudoking.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "turbo dev",
-    "dev:web": "turbo dev --filter=web",
-    "dev:api": "turbo dev --filter=api",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx @biomejs/biome lint",
-    "format": "npx @biomejs/biome format",
-    "check": "npx @biomejs/biome check",
-    "check:fix": "npx @biomejs/biome check --write"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@types/node": "^22.15.30",
-    "@typescript-eslint/eslint-plugin": "^8.33.1",
-    "@typescript-eslint/parser": "^8.33.1",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
-  }
+	"name": "rncp-sudoku",
+	"type": "module",
+	"version": "1.0.0",
+	"packageManager": "npm@11.4.0",
+	"workspaces": [
+		"apps/api",
+		"apps/web",
+		"packages/database",
+		"packages/shared"
+	],
+	"description": "",
+	"homepage": "https://github.com/EliDevToBe/sudoking#readme",
+	"bugs": {
+		"url": "https://github.com/EliDevToBe/sudoking/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/EliDevToBe/sudoking.git"
+	},
+	"license": "ISC",
+	"author": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "turbo dev",
+		"dev:web": "turbo dev --filter=web",
+		"dev:api": "turbo dev --filter=api",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "npx @biomejs/biome lint",
+		"format": "npx @biomejs/biome format",
+		"check": "npx @biomejs/biome check",
+		"check:fix": "npx @biomejs/biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/node": "^22.15.30",
+		"@typescript-eslint/eslint-plugin": "^8.33.1",
+		"@typescript-eslint/parser": "^8.33.1",
+		"turbo": "^2.5.4",
+		"typescript": "^5.8.3"
+	}
 }
