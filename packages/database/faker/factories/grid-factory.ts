@@ -1,5 +1,5 @@
-import { Faker } from "@faker-js/faker";
-import { Prisma, PrismaClient } from "@prisma/client";
+import type { Faker } from "@faker-js/faker";
+import type { Prisma, PrismaClient } from "@prisma/client";
 
 type Grid = Prisma.gridCreateInput;
 

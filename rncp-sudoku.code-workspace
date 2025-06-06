@@ -2,24 +2,24 @@
   "folders": [
     {
       "name": "🏠 Frontend",
-      "path": "apps/web",
+      "path": "apps/web"
     },
     {
       "name": "🔌 Api",
-      "path": "apps/api",
+      "path": "apps/api"
     },
     {
       "name": "🤝 Shared",
-      "path": "packages/shared",
+      "path": "packages/shared"
     },
     {
       "name": "💾 Database",
-      "path": "packages/database",
+      "path": "packages/database"
     },
     {
       "name": "✨ Root",
-      "path": ".",
-    },
+      "path": "."
+    }
   ],
   "settings": {
     "files.exclude": {
@@ -27,7 +27,7 @@
       "**/.DS_Store": true,
       "**/Thumbs.db": true,
       "**/.turbo/**": true,
-      "**/deno.lock": true,
+      "**/deno.lock": true
     },
     "editor.tabSize": 2,
     "cSpell.language": "en,fr",
@@ -37,7 +37,7 @@
       ".git/{info,lfs,logs,refs,objects}/**",
       ".git/{index,*refs,*HEAD}",
       ".vscode",
-      ".env",
+      ".env"
     ],
     "cSpell.words": [
       "adminer",
@@ -53,7 +53,7 @@
       "postgresql",
       "prisma",
       "uuid",
-      "Uuid",
-    ],
-  },
+      "Uuid"
+    ]
+  }
 }

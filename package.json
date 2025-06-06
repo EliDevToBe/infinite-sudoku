@@ -26,10 +26,10 @@
     "dev:web": "turbo dev --filter=web",
     "dev:api": "turbo dev --filter=api",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx eslint . --config ./eslint.config.js",
-    "format": "npx prettier --check .",
-    "format:write": "npx prettier --write .",
-    "check:ts": "npx tsc --noEmit"
+    "lint": "npx @biomejs/biome lint",
+    "format": "npx @biomejs/biome format",
+    "check": "npx @biomejs/biome check",
+    "check:fix": "npx @biomejs/biome check --write"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
