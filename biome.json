@@ -3,7 +3,8 @@
   "formatter": {
     "lineWidth": 80,
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "ignore": ["*.vue"]
   },
   "organizeImports": {
     "enabled": true
@@ -11,12 +12,30 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
-    }
+      "recommended": true,
+      "correctness": {
+        "noUnusedFunctionParameters": "error",
+        "noUnusedImports": "error"
+      }
+    },
+    "ignore": ["*.vue"]
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["*.svelte", "*.astro", "*.vue"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useConst": "off",
+            "useImportType": "off"
+          }
+        }
+      }
+    }
+  ]
 }
