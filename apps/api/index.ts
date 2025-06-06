@@ -1,11 +1,24 @@
 import Fastify from "fastify";
 import routes from "./src/routes";
+import plugins from "./src/plugins";
+import fp from "fastify-plugin";
 
 const server = Fastify({
   logger: true,
 });
 
-server.register(routes);
+fp((server, _opts, done) => {
+  server.register(plugins);
+  done();
+});
+console.info("\n⚡️ Plugins registered ⚡️");
+
+fp((server, _opts, done) => {
+  server.register(routes);
+  done();
+});
+console.info("✨ Routes registered ✨\n");
+
 server.after((err) => {
   if (err) {
     server.log.error(err);

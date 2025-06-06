@@ -15,7 +15,8 @@
       "recommended": true,
       "correctness": {
         "noUnusedFunctionParameters": "error",
-        "noUnusedImports": "error"
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
       }
     },
     "ignore": ["*.vue"]
