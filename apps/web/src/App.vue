@@ -1,27 +1,19 @@
 <template>
-  <header>
-    <div>
-      <HelloWorld msg="You did it!" />
+  <BaseLayout>
+    <template #header>
+      <h1>SudoKing</h1>
+    </template>
 
-      <nav class="bg-amber-400">
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <div class="text-red-500" @click="handleClick">Hello</div>
-      </nav>
-    </div>
-  </header>
+    <MainWrapper>
+      <RouterView />
+    </MainWrapper>
 
-  <RouterView />
+    <template #footer> FOOTER </template>
+  </BaseLayout>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-const handleClick = () => {
-  router.push("/about");
-};
+import { RouterView } from "vue-router";
+import BaseLayout from "./components/BaseLayout.vue";
+import MainWrapper from "./components/MainWrapper.vue";
 </script>
