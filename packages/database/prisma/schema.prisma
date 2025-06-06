@@ -7,6 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model grid {
+  id         String      @id @default(uuid()) @db.Uuid
+  puzzle     Json
+  solution   Json
+  difficulty Int         @db.SmallInt
+  created_at DateTime    @default(now()) @db.Timestamp(0)
+  user_grid  user_grid[]
+}
+
+model user {
+  id                  String      @id @default(uuid()) @db.Uuid
+  pseudo              String
+  email               String      @unique(map: "user_email_unique")
+  password            String
+  avatar              String?
+  has_confirmed_email Boolean     @default(false)
+  created_at          DateTime    @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?   @updatedAt @db.Timestamp(0)
+  role                Role        @default(member)
+  quality             Quality     @default(basic)
+  user_grid           user_grid[]
+}
+
+model user_grid {
+  id            String    @id @default(uuid()) @db.Uuid
+  user_id       String    @db.Uuid
+  grid_id       String    @db.Uuid
+  backup_wip    Json?
+  started_at    DateTime  @default(now()) @db.Timestamp(0)
+  finished_at   DateTime? @db.Timestamp(0)
+  created_at    DateTime  @default(now()) @db.Timestamp(0)
+  updated_at    DateTime? @updatedAt @db.Timestamp(0)
+  score         Int?
+  highest_score Int?
+  try_number    Int?
+  grid          grid      @relation(fields: [grid_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_grid_grid_id_foreign")
+  user          user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_grid_user_id_foreign")
+
+  @@unique([user_id, grid_id])
+}
+
 enum Role {
   member
   admin
@@ -15,44 +56,4 @@ enum Role {
 enum Quality {
   basic
   premium
-}
-
-model grid {
-  id         String      @id @db.Uuid
-  puzzle     Json
-  solution   Json
-  difficulty Int         @db.SmallInt
-  created_at DateTime    @db.Timestamp(0)
-  user_grid  user_grid[]
-}
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model user {
-  id                  String      @id @db.Uuid
-  pseudo              String
-  email               String      @unique(map: "user_email_unique")
-  password            String
-  avatar              String?
-  role                Role        @default(member)
-  quality             Quality     @default(basic)
-  has_confirmed_email Boolean
-  created_at          DateTime    @db.Timestamp(0)
-  updated_at          DateTime    @db.Timestamp(0)
-  user_grid           user_grid[]
-}
-
-model user_grid {
-  id            String    @id @db.Uuid
-  user_id       String    @db.Uuid
-  grid_id       String    @db.Uuid
-  backup_wip    Json?
-  started_at    DateTime  @db.Timestamp(0)
-  finished_at   DateTime? @db.Timestamp(0)
-  created_at    DateTime  @db.Timestamp(0)
-  updated_at    DateTime? @db.Timestamp(0)
-  score         Int
-  highest_score Int
-  try_number    Int?
-  grid          grid      @relation(fields: [grid_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_grid_grid_id_foreign")
-  user          user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_grid_user_id_foreign")
 }

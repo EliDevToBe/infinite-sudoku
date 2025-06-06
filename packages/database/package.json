@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "db:start": "docker compose up -d && npx tsx ../shared/utils/wait.ts && npm run db:apply-migrations",
+    "db:start": "docker compose up -d && npx tsx ../shared/utils/wait.ts && npm run db:apply-migrations && npm run db:seed",
     "db:clean": "docker compose down --rmi all",
     "db:reset": "docker compose down --rmi all -v",
     "db:restart": "npm run db:reset && npm run db:start",
@@ -15,10 +15,15 @@
     "db:client": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev --name",
     "db:migrate:new": "npx prisma migrate dev --create-only --name",
-    "db:apply-migrations": "npx prisma migrate deploy && npm run db:client"
+    "db:apply-migrations": "npx prisma migrate deploy && npm run db:client",
+    "db:seed": "npx tsx faker/index.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@prisma/client": "^6.9.0",
     "prisma": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30"
   }
 }
