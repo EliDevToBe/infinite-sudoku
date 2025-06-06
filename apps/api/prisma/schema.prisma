@@ -13,6 +13,7 @@ model grid {
   solution   Json
   difficulty Int         @db.SmallInt
   created_at DateTime    @default(now()) @db.Timestamp(0)
+  sha256     String      @unique
   user_grid  user_grid[]
 }
 
