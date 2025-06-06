@@ -1,0 +1,26 @@
+name: CI - Web
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - "apps/web/**"
+
+jobs:
+  Lint-Format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run linter
+        run: npx @biomejs/biome lint ./apps/web
+
+      - name: Run formatter
+        run: npx @biomejs/biome format ./apps/web
