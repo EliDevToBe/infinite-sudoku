@@ -15,5 +15,5 @@ export default fp(
     server.delete("/user/:id", UserController().deleteUser);
 
     done();
-  }
+  },
 );

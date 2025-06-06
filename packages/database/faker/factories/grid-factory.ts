@@ -7,7 +7,7 @@ type Grid = Prisma.gridCreateInput;
 export class GridFactory {
   constructor(
     private readonly fakerClient: Faker,
-    private readonly prisma: PrismaClient
+    private readonly prisma: PrismaClient,
   ) {}
 
   async createMany(count: number) {
@@ -15,14 +15,14 @@ export class GridFactory {
       Array.from({ length: count }, () =>
         this.prisma.grid.create({
           data: this.create(),
-        })
-      )
+        }),
+      ),
     );
   }
 
   private create(): Grid {
     const solution = Array.from({ length: 9 }, () =>
-      [...Array(9)].map(() => this.fakerClient.number.int({ min: 1, max: 9 }))
+      [...Array(9)].map(() => this.fakerClient.number.int({ min: 1, max: 9 })),
     );
 
     const puzzle = [solution[0].map((_el) => 0), ...solution.slice(1)];

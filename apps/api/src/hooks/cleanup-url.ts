@@ -1,8 +1,8 @@
 import type {
   FastifyInstance,
   FastifyPluginOptions,
-  FastifyRequest,
   FastifyReply,
+  FastifyRequest,
 } from "fastify";
 import fp from "fastify-plugin";
 
@@ -16,8 +16,8 @@ export default fp(
           return;
         }
         done();
-      }
+      },
     );
     done();
-  }
+  },
 );

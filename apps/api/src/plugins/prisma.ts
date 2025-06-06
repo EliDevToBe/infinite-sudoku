@@ -7,5 +7,5 @@ export default fp(
     const prisma = new PrismaClient();
     server.decorate("prisma", prisma);
     done();
-  }
+  },
 );

@@ -1,6 +1,6 @@
+import cors from "@fastify/cors";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import cors from "@fastify/cors";
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
@@ -12,5 +12,5 @@ export default fp(
     });
 
     done();
-  }
+  },
 );

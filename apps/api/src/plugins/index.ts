@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import prisma from "./prisma";
 import cors from "./cors";
 import helmet from "./helmet";
+import prisma from "./prisma";
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
@@ -10,5 +10,5 @@ export default fp(
     server.register(helmet);
     server.register(prisma);
     done();
-  }
+  },
 );

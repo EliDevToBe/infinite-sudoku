@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Prisma } from "@prisma/client";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 type UserInsert = Prisma.userCreateInput;
 type UserUpdate = Prisma.userUpdateInput;
@@ -19,7 +19,7 @@ export const UserController = () => {
 
   const getUser = async (
     request: FastifyRequest<{ Params: { id: string } }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
@@ -45,7 +45,7 @@ export const UserController = () => {
 
   const createUser = async (
     request: FastifyRequest<{ Body: UserInsert }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
@@ -59,7 +59,7 @@ export const UserController = () => {
 
   const updateUser = async (
     request: FastifyRequest<{ Params: { id: string }; Body: UserUpdate }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     const userId = request.params.id;
@@ -77,7 +77,7 @@ export const UserController = () => {
 
   const deleteUser = async (
     request: FastifyRequest<{ Params: { id: string } }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     const userId = request.params.id;

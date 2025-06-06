@@ -13,5 +13,5 @@ export default fp(
     server.delete("/user-grid/:id", UserGridController().deleteUserGrid);
 
     done();
-  }
+  },
 );

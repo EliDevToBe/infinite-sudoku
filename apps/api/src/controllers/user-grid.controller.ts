@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Prisma } from "@prisma/client";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 type UserGridInsert = Prisma.user_gridCreateInput;
 type UserGridUpdate = Prisma.user_gridUpdateInput;
@@ -19,7 +19,7 @@ export const UserGridController = () => {
 
   const getUserGrid = async (
     request: FastifyRequest<{ Params: { id: string } }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
@@ -48,7 +48,7 @@ export const UserGridController = () => {
 
   const createUserGrid = async (
     request: FastifyRequest<{ Body: UserGridInsert }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
@@ -62,7 +62,7 @@ export const UserGridController = () => {
 
   const updateUserGrid = async (
     request: FastifyRequest<{ Params: { id: string }; Body: UserGridUpdate }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     const userGridId = request.params.id;
@@ -81,7 +81,7 @@ export const UserGridController = () => {
 
   const deleteUserGrid = async (
     request: FastifyRequest<{ Params: { id: string } }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     const userGridId = request.params.id;

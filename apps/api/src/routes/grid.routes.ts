@@ -13,5 +13,5 @@ export default fp(
     server.delete("/grid/:id", GridController().deleteGrid);
 
     done();
-  }
+  },
 );
