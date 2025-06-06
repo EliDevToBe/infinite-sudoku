@@ -1,22 +1,34 @@
 import Fastify from "fastify";
+import routes from "./src/routes";
 
-const fastify = Fastify({
+const server = Fastify({
   logger: true,
 });
 
-fastify.get("/", async function handler(_request, _reply) {
-  return { hello: "world" };
+server.register(routes);
+server.after((err) => {
+  if (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+});
+
+server.ready((err) => {
+  if (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
 });
 
 const shutdown = async () => {
-  await fastify.close();
+  await server.close();
 };
 
 const start = async () => {
   try {
-    await fastify.listen({ host: "0.0.0.0", port: 3000 });
+    await server.listen({ host: "0.0.0.0", port: 3000 });
   } catch (err) {
-    fastify.log.error(err);
+    server.log.error(err);
     process.exit(1);
   }
 };
