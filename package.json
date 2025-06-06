@@ -30,7 +30,8 @@
     "lint": "npx @biomejs/biome lint",
     "format": "npx @biomejs/biome format",
     "check": "npx @biomejs/biome check",
-    "check:fix": "npx @biomejs/biome check --write"
+    "check:fix": "npx @biomejs/biome check --write",
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
