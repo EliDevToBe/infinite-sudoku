@@ -1,13 +1,17 @@
 import Fastify from "fastify";
 import routes from "./src/routes";
 import plugins from "./src/plugins";
+import hooks from "./src/hooks";
 
 const server = Fastify({
   logger: true,
 });
 
+server.register(hooks);
+console.info("\n🪝 Hooks registered 🪝");
+
 server.register(plugins);
-console.info("\n⚡️ Plugins registered ⚡️");
+console.info("⚡️ Plugins registered ⚡️");
 
 server.register(routes);
 console.info("✨ Routes registered ✨\n");
