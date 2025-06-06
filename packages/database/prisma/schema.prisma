@@ -7,16 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  member
-  admin
-}
-
-enum Quality {
-  basic
-  premium
-}
-
 model grid {
   id         String      @id @default(uuid()) @db.Uuid
   puzzle     Json
@@ -32,11 +22,11 @@ model user {
   email               String      @unique(map: "user_email_unique")
   password            String
   avatar              String?
-  role                Role        @default(member)
-  quality             Quality     @default(basic)
   has_confirmed_email Boolean     @default(false)
   created_at          DateTime    @default(now()) @db.Timestamp(0)
   updated_at          DateTime?   @updatedAt @db.Timestamp(0)
+  role                Role        @default(member)
+  quality             Quality     @default(basic)
   user_grid           user_grid[]
 }
 
@@ -54,4 +44,16 @@ model user_grid {
   try_number    Int?
   grid          grid      @relation(fields: [grid_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_grid_grid_id_foreign")
   user          user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_grid_user_id_foreign")
+
+  @@unique([user_id, grid_id])
+}
+
+enum Role {
+  member
+  admin
+}
+
+enum Quality {
+  basic
+  premium
 }
