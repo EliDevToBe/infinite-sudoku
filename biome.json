@@ -15,14 +15,16 @@
       "recommended": true,
       "correctness": {
         "noUnusedFunctionParameters": "error",
-        "noUnusedImports": "error"
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
       }
     },
     "ignore": ["*.vue"]
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "double",
+      "trailingCommas": "all"
     }
   },
   "overrides": [

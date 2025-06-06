@@ -11,7 +11,7 @@
       "persistent": true,
       "cache": false
     },
-    "db:start": {
+    "db:restart": {
       "cache": false
     }
   }

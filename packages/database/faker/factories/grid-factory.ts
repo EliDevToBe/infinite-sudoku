@@ -1,5 +1,6 @@
 import type { Faker } from "@faker-js/faker";
 import type { Prisma, PrismaClient } from "@prisma/client";
+import { sha256 } from "../../../shared/utils/sha256";
 
 type Grid = Prisma.gridCreateInput;
 
@@ -20,15 +21,18 @@ export class GridFactory {
   }
 
   private create(): Grid {
-    const puzzle = Array.from({ length: 8 }, () =>
-      [...Array(8)].map(() => this.fakerClient.number.int({ min: 1, max: 9 })),
+    const solution = Array.from({ length: 9 }, () =>
+      [...Array(9)].map(() => this.fakerClient.number.int({ min: 1, max: 9 })),
     );
 
-    const solution = [puzzle[0].map((_el) => 0), ...puzzle.slice(1)];
+    const puzzle = [solution[0].map((_el) => 0), ...solution.slice(1)];
+
+    const shaString = sha256({ puzzle, solution });
 
     return {
-      puzzle,
       solution,
+      puzzle,
+      sha256: shaString,
       difficulty: this.fakerClient.number.int({ min: 40, max: 67 }),
     };
   }

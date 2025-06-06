@@ -1,5 +1,5 @@
 import { centerText } from "./center-text";
-// Thinking ahead
+import { sha256 } from "./sha256";
 import { wait } from "./wait";
 
-export { wait, centerText };
+export { centerText, sha256, wait };
