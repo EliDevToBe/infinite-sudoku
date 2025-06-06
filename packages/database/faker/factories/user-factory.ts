@@ -10,11 +10,13 @@ export class UserFactory {
   ) {}
 
   async createMany(count: number) {
-    const users = Array.from({ length: count }, () => this.create());
-
-    return this.prisma.user.createMany({
-      data: users,
-    });
+    return Promise.all(
+      Array.from({ length: count }, () =>
+        this.prisma.user.create({
+          data: this.create(),
+        }),
+      ),
+    );
   }
 
   private create(): User {

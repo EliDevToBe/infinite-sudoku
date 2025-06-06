@@ -10,11 +10,13 @@ export class GridFactory {
   ) {}
 
   async createMany(count: number) {
-    const grids = Array.from({ length: count }, () => this.create());
-
-    return this.prisma.grid.createMany({
-      data: grids,
-    });
+    return Promise.all(
+      Array.from({ length: count }, () =>
+        this.prisma.grid.create({
+          data: this.create(),
+        }),
+      ),
+    );
   }
 
   private create(): Grid {
