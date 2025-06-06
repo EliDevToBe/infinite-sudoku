@@ -41,6 +41,7 @@
     ],
     "cSpell.words": [
       "adminer",
+      "Attributify",
       "autologin",
       "datasource",
       "dracula",
@@ -51,7 +52,9 @@
       "pgsql",
       "postgres",
       "postgresql",
+      "preflights",
       "prisma",
+      "unocss",
       "uuid",
       "Uuid"
     ]
