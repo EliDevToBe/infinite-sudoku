@@ -10,8 +10,6 @@ on:
 jobs:
   Lint-Format:
     runs-on: ubuntu-latest
-    env:
-      HUSKY: 0
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
