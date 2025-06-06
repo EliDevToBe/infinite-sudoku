@@ -12,9 +12,6 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "devDependencies": {
-    "@types/node": "^22.15.29"
-  },
   "dependencies": {
     "fastify": "^5.3.3",
     "fastify-plugin": "^5.0.1",

@@ -1,5 +1,5 @@
 import type { Faker } from "@faker-js/faker";
-import type { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 type User = Prisma.userCreateInput;
 

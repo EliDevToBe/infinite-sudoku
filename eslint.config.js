@@ -1,16 +1,25 @@
-import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
+import prettierConfig from "eslint-config-prettier";
+import tseslint from "typescript-eslint";
 
 export default [
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  prettierConfig,
   {
-    ignores: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/coverage/**"],
+    ignores: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/coverage/**",
+    ],
   },
   {
-    files: ["**/*.ts", "**/*.tsx", "**/*.vue"],
+    files: ["**/*.ts", "**/*.vue"],
     languageOptions: {
-      parser: "@typescript-eslint/parser",
+      parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
-        ecmaVersion: 2020,
         sourceType: "module",
         extraFileExtensions: [".vue"],
       },
@@ -22,7 +31,10 @@ export default [
     rules: {
       // TypeScript
       "@typescript-eslint/explicit-function-return-type": "warn",
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/consistent-type-imports": "error",
       // Arrow function preference
       "prefer-arrow-callback": "error",
@@ -32,3 +44,20 @@ export default [
     },
   },
 ];
+
+// {
+//   "root": true,
+//   "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+//   "parserOptions": {
+//     "ecmaVersion": 2021,
+//     "sourceType": "module"
+//   },
+//   "env": {
+//     "node": true,
+//     "es2021": true
+//   },
+//   "rules": {
+//     "prettier/prettier": "error",
+//     "quotes": ["error", "double"]
+//   }
+// }
