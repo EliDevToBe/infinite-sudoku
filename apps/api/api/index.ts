@@ -24,6 +24,15 @@ server.after((err) => {
   }
 });
 
+server.register(async (server) => {
+  await server.prisma.$connect();
+  console.info("🔌 Prisma connected 🔌");
+
+  server.get("/", (_req, res) => {
+    res.send({ status: "ok" });
+  });
+});
+
 server.ready((err) => {
   if (err) {
     server.log.error(err);
@@ -46,7 +55,7 @@ const _start = async () => {
 };
 
 // Only valid for local development
-// start();
+// _start();
 
 // Vercel serverless template
 //
