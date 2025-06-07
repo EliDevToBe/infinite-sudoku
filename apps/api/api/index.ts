@@ -7,13 +7,13 @@ const server = Fastify({
   logger: true,
 });
 
-server.register(hooks);
+server.register(hooks, { prefix: "/api" });
 console.info("\n🪝 Hooks registered 🪝");
 
-server.register(plugins);
+server.register(plugins, { prefix: "/api" });
 console.info("⚡️ Plugins registered ⚡️");
 
-server.register(routes);
+server.register(routes, { prefix: "/api" });
 console.info("✨ Routes registered ✨\n");
 
 server.after((err) => {
@@ -23,9 +23,10 @@ server.after((err) => {
   }
 });
 
-server.register(async (server) => {
+server.register(async (server, _opts, done) => {
   await server.prisma.$connect();
   console.info("🔌 Prisma connected 🔌");
+  done();
 });
 
 server.ready((err) => {
