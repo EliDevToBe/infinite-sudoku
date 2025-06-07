@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import hooks from "./src/hooks";
 import plugins from "./src/plugins";
 import routes from "./src/routes";
+import "node:process";
 
 const server = Fastify({
   logger: true,
