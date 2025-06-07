@@ -26,10 +26,6 @@ server.after((err) => {
 server.register(async (server) => {
   await server.prisma.$connect();
   console.info("🔌 Prisma connected 🔌");
-
-  server.get("/", (_req, res) => {
-    res.send({ status: "ok" });
-  });
 });
 
 server.ready((err) => {
@@ -37,6 +33,10 @@ server.ready((err) => {
     server.log.error(err);
     server.close();
   }
+});
+
+server.get("/", (_req, res) => {
+  res.send({ status: "ok" });
 });
 
 // const shutdown = () => {
