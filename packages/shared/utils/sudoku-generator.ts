@@ -1,3 +1,5 @@
+import { getRandomNumber } from "./random-num";
+
 type DevNum = { dev: number };
 type _Point = { col: number; row: number };
 
@@ -28,35 +30,31 @@ export function chooseDifficulty(str: Difficulty | DevNum) {
   return typeof str === "string" ? levels[str as Difficulty] : str.dev;
 }
 
-function getRandomNumber(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 export class Sudoku {
   private board: number[][];
   private completeBoard: number[][] = [];
 
   private difficultyLevel: number;
-  #maxDifficultyLevel = 57;
 
-  #callCounter = 0;
-  #removeCounter = 0;
-  #solutionCount = 0;
+  fillboardCounter = 0;
+  backtrackingNumberRemovedCounter = 0;
+  possibleSolutionCount = 0;
 
-  private attemptTimeout = {
-    start: 0,
-    threshold: 950,
+  private attemptTimeoutMs = 950;
+
+  private readonly config = {
+    maxRemoveNumAttemptCount: 90,
+    maxAttemptTimeoutMs: 950,
+    maxDifficultyLevel: 57,
   };
 
   private stats = {
     generatorCreatedAt: 0,
-    attempts: 0,
-    maxAttempts: 90,
+    generatorFinishedAt: 0,
+    removeNumAttemptCount: 0,
     timeOutCounter: 0,
     hardResetCounter: 0,
   };
-
-  #startDateEnd = 0;
 
   #validNumbers: Set<number>[][] = Array(9)
     .fill(null)
@@ -67,13 +65,12 @@ export class Sudoku {
     );
 
   constructor(difficulty: number) {
+    this.stats.generatorCreatedAt = Date.now();
     this.difficultyLevel = difficulty;
 
     this.board = Array(9)
       .fill(0)
       .map(() => Array(9).fill(0));
-
-    this.stats.generatorCreatedAt = Date.now();
 
     this.fillBoard(0, 0);
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
@@ -110,7 +107,7 @@ export class Sudoku {
   }
 
   private fillBoard(row: number, col: number): boolean {
-    this.#callCounter += 1;
+    this.fillboardCounter += 1;
 
     let currentRow = row;
     let currentCol = col;
@@ -146,35 +143,38 @@ export class Sudoku {
   private removeNumbers(targetEmpty: number): void {
     let cellCountToRemove = targetEmpty;
 
-    if (cellCountToRemove > 81) cellCountToRemove = this.#maxDifficultyLevel;
+    if (cellCountToRemove > 81)
+      cellCountToRemove = this.config.maxDifficultyLevel;
     if (cellCountToRemove < 0) cellCountToRemove = 0;
 
-    while (this.stats.attempts < this.stats.maxAttempts) {
+    while (
+      this.stats.removeNumAttemptCount < this.config.maxRemoveNumAttemptCount
+    ) {
       // Reducing the Hz of resetBoard for accelerating easy calculations
       if (
-        this.stats.attempts &&
-        (this.stats.attempts < 20
-          ? this.stats.attempts % 5 === 0
-          : this.stats.attempts % 3 === 0)
+        this.stats.removeNumAttemptCount &&
+        (this.stats.removeNumAttemptCount < 20
+          ? this.stats.removeNumAttemptCount % 5 === 0
+          : this.stats.removeNumAttemptCount % 3 === 0)
       ) {
         this.resetBoard();
       }
 
       // Reset timer for each attempt
-      this.attemptTimeout.start = Date.now();
+      this.attemptTimeoutMs = Date.now();
 
       // Prioritize cells based on position
       const positions = this.getPrioritizedPositions();
 
       if (this.removeNumbersBacktrack(positions, 0, 0, cellCountToRemove)) {
-        this.#startDateEnd = Date.now();
+        this.stats.generatorFinishedAt = Date.now();
         return;
       }
 
-      this.stats.attempts++;
+      this.stats.removeNumAttemptCount++;
     }
 
-    this.#startDateEnd = Date.now();
+    this.stats.generatorFinishedAt = Date.now();
   }
 
   // Helper method for smart cell selection
@@ -213,10 +213,7 @@ export class Sudoku {
     targetEmpty: number
   ): boolean {
     // Check timeout
-    if (
-      Date.now() - this.attemptTimeout.start >
-      this.attemptTimeout.threshold
-    ) {
+    if (Date.now() - this.attemptTimeoutMs > this.config.maxAttemptTimeoutMs) {
       this.stats.timeOutCounter++;
       return false;
     }
@@ -232,7 +229,7 @@ export class Sudoku {
     }
 
     const { row, col } = positions[posIndex];
-    this.#removeCounter++;
+    this.backtrackingNumberRemovedCounter++;
 
     // Skip if cell is already empty
     if (this.board[row][col] === 0) {
@@ -315,10 +312,10 @@ export class Sudoku {
    */
   private findAllSolutions(row: number, col: number, board: number[][]): void {
     // At least solvable
-    if (this.#solutionCount > 1) return;
+    if (this.possibleSolutionCount > 1) return;
 
     if (row === 9) {
-      this.#solutionCount++;
+      this.possibleSolutionCount++;
       return;
     }
 
@@ -338,7 +335,7 @@ export class Sudoku {
         this.findAllSolutions(nextRow, nextCol, board);
 
         // Early exit
-        if (this.#solutionCount > 1) return;
+        if (this.possibleSolutionCount > 1) return;
 
         board[row][col] = 0;
       }
@@ -352,11 +349,11 @@ export class Sudoku {
    * @returns Boolean
    */
   hasUniqueSolution(): boolean {
-    this.#solutionCount = 0;
+    this.possibleSolutionCount = 0;
 
     const boardCopy = this.board.map((row) => [...row]);
     this.findAllSolutions(0, 0, boardCopy);
 
-    return this.#solutionCount === 1;
+    return this.possibleSolutionCount === 1;
   }
 }
