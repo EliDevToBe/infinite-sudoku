@@ -196,14 +196,14 @@ export class Sudoku {
     const positions: { row: number; col: number; priority: number }[] = [];
 
     const center = 4; // Center index for 9x9 board
-    const sigma = 3.5; // Controls how quickly priority drops off from center
+    const sigma = 3; // Controls how quickly priority drops off from center
 
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
         // Gaussian-based priority: highest at center, smooth drop-off to edges
         const distSq = (i - center) ** 2 + (j - center) ** 2;
         const priority =
-          Math.exp(-distSq / (2 * sigma * sigma)) + Math.random() * 0.6;
+          Math.exp(-distSq / (2 * sigma * sigma)) + Math.random() * 0.5;
         positions.push({ row: i, col: j, priority });
       }
     }
