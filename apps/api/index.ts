@@ -36,7 +36,7 @@ const shutdown = () => {
   server.close();
 };
 
-const start = async () => {
+const _start = async () => {
   try {
     await server.listen({ host: "0.0.0.0", port: 3000 });
   } catch (err) {
@@ -46,7 +46,7 @@ const start = async () => {
 };
 
 // Only valid for local development
-start();
+// start();
 
 // Vercel serverless template
 //
