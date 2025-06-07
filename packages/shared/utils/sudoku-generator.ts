@@ -36,10 +36,6 @@ export class Sudoku {
 
   private difficultyLevel: number;
 
-  fillboardCounter = 0;
-  backtrackingNumberRemovedCounter = 0;
-  possibleSolutionCount = 0;
-
   private attemptTimeoutMs = 950;
 
   private readonly config = {
@@ -51,9 +47,14 @@ export class Sudoku {
   private stats = {
     generatorCreatedAt: 0,
     generatorFinishedAt: 0,
-    removeNumAttemptCount: 0,
-    timeOutCounter: 0,
-    hardResetCounter: 0,
+    counter: {
+      removeNumAttempt: 0,
+      timeOut: 0,
+      hardReset: 0,
+      possibleSolution: 0,
+      backtrack: 0,
+      fillboard: 0,
+    },
   };
 
   #validNumbers: Set<number>[][] = Array(9)
@@ -61,7 +62,7 @@ export class Sudoku {
     .map(() =>
       Array(9)
         .fill(null)
-        .map(() => new Set([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+        .map(() => new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])),
     );
 
   constructor(difficulty: number) {
@@ -82,18 +83,18 @@ export class Sudoku {
     return { data: { puzzle: this.board, solution: this.completeBoard } };
   }
 
+  getSolution(): SudokuGrid {
+    return this.completeBoard;
+  }
+
   private resetBoard() {
-    this.stats.hardResetCounter++;
+    this.stats.counter.hardReset++;
     this.board = Array(9)
       .fill(0)
       .map(() => Array(9).fill(0));
 
     this.fillBoard(0, 0);
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
-  }
-
-  getSolution(): SudokuGrid {
-    return this.completeBoard;
   }
 
   private getValidRandomRow() {
@@ -107,7 +108,7 @@ export class Sudoku {
   }
 
   private fillBoard(row: number, col: number): boolean {
-    this.fillboardCounter += 1;
+    this.stats.counter.fillboard += 1;
 
     let currentRow = row;
     let currentCol = col;
@@ -148,14 +149,13 @@ export class Sudoku {
     if (cellCountToRemove < 0) cellCountToRemove = 0;
 
     while (
-      this.stats.removeNumAttemptCount < this.config.maxRemoveNumAttemptCount
+      this.stats.counter.removeNumAttempt < this.config.maxRemoveNumAttemptCount
     ) {
+      const currAttempt = this.stats.counter.removeNumAttempt;
       // Reducing the Hz of resetBoard for accelerating easy calculations
       if (
-        this.stats.removeNumAttemptCount &&
-        (this.stats.removeNumAttemptCount < 20
-          ? this.stats.removeNumAttemptCount % 5 === 0
-          : this.stats.removeNumAttemptCount % 3 === 0)
+        currAttempt &&
+        (currAttempt < 20 ? currAttempt % 5 === 0 : currAttempt % 3 === 0)
       ) {
         this.resetBoard();
       }
@@ -171,7 +171,7 @@ export class Sudoku {
         return;
       }
 
-      this.stats.removeNumAttemptCount++;
+      this.stats.counter.removeNumAttempt++;
     }
 
     this.stats.generatorFinishedAt = Date.now();
@@ -210,11 +210,11 @@ export class Sudoku {
     positions: { row: number; col: number }[],
     posIndex: number,
     emptyCells: number,
-    targetEmpty: number
+    targetEmpty: number,
   ): boolean {
     // Check timeout
     if (Date.now() - this.attemptTimeoutMs > this.config.maxAttemptTimeoutMs) {
-      this.stats.timeOutCounter++;
+      this.stats.counter.timeOut++;
       return false;
     }
 
@@ -229,7 +229,7 @@ export class Sudoku {
     }
 
     const { row, col } = positions[posIndex];
-    this.backtrackingNumberRemovedCounter++;
+    this.stats.counter.backtrack++;
 
     // Skip if cell is already empty
     if (this.board[row][col] === 0) {
@@ -237,7 +237,7 @@ export class Sudoku {
         positions,
         posIndex + 1,
         emptyCells,
-        targetEmpty
+        targetEmpty,
       );
     }
 
@@ -252,7 +252,7 @@ export class Sudoku {
           positions,
           posIndex + 1,
           emptyCells + 1,
-          targetEmpty
+          targetEmpty,
         )
       ) {
         return true;
@@ -267,7 +267,7 @@ export class Sudoku {
       positions,
       posIndex + 1,
       emptyCells,
-      targetEmpty
+      targetEmpty,
     );
   }
 
@@ -284,7 +284,7 @@ export class Sudoku {
     row: number,
     col: number,
     input: number,
-    board: number[][]
+    board: number[][],
   ): boolean {
     // Use row/column/block lookup arrays instead of loops
     const rowNums = new Set(board[row]);
@@ -312,10 +312,10 @@ export class Sudoku {
    */
   private findAllSolutions(row: number, col: number, board: number[][]): void {
     // At least solvable
-    if (this.possibleSolutionCount > 1) return;
+    if (this.stats.counter.possibleSolution > 1) return;
 
     if (row === 9) {
-      this.possibleSolutionCount++;
+      this.stats.counter.possibleSolution++;
       return;
     }
 
@@ -335,7 +335,7 @@ export class Sudoku {
         this.findAllSolutions(nextRow, nextCol, board);
 
         // Early exit
-        if (this.possibleSolutionCount > 1) return;
+        if (this.stats.counter.possibleSolution > 1) return;
 
         board[row][col] = 0;
       }
@@ -349,11 +349,11 @@ export class Sudoku {
    * @returns Boolean
    */
   hasUniqueSolution(): boolean {
-    this.possibleSolutionCount = 0;
+    this.stats.counter.possibleSolution = 0;
 
     const boardCopy = this.board.map((row) => [...row]);
     this.findAllSolutions(0, 0, boardCopy);
 
-    return this.possibleSolutionCount === 1;
+    return this.stats.counter.possibleSolution === 1;
   }
 }
