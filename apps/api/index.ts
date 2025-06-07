@@ -50,7 +50,7 @@ const _start = async () => {
 
 // Vercel serverless template
 //
-export default async function handler(req: unknown, res: unknown) {
+export default async (req: unknown, res: unknown) => {
   await server.ready();
   server.server.emit("request", req, res);
-}
+};
