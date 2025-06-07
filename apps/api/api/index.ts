@@ -39,26 +39,28 @@ server.ready((err) => {
   }
 });
 
-const shutdown = () => {
-  server.prisma.$disconnect();
-  server.close();
-};
+// const shutdown = () => {
+//   server.prisma.$disconnect();
+//   server.close();
+// };
 
-const _start = async () => {
-  try {
-    await server.listen({ host: "0.0.0.0", port: 3000 });
-  } catch (err) {
-    server.log.error(err);
-    shutdown();
-  }
-};
+// const _start = async () => {
+//   try {
+//     await server.listen({ host: "0.0.0.0", port: 3000 });
+//   } catch (err) {
+//     server.log.error(err);
+//     shutdown();
+//   }
+// };
 
 // Only valid for local development
 // _start();
 
 // Vercel serverless template
 //
-export default async (req: unknown, res: unknown) => {
-  await server.ready();
-  server.server.emit("request", req, res);
-};
+// export default async (req: unknown, res: unknown) => {
+//   await server.ready();
+//   server.server.emit("request", req, res);
+// };
+
+export default server;
