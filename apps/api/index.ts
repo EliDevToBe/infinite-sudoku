@@ -31,18 +31,16 @@ server.ready((err) => {
   }
 });
 
-const shutdown = async () => {
-  await server.prisma.$disconnect();
-  await server.close();
+const shutdown = () => {
+  server.prisma.$disconnect();
+  server.close();
 };
 
-const start = async () => {
+export default async function start() {
   try {
     await server.listen({ host: "0.0.0.0", port: 3000 });
   } catch (err) {
     server.log.error(err);
-    await shutdown();
+    shutdown();
   }
-};
-
-start();
+}
