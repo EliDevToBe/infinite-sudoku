@@ -30,9 +30,27 @@ export function chooseDifficulty(str: Difficulty | DevNum) {
   return typeof str === "string" ? levels[str as Difficulty] : str.dev;
 }
 
+const logDisplayBoard = (board: number[][]) => {
+  process.stdout.write("\x1b[0;0H\x1b[2J");
+  console.log("=====================");
+
+  board.forEach((row, i) => {
+    console.log(
+      row
+        .map((col, i) => {
+          const cell = col === 0 ? "•" : col;
+          if ((i + 1) % 3 === 0 && i !== 8) return `${cell} |`;
+          return cell;
+        })
+        .join(" "),
+    );
+    if ((i + 1) % 3 === 0 && i !== 8) console.log("---------------------");
+  });
+};
+
 export class Sudoku {
-  private board: number[][];
-  private completeBoard: number[][] = [];
+  private board: SudokuGrid;
+  private completeBoard: SudokuGrid = [];
 
   private difficultyLevel: number;
 
@@ -41,12 +59,14 @@ export class Sudoku {
   private readonly config = {
     maxRemoveNumAttemptCount: 90,
     maxAttemptTimeoutMs: 950,
-    maxDifficultyLevel: 57,
+    maxDifficultyLevel: 60,
   };
 
   private stats = {
     generatorCreatedAt: 0,
     generatorFinishedAt: 0,
+    generatorTimeTaken: 0,
+    success: false,
     counter: {
       removeNumAttempt: 0,
       timeOut: 0,
@@ -57,7 +77,7 @@ export class Sudoku {
     },
   };
 
-  #validNumbers: Set<number>[][] = Array(9)
+  private validNumbers: Set<number>[][] = Array(9)
     .fill(null)
     .map(() =>
       Array(9)
@@ -85,6 +105,12 @@ export class Sudoku {
 
   getSolution(): SudokuGrid {
     return this.completeBoard;
+  }
+
+  getStats() {
+    this.stats.generatorTimeTaken =
+      (this.stats.generatorFinishedAt - this.stats.generatorCreatedAt) / 1000;
+    return this.stats;
   }
 
   private resetBoard() {
@@ -220,6 +246,7 @@ export class Sudoku {
 
     // Success stop case
     if (emptyCells === targetEmpty) {
+      this.stats.success = true;
       return true;
     }
 
@@ -329,7 +356,7 @@ export class Sudoku {
     }
 
     // Try only valid numbers for this cell
-    for (const num of this.#validNumbers[row][col]) {
+    for (const num of this.validNumbers[row][col]) {
       if (this.isValidCell(row, col, num, board)) {
         board[row][col] = num;
         this.findAllSolutions(nextRow, nextCol, board);
@@ -357,3 +384,20 @@ export class Sudoku {
     return this.stats.counter.possibleSolution === 1;
   }
 }
+
+const generator = new Sudoku(60);
+const { data } = generator.getPuzzleAndSolution();
+const stats = generator.getStats();
+
+console.log(logDisplayBoard(data.puzzle));
+console.log(stats);
+
+const _commonDifficultyLevelsByMissingCells = {
+  WayTooEasy: [0, 40],
+  Easy: [41, 45],
+  Medium: [46, 49],
+  Advanced: [50, 53],
+  Hard: [54, 56],
+  VeryHard: [57, 59],
+  DiabolicExpert: [60, 64],
+};
