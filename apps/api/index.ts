@@ -20,18 +20,19 @@ console.info("✨ Routes registered ✨\n");
 server.after((err) => {
   if (err) {
     server.log.error(err);
-    process.exit(1);
+    server.close();
   }
 });
 
 server.ready((err) => {
   if (err) {
     server.log.error(err);
-    process.exit(1);
+    server.close();
   }
 });
 
 const shutdown = async () => {
+  await server.prisma.$disconnect();
   await server.close();
 };
 
@@ -40,7 +41,7 @@ const start = async () => {
     await server.listen({ host: "0.0.0.0", port: 3000 });
   } catch (err) {
     server.log.error(err);
-    process.exit(1);
+    server.close();
   }
 };
 
