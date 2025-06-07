@@ -41,11 +41,8 @@ const start = async () => {
     await server.listen({ host: "0.0.0.0", port: 3000 });
   } catch (err) {
     server.log.error(err);
-    server.close();
+    await shutdown();
   }
 };
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
 
 start();
