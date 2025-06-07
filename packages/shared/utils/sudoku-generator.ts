@@ -1,34 +1,15 @@
-import { getRandomNumber } from "./random-num";
-
-type DevNum = { dev: number };
-type _Point = { col: number; row: number };
-
-type Difficulty = "easy" | "medium" | "hard" | "hardest";
-const _difficulties = [
-  "easy",
-  "medium",
-  "hard",
-  "hardest",
-] as const satisfies Difficulty[];
-
 type SudokuGrid = number[][];
 type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
-type _SudokuMatrix = Record<Difficulty, SudokuComplete>;
 
-type _MenuSettings = {
-  difficulty: Difficulty;
-  isHelperActive: boolean;
+const _commonDifficultyLevelsByMissingCells = {
+  WayTooEasy: [0, 40],
+  Easy: [41, 45],
+  Medium: [46, 49],
+  Advanced: [50, 53],
+  Hard: [54, 56],
+  VeryHard: [57, 59],
+  DiabolicExpert: [60, 64],
 };
-
-export function chooseDifficulty(str: Difficulty | DevNum) {
-  const levels: Record<Difficulty, number> = {
-    easy: getRandomNumber(33, 40),
-    medium: getRandomNumber(41, 48),
-    hard: getRandomNumber(49, 56),
-    hardest: 57,
-  };
-  return typeof str === "string" ? levels[str as Difficulty] : str.dev;
-}
 
 const logDisplayBoard = (board: number[][]) => {
   process.stdout.write("\x1b[0;0H\x1b[2J");
@@ -50,7 +31,7 @@ const logDisplayBoard = (board: number[][]) => {
 
 export class Sudoku {
   private board: SudokuGrid;
-  private completeBoard: SudokuGrid = [];
+  private completeBoard: SudokuGrid;
 
   private difficultyLevel: number;
 
@@ -60,6 +41,7 @@ export class Sudoku {
     maxRemoveNumAttemptCount: 90,
     maxAttemptTimeoutMs: 950,
     maxDifficultyLevel: 60,
+    generatorTimeoutSeconds: 300,
   };
 
   private stats = {
@@ -108,9 +90,13 @@ export class Sudoku {
   }
 
   getStats() {
+    return this.stats;
+  }
+
+  private setFinishTime() {
+    this.stats.generatorFinishedAt = Date.now();
     this.stats.generatorTimeTaken =
       (this.stats.generatorFinishedAt - this.stats.generatorCreatedAt) / 1000;
-    return this.stats;
   }
 
   private resetBoard() {
@@ -175,7 +161,8 @@ export class Sudoku {
     if (cellCountToRemove < 0) cellCountToRemove = 0;
 
     while (
-      this.stats.counter.removeNumAttempt < this.config.maxRemoveNumAttemptCount
+      Date.now() - this.stats.generatorCreatedAt <
+      this.config.generatorTimeoutSeconds * 1000
     ) {
       const currAttempt = this.stats.counter.removeNumAttempt;
       // Reducing the Hz of resetBoard for accelerating easy calculations
@@ -190,33 +177,38 @@ export class Sudoku {
       this.attemptTimeoutMs = Date.now();
 
       // Prioritize cells based on position
-      const positions = this.getPrioritizedPositions();
+      const positions = this.prioritizePositions();
 
-      if (this.removeNumbersBacktrack(positions, 0, 0, cellCountToRemove)) {
-        this.stats.generatorFinishedAt = Date.now();
+      if (this.backtrack(positions, 0, 0, cellCountToRemove)) {
+        this.setFinishTime();
+
         return;
       }
 
       this.stats.counter.removeNumAttempt++;
     }
 
-    this.stats.generatorFinishedAt = Date.now();
+    this.setFinishTime();
   }
 
   // Helper method for smart cell selection
-  private getPrioritizedPositions(): { row: number; col: number }[] {
+  private prioritizePositions(): { row: number; col: number }[] {
     const positions: { row: number; col: number; priority: number }[] = [];
+
+    const center = 4; // Center index for 9x9 board
+    const sigma = 3.5; // Controls how quickly priority drops off from center
 
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
-        // Prioritize cells that are more likely to maintain uniqueness
-        // Center cells and edges are less important than others
-        const centerDistance = Math.abs(i - 3.5) + Math.abs(j - 3.5);
-        const priority = centerDistance + Math.random();
+        // Gaussian-based priority: highest at center, smooth drop-off to edges
+        const distSq = (i - center) ** 2 + (j - center) ** 2;
+        const priority =
+          Math.exp(-distSq / (2 * sigma * sigma)) + Math.random() * 0.6;
         positions.push({ row: i, col: j, priority });
       }
     }
 
+    // Sort descending: higher priority (closer to center) first
     return positions
       .sort((a, b) => b.priority - a.priority)
       .map(({ row, col }) => ({ row, col }));
@@ -232,7 +224,7 @@ export class Sudoku {
    * @param targetEmpty Target number of cells to remove
    * @returns Boolean
    */
-  private removeNumbersBacktrack(
+  private backtrack(
     positions: { row: number; col: number }[],
     posIndex: number,
     emptyCells: number,
@@ -260,12 +252,7 @@ export class Sudoku {
 
     // Skip if cell is already empty
     if (this.board[row][col] === 0) {
-      return this.removeNumbersBacktrack(
-        positions,
-        posIndex + 1,
-        emptyCells,
-        targetEmpty,
-      );
+      return this.backtrack(positions, posIndex + 1, emptyCells, targetEmpty);
     }
 
     // Try removing the number
@@ -275,12 +262,7 @@ export class Sudoku {
     if (this.hasUniqueSolution()) {
       // Successful removal, continue with next position
       if (
-        this.removeNumbersBacktrack(
-          positions,
-          posIndex + 1,
-          emptyCells + 1,
-          targetEmpty,
-        )
+        this.backtrack(positions, posIndex + 1, emptyCells + 1, targetEmpty)
       ) {
         return true;
       }
@@ -290,12 +272,7 @@ export class Sudoku {
     this.board[row][col] = temp;
 
     // Try next position
-    return this.removeNumbersBacktrack(
-      positions,
-      posIndex + 1,
-      emptyCells,
-      targetEmpty,
-    );
+    return this.backtrack(positions, posIndex + 1, emptyCells, targetEmpty);
   }
 
   /**
@@ -385,19 +362,9 @@ export class Sudoku {
   }
 }
 
-const generator = new Sudoku(60);
+const generator = new Sudoku(59);
 const { data } = generator.getPuzzleAndSolution();
 const stats = generator.getStats();
 
 console.log(logDisplayBoard(data.puzzle));
 console.log(stats);
-
-const _commonDifficultyLevelsByMissingCells = {
-  WayTooEasy: [0, 40],
-  Easy: [41, 45],
-  Medium: [46, 49],
-  Advanced: [50, 53],
-  Hard: [54, 56],
-  VeryHard: [57, 59],
-  DiabolicExpert: [60, 64],
-};
