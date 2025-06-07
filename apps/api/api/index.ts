@@ -23,8 +23,8 @@ server.after((err) => {
   }
 });
 
-server.register(async (server, _opts, done) => {
-  await server.prisma.$connect();
+server.register((server, _opts, done) => {
+  server.prisma.$connect();
   console.info("🔌 Prisma connected 🔌");
   done();
 });
