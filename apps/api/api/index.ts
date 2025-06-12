@@ -7,13 +7,13 @@ const server = Fastify({
   logger: true,
 });
 
-server.register(hooks, { prefix: "/api" });
+server.register(hooks);
 console.info("\n🪝 Hooks registered 🪝");
 
-server.register(plugins, { prefix: "/api" });
+server.register(plugins);
 console.info("⚡️ Plugins registered ⚡️");
 
-server.register(routes, { prefix: "/api" });
+server.register(routes);
 console.info("✨ Routes registered ✨\n");
 
 server.after((err) => {
