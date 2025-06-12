@@ -18,17 +18,15 @@ export const UserGridController = () => {
   };
 
   const getUserGrid = async (
-    request: FastifyRequest<{ Params: { id: string } }>,
+    request: FastifyRequest<{ Params: { userId: string } }>,
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
-      const userGridId = request.params.id;
+      const userId = request.params.userId;
 
-      console.warn(request.originalUrl);
-
-      const userGrid = await prisma.user_grid.findUnique({
-        where: { id: userGridId },
+      const userGrid = await prisma.user_grid.findMany({
+        where: { user_id: userId },
       });
 
       if (!userGrid) {
@@ -41,7 +39,7 @@ export const UserGridController = () => {
       reply.status(500).send({
         message: "Failed to get user grid",
         error,
-        userId: request.params.id,
+        userId: request.params.userId,
       });
     }
   };

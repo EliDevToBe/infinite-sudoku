@@ -6,7 +6,7 @@ export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
     server.get("/user-grid", UserGridController().getUserGrids);
 
-    server.get("/user-grid/:id", UserGridController().getUserGrid);
+    server.get("/user-grid/:userId", UserGridController().getUserGrid);
 
     server.post("/user-grid", UserGridController().createUserGrid);
 
