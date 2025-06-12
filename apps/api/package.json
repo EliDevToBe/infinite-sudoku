@@ -9,7 +9,8 @@
     "dev": "npm run db:client && npx tsx --watch ./index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:client": "npx prisma generate",
-    "db:pull": "npx prisma db pull"
+    "db:pull": "npx prisma db pull",
+    "postinstall": "npx prisma generate"
   },
   "keywords": [],
   "author": "",

@@ -64,4 +64,19 @@ server.get("/", (_req, res) => {
 //   server.server.emit("request", req, res);
 // };
 
-export default server;
+// Initialize server (but don't start listening)
+let isReady = false;
+const readyPromise = server.ready().then(() => {
+  isReady = true;
+  console.log("Fastify is ready!");
+});
+
+// Export the serverless handler
+export default async (req: unknown, res: unknown) => {
+  if (!isReady) await readyPromise;
+
+  // Forward the request to Fastify
+  server.server.emit("request", req, res);
+};
+
+// export default server;
