@@ -1,8 +1,7 @@
 import Fastify from "fastify";
-import hooks from "./src/hooks";
-import plugins from "./src/plugins";
-import routes from "./src/routes";
-import "node:process";
+import hooks from "../src/hooks";
+import plugins from "../src/plugins";
+import routes from "../src/routes";
 
 const server = Fastify({
   logger: true,
@@ -24,6 +23,12 @@ server.after((err) => {
   }
 });
 
+server.register((server, _opts, done) => {
+  server.prisma.$connect();
+  console.info("🔌 Prisma connected 🔌");
+  done();
+});
+
 server.ready((err) => {
   if (err) {
     server.log.error(err);
@@ -31,18 +36,11 @@ server.ready((err) => {
   }
 });
 
-const shutdown = async () => {
-  await server.prisma.$disconnect();
-  await server.close();
-};
+server.get("/", (_req, res) => {
+  res.send({ status: "ok" });
+});
 
-const start = async () => {
-  try {
-    await server.listen({ host: "0.0.0.0", port: 3000 });
-  } catch (err) {
-    server.log.error(err);
-    await shutdown();
-  }
+export default async (req: unknown, res: unknown) => {
+  await server.ready();
+  server.server.emit("request", req, res);
 };
-
-start();
