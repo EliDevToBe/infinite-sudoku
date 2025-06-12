@@ -59,24 +59,24 @@ server.get("/", (_req, res) => {
 
 // Vercel serverless template
 //
-// export default async (req: unknown, res: unknown) => {
-//   await server.ready();
-//   server.server.emit("request", req, res);
-// };
-
-// Initialize server (but don't start listening)
-let isReady = false;
-const readyPromise = server.ready().then(() => {
-  isReady = true;
-  console.log("Fastify is ready!");
-});
-
-// Export the serverless handler
 export default async (req: unknown, res: unknown) => {
-  if (!isReady) await readyPromise;
-
-  // Forward the request to Fastify
+  await server.ready();
   server.server.emit("request", req, res);
 };
+
+// Initialize server (but don't start listening)
+// let isReady = false;
+// const readyPromise = server.ready().then(() => {
+//   isReady = true;
+//   console.log("Fastify is ready!");
+// });
+
+// // Export the serverless handler
+// export default async (req: unknown, res: unknown) => {
+//   if (!isReady) await readyPromise;
+
+//   // Forward the request to Fastify
+//   server.server.emit("request", req, res);
+// };
 
 // export default server;
