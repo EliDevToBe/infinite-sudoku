@@ -15,6 +15,17 @@ export default fp(
           reply.code(301).redirect(request.url.replace(/\/+$/, ""));
           return;
         }
+
+        // Handling missing ids
+        if (request.url.endsWith("/user-grid/grid")) {
+          reply.code(301).redirect(request.url.replace(/\/grid$/, ""));
+          return;
+        }
+        if (request.url.endsWith("/user-grid/user")) {
+          reply.code(301).redirect(request.url.replace(/\/user$/, ""));
+          return;
+        }
+
         done();
       },
     );

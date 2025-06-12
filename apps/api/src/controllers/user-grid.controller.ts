@@ -5,7 +5,10 @@ type UserGridInsert = Prisma.user_gridCreateInput;
 type UserGridUpdate = Prisma.user_gridUpdateInput;
 
 export const UserGridController = () => {
-  const getUserGrids = async (request: FastifyRequest, reply: FastifyReply) => {
+  const getAllUserGrids = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ) => {
     const prisma = request.server.prisma;
 
     try {
@@ -17,13 +20,45 @@ export const UserGridController = () => {
     }
   };
 
-  const getUserGrid = async (
-    request: FastifyRequest<{ Params: { userId: string } }>,
+  const getById = async (
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply,
+  ) => {
+    const prisma = request.server.prisma;
+    const userGridId = request.params.id;
+
+    try {
+      const userGrid = await prisma.user_grid.findUnique({
+        where: { id: userGridId },
+      });
+
+      if (!userGrid) {
+        reply.status(404).send({ message: "User grid not found" });
+        return;
+      }
+
+      reply.send(userGrid);
+    } catch (error) {
+      reply.status(500).send({
+        message: "Failed to get user grid",
+        error,
+        userId: request.params.id,
+      });
+    }
+  };
+
+  const getByUserId = async (
+    request: FastifyRequest<{ Params: { id: string } }>,
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
-      const userId = request.params.userId;
+      const userId = request.params.id;
+
+      if (!userId || userId === "") {
+        reply.status(400).send({ message: "User ID is required" });
+        return;
+      }
 
       const userGrid = await prisma.user_grid.findMany({
         where: { user_id: userId },
@@ -39,7 +74,29 @@ export const UserGridController = () => {
       reply.status(500).send({
         message: "Failed to get user grid",
         error,
-        userId: request.params.userId,
+        userId: request.params.id,
+      });
+    }
+  };
+
+  const getByGridId = async (
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply,
+  ) => {
+    const prisma = request.server.prisma;
+    const gridId = request.params.id;
+
+    try {
+      const userGrid = await prisma.user_grid.findMany({
+        where: { grid_id: gridId },
+      });
+
+      reply.send(userGrid);
+    } catch (error) {
+      reply.status(500).send({
+        message: "Failed to get user grid",
+        error,
+        gridId: request.params.id,
       });
     }
   };
@@ -93,8 +150,10 @@ export const UserGridController = () => {
   };
 
   return {
-    getUserGrids,
-    getUserGrid,
+    getAllUserGrids,
+    getById,
+    getByUserId,
+    getByGridId,
     createUserGrid,
     updateUserGrid,
     deleteUserGrid,

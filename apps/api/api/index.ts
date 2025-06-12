@@ -8,7 +8,7 @@ const server = Fastify({
 });
 
 server.register(hooks);
-console.info("\n🪝 Hooks registered 🪝");
+console.info("\n🪝  Hooks registered 🪝");
 
 server.register(plugins);
 console.info("⚡️ Plugins registered ⚡️");
