@@ -11,6 +11,17 @@ export default fp(
     server.addHook(
       "onRequest",
       (request: FastifyRequest, reply: FastifyReply, done) => {
+        if (
+          !request.headers["access-token"] ||
+          !request.headers["refresh-token"]
+        ) {
+          request.headers = {
+            ...request.headers,
+            "access-token": "",
+            "refresh-token": "",
+          };
+        }
+
         if (request.url.length > 1 && request.url.endsWith("/")) {
           reply.code(301).redirect(request.url.replace(/\/+$/, ""));
           return;
