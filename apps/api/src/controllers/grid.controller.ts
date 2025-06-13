@@ -24,8 +24,6 @@ export const GridController = () => {
     try {
       const gridId = request.params.id;
 
-      console.warn(request.originalUrl);
-
       const grid = await prisma.grid.findUnique({
         where: { id: gridId },
       });

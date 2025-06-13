@@ -11,10 +11,32 @@ export default fp(
     server.addHook(
       "onRequest",
       (request: FastifyRequest, reply: FastifyReply, done) => {
+        if (
+          !request.headers["access-token"] ||
+          !request.headers["refresh-token"]
+        ) {
+          request.headers = {
+            ...request.headers,
+            "access-token": "",
+            "refresh-token": "",
+          };
+        }
+
         if (request.url.length > 1 && request.url.endsWith("/")) {
           reply.code(301).redirect(request.url.replace(/\/+$/, ""));
           return;
         }
+
+        // Handling missing ids
+        if (request.url.endsWith("/user-grid/grid")) {
+          reply.code(301).redirect(request.url.replace(/\/grid$/, ""));
+          return;
+        }
+        if (request.url.endsWith("/user-grid/user")) {
+          reply.code(301).redirect(request.url.replace(/\/user$/, ""));
+          return;
+        }
+
         done();
       },
     );
