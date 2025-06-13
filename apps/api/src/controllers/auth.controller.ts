@@ -6,7 +6,7 @@ import { useToken } from "../utils/token";
 type RegisterInput = Prisma.userCreateInput;
 
 const { hashPassword } = useHash();
-const { generateToken } = useToken();
+const { generateToken, generateAccessToken } = useToken();
 
 export const AuthController = () => {
   const register = async (
@@ -36,6 +36,7 @@ export const AuthController = () => {
       };
 
       const token = generateToken(tokenizedUser);
+      const refreshToken = generateAccessToken(tokenizedUser);
 
       const authUser = {
         id: user.id,
@@ -44,9 +45,13 @@ export const AuthController = () => {
         role: user.role,
       };
 
+      reply.headers({
+        "access-token": token,
+        "refresh-token": refreshToken,
+      });
+
       return reply.status(201).send({
         user: authUser,
-        token,
       });
     } catch (error) {
       reply.status(500).send({ message: "Internal server error", error });
