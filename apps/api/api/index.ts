@@ -13,6 +13,12 @@ console.info("\n🪝  Hooks registered 🪝");
 server.register(plugins);
 console.info("⚡️ Plugins registered ⚡️");
 
+server.register((server, _opts, done) => {
+  server.prisma.$connect();
+  console.info("🔌 Prisma connected 🔌");
+  done();
+});
+
 server.register(routes);
 console.info("✨ Routes registered ✨\n");
 
@@ -21,12 +27,6 @@ server.after((err) => {
     server.log.error(err);
     server.close();
   }
-});
-
-server.register((server, _opts, done) => {
-  server.prisma.$connect();
-  console.info("🔌 Prisma connected 🔌");
-  done();
 });
 
 server.ready((err) => {
