@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.30"
+    "@types/node": "^22.15.30",
+    "pino-pretty": "^13.0.0"
   }
 }

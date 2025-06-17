@@ -6,6 +6,8 @@ export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
     const prisma = new PrismaClient();
     server.decorate("prisma", prisma);
+    server.prisma.$connect();
+    server.log.info("🔌 Prisma connected 🔌");
     done();
   },
 );

@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "name": "✨ Root",
+      "path": "."
+    },
+    {
       "name": "🏠 Frontend",
       "path": "apps/web"
     },
@@ -9,16 +13,12 @@
       "path": "apps/api"
     },
     {
-      "name": "🤝 Shared",
-      "path": "packages/shared"
-    },
-    {
       "name": "💾 Database",
       "path": "packages/database"
     },
     {
-      "name": "✨ Root",
-      "path": "."
+      "name": "🤝 Shared",
+      "path": "packages/shared"
     }
   ],
   "settings": {
@@ -60,7 +60,9 @@
       "prisma",
       "unocss",
       "uuid",
-      "Uuid"
-    ]
+      "Uuid",
+      "vueuse"
+    ],
+    "svg.preview.background": "dark-transparent"
   }
 }
