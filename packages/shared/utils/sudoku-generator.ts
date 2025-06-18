@@ -29,25 +29,44 @@ const logDisplayBoard = (board: number[][]) => {
   });
 };
 
+const logElapsedTime = (startTime: number) => {
+  process.stdout.write("\x1b[1A\x1b[2K");
+
+  const elapsedMs = Date.now() - startTime;
+  const date = new Date(elapsedMs);
+
+  const formatted = new Intl.DateTimeFormat("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+  }).format(date);
+
+  console.info(`Elapsed time: ${formatted}`);
+  return formatted;
+};
+
 export class Sudoku {
   private board: SudokuGrid;
   private completeBoard: SudokuGrid;
 
   private difficultyLevel: number;
 
-  private attemptTimeoutMs = 950;
+  private attemptTimeoutMs = 1500;
 
   private readonly config = {
     maxRemoveNumAttemptCount: 90,
     maxAttemptTimeoutMs: 950,
     maxDifficultyLevel: 60,
-    generatorTimeoutSeconds: 300,
+    generatorTimeoutSeconds: 600,
+    resetThreshold: 17,
   };
 
   private stats = {
     generatorCreatedAt: 0,
     generatorFinishedAt: 0,
-    generatorTimeTaken: 0,
+    generatorTimeTaken: "",
     success: false,
     counter: {
       removeNumAttempt: 0,
@@ -55,7 +74,7 @@ export class Sudoku {
       hardReset: 0,
       possibleSolution: 0,
       backtrack: 0,
-      fillboard: 0,
+      solver: 0,
     },
   };
 
@@ -75,7 +94,7 @@ export class Sudoku {
       .fill(0)
       .map(() => Array(9).fill(0));
 
-    this.fillBoard(0, 0);
+    this.solver(0, 0);
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
 
     this.removeNumbers(this.difficultyLevel);
@@ -95,8 +114,9 @@ export class Sudoku {
 
   private setFinishTime() {
     this.stats.generatorFinishedAt = Date.now();
-    this.stats.generatorTimeTaken =
-      (this.stats.generatorFinishedAt - this.stats.generatorCreatedAt) / 1000;
+    this.stats.generatorTimeTaken = logElapsedTime(
+      this.stats.generatorCreatedAt,
+    );
   }
 
   private resetBoard() {
@@ -105,7 +125,7 @@ export class Sudoku {
       .fill(0)
       .map(() => Array(9).fill(0));
 
-    this.fillBoard(0, 0);
+    this.solver(0, 0);
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
   }
 
@@ -119,8 +139,8 @@ export class Sudoku {
     return row;
   }
 
-  private fillBoard(row: number, col: number): boolean {
-    this.stats.counter.fillboard += 1;
+  private solver(row: number, col: number): boolean {
+    this.stats.counter.solver += 1;
 
     let currentRow = row;
     let currentCol = col;
@@ -142,7 +162,7 @@ export class Sudoku {
         this.board[currentRow][currentCol] = num;
 
         // Next call
-        if (this.fillBoard(currentRow, currentCol + 1)) {
+        if (this.solver(currentRow, currentCol + 1)) {
           return true;
         }
 
@@ -164,12 +184,11 @@ export class Sudoku {
       Date.now() - this.stats.generatorCreatedAt <
       this.config.generatorTimeoutSeconds * 1000
     ) {
+      logElapsedTime(this.stats.generatorCreatedAt);
+
       const currAttempt = this.stats.counter.removeNumAttempt;
       // Reducing the Hz of resetBoard for accelerating easy calculations
-      if (
-        currAttempt &&
-        (currAttempt < 20 ? currAttempt % 5 === 0 : currAttempt % 3 === 0)
-      ) {
+      if (currAttempt && currAttempt % this.config.resetThreshold === 0) {
         this.resetBoard();
       }
 
@@ -362,9 +381,9 @@ export class Sudoku {
   }
 }
 
-const generator = new Sudoku(59);
+const generator = new Sudoku(60);
 const { data } = generator.getPuzzleAndSolution();
 const stats = generator.getStats();
 
-console.log(logDisplayBoard(data.puzzle));
+logDisplayBoard(data.puzzle);
 console.log(stats);
