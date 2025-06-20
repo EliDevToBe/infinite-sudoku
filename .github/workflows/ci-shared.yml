@@ -18,9 +18,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: 2.0.0
 
-      - name: Run linter
-        run: npx @biomejs/biome lint ./packages/shared
-
-      - name: Run formatter
-        run: npx @biomejs/biome format ./packages/shared
+      - name: Run Biome
+        run: biome ci ./packages/shared

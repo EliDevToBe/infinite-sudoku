@@ -19,8 +19,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Run linter
-        run: npx @biomejs/biome lint ./apps/api
-
-      - name: Run formatter
-        run: npx @biomejs/biome format ./apps/api
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: 2.0.0
+  
+      - name: Run Biome
+        run: biome ci ./apps/api
