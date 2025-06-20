@@ -1,3 +1,6 @@
+import type { Position } from "./priority-algorithm";
+import { gaussianPriority } from "./priority-algorithm";
+
 type SudokuGrid = number[][];
 type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
 
@@ -29,7 +32,13 @@ const logDisplayBoard = (board: number[][]) => {
   });
 };
 
-const logElapsedTime = (startTime: number) => {
+const logProgress = (
+  startTime: number,
+  posIndex?: number,
+  emptyCells?: number,
+  attempts?: number,
+  resets?: number,
+) => {
   process.stdout.write("\x1b[1A\x1b[2K");
 
   const elapsedMs = Date.now() - startTime;
@@ -43,7 +52,9 @@ const logElapsedTime = (startTime: number) => {
     timeZone: "UTC",
   }).format(date);
 
-  console.info(`Elapsed time: ${formatted}`);
+  console.info(
+    `Elapsed time: ${formatted} - Backtrack index: ${posIndex} - Empty cells: ${emptyCells} - Attempts: ${attempts} - Resets: ${resets}`,
+  );
   return formatted;
 };
 
@@ -51,16 +62,14 @@ export class Sudoku {
   private board: SudokuGrid;
   private completeBoard: SudokuGrid;
 
-  private difficultyLevel: number;
-
-  private attemptTimeoutMs = 1500;
+  private attemptTimeoutMs = 0;
 
   private readonly config = {
-    maxRemoveNumAttemptCount: 90,
-    maxAttemptTimeoutMs: 950,
-    maxDifficultyLevel: 60,
-    generatorTimeoutSeconds: 600,
-    resetThreshold: 17,
+    maxBacktrackTimeoutMs: 2000, // Default, overridden in constructor
+    maxDifficultyLevel: 64,
+    generatorTimeoutSeconds: 900,
+    resetThreshold: 10, // Default, overridden in constructor
+    difficultyLevel: 0,
   };
 
   private stats = {
@@ -70,11 +79,13 @@ export class Sudoku {
     success: false,
     counter: {
       removeNumAttempt: 0,
-      timeOut: 0,
+      backtrackTimeout: 0,
       hardReset: 0,
       possibleSolution: 0,
-      backtrack: 0,
+    },
+    execution: {
       solver: 0,
+      backtrack: 0,
     },
   };
 
@@ -86,9 +97,22 @@ export class Sudoku {
         .map(() => new Set([1, 2, 3, 4, 5, 6, 7, 8, 9])),
     );
 
-  constructor(difficulty: number) {
+  private priorityAlgorithm: () => Position[];
+
+  constructor(difficulty: number, priorityAlgorithm: () => Position[]) {
     this.stats.generatorCreatedAt = Date.now();
-    this.difficultyLevel = difficulty;
+    this.config.difficultyLevel = difficulty;
+    this.priorityAlgorithm = priorityAlgorithm;
+
+    // Scale with difficulty, longer time for harder puzzles
+    this.config.resetThreshold = Math.max(
+      5,
+      Math.floor(60 - this.config.difficultyLevel),
+    );
+
+    this.config.maxBacktrackTimeoutMs = this.calculateBacktrackTimeout(
+      this.config.difficultyLevel,
+    );
 
     this.board = Array(9)
       .fill(0)
@@ -97,7 +121,7 @@ export class Sudoku {
     this.solver(0, 0);
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
 
-    this.removeNumbers(this.difficultyLevel);
+    this.removeNumbers(this.config.difficultyLevel);
   }
 
   getPuzzleAndSolution(): { data: SudokuComplete } {
@@ -112,11 +136,39 @@ export class Sudoku {
     return this.stats;
   }
 
+  getConfig() {
+    return this.config;
+  }
+
+  private logProgress = (
+    startTime: number,
+    posIndex?: number,
+    emptyCells?: number,
+    attempts?: number,
+    resets?: number,
+  ) => {
+    process.stdout.write("\x1b[1A\x1b[2K");
+
+    const elapsedMs = Date.now() - startTime;
+    const date = new Date(elapsedMs);
+
+    const formatted = new Intl.DateTimeFormat("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "UTC",
+    }).format(date);
+
+    console.info(
+      `Elapsed time: ${formatted} - Backtrack index: ${posIndex} - Empty cells: ${emptyCells} - Attempts: ${attempts} - Resets: ${resets}`,
+    );
+    return formatted;
+  };
+
   private setFinishTime() {
     this.stats.generatorFinishedAt = Date.now();
-    this.stats.generatorTimeTaken = logElapsedTime(
-      this.stats.generatorCreatedAt,
-    );
+    this.stats.generatorTimeTaken = logProgress(this.stats.generatorCreatedAt);
   }
 
   private resetBoard() {
@@ -129,6 +181,13 @@ export class Sudoku {
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
   }
 
+  private calculateBacktrackTimeout = (difficulty: number): number => {
+    const minTimeout = 2000;
+    const timePerDifficulty = (5000 - minTimeout) / 64;
+
+    return Math.floor(minTimeout + timePerDifficulty * difficulty);
+  };
+
   private getValidRandomRow() {
     const row = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -140,7 +199,7 @@ export class Sudoku {
   }
 
   private solver(row: number, col: number): boolean {
-    this.stats.counter.solver += 1;
+    this.stats.execution.solver += 1;
 
     let currentRow = row;
     let currentCol = col;
@@ -173,6 +232,15 @@ export class Sudoku {
     return false;
   }
 
+  /**
+   * Removes numbers from the board to create a puzzle.
+   *
+   * Strategy:
+   * - If number of attempts of current board is too high, reset the board anyway
+   *
+   * @param targetEmpty Target number of empty cells
+   * @returns Void
+   */
   private removeNumbers(targetEmpty: number): void {
     let cellCountToRemove = targetEmpty;
 
@@ -184,19 +252,11 @@ export class Sudoku {
       Date.now() - this.stats.generatorCreatedAt <
       this.config.generatorTimeoutSeconds * 1000
     ) {
-      logElapsedTime(this.stats.generatorCreatedAt);
-
-      const currAttempt = this.stats.counter.removeNumAttempt;
-      // Reducing the Hz of resetBoard for accelerating easy calculations
-      if (currAttempt && currAttempt % this.config.resetThreshold === 0) {
-        this.resetBoard();
-      }
-
       // Reset timer for each attempt
       this.attemptTimeoutMs = Date.now();
 
       // Prioritize cells based on position
-      const positions = this.prioritizePositions();
+      const positions = this.priorityAlgorithm();
 
       if (this.backtrack(positions, 0, 0, cellCountToRemove)) {
         this.setFinishTime();
@@ -205,32 +265,16 @@ export class Sudoku {
       }
 
       this.stats.counter.removeNumAttempt++;
-    }
 
-    this.setFinishTime();
-  }
-
-  // Helper method for smart cell selection
-  private prioritizePositions(): { row: number; col: number }[] {
-    const positions: { row: number; col: number; priority: number }[] = [];
-
-    const center = 4; // Center index for 9x9 board
-    const sigma = 3; // Controls how quickly priority drops off from center
-
-    for (let i = 0; i < 9; i++) {
-      for (let j = 0; j < 9; j++) {
-        // Gaussian-based priority: highest at center, smooth drop-off to edges
-        const distSq = (i - center) ** 2 + (j - center) ** 2;
-        const priority =
-          Math.exp(-distSq / (2 * sigma * sigma)) + Math.random() * 0.5;
-        positions.push({ row: i, col: j, priority });
+      // Strategy: if number of attempts of current board is too high, reset the board anyway
+      const currAttempt = this.stats.counter.removeNumAttempt;
+      // Reducing the Hz of resetBoard for accelerating easy calculations
+      if (currAttempt && currAttempt % this.config.resetThreshold === 0) {
+        this.resetBoard();
       }
     }
 
-    // Sort descending: higher priority (closer to center) first
-    return positions
-      .sort((a, b) => b.priority - a.priority)
-      .map(({ row, col }) => ({ row, col }));
+    this.setFinishTime();
   }
 
   /**
@@ -250,10 +294,21 @@ export class Sudoku {
     targetEmpty: number,
   ): boolean {
     // Check timeout
-    if (Date.now() - this.attemptTimeoutMs > this.config.maxAttemptTimeoutMs) {
-      this.stats.counter.timeOut++;
+    if (
+      Date.now() - this.attemptTimeoutMs >
+      this.config.maxBacktrackTimeoutMs
+    ) {
+      this.stats.counter.backtrackTimeout++;
       return false;
     }
+
+    this.logProgress(
+      this.stats.generatorCreatedAt,
+      posIndex,
+      emptyCells,
+      this.stats.counter.removeNumAttempt,
+      this.stats.counter.hardReset,
+    );
 
     // Success stop case
     if (emptyCells === targetEmpty) {
@@ -267,7 +322,7 @@ export class Sudoku {
     }
 
     const { row, col } = positions[posIndex];
-    this.stats.counter.backtrack++;
+    this.stats.execution.backtrack++;
 
     // Skip if cell is already empty
     if (this.board[row][col] === 0) {
@@ -289,6 +344,7 @@ export class Sudoku {
 
     // Backtrack: put the number back
     this.board[row][col] = temp;
+    // this.solutionCache.set(cacheKey, false);
 
     // Try next position
     return this.backtrack(positions, posIndex + 1, emptyCells, targetEmpty);
@@ -371,7 +427,7 @@ export class Sudoku {
    *
    * @returns Boolean
    */
-  hasUniqueSolution(): boolean {
+  private hasUniqueSolution(): boolean {
     this.stats.counter.possibleSolution = 0;
 
     const boardCopy = this.board.map((row) => [...row]);
@@ -381,9 +437,10 @@ export class Sudoku {
   }
 }
 
-const generator = new Sudoku(60);
+const generator = new Sudoku(58, gaussianPriority);
 const { data } = generator.getPuzzleAndSolution();
 const stats = generator.getStats();
+const config = generator.getConfig();
 
 logDisplayBoard(data.puzzle);
-console.log(stats);
+console.log(stats, config);
