@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 type TokenPayload = {
   id: string;
