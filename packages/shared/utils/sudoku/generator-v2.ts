@@ -64,6 +64,7 @@ export class SudokuV2 {
       priorityAttempt: 0,
       priorityRatio: 0,
       possibleSolution: 0,
+      maxCellsRemoved: 0,
     },
     execution: {
       solver: 0,
@@ -138,6 +139,7 @@ export class SudokuV2 {
 
   private logProgress = (
     startTime: number,
+    maxCells?: number,
     attempts?: number,
     resets?: number,
   ) => {
@@ -156,8 +158,24 @@ export class SudokuV2 {
 
     if (this.config.logging) {
       process.stdout.write("\x1b[1A\x1b[2K");
+      const hours = [
+        "🕛",
+        "🕐",
+        "🕑",
+        "🕒",
+        "🕓",
+        "🕔",
+        "🕕",
+        "🕖",
+        "🕗",
+        "🕘",
+        "🕙",
+        "🕚",
+      ];
       console.info(
-        `Elapsed time: ${formatted}.${ms}ms - Attempts: ${attempts} - Resets: ${resets}`,
+        `${
+          hours[Number(formatted.split(":")[2]) % hours.length]
+        } Elapsed time: ${formatted}.${ms}ms - Max cells: ${maxCells} - Attempts: ${attempts} - Resets: ${resets}`,
       );
     }
 
@@ -268,11 +286,12 @@ export class SudokuV2 {
     ) {
       this.attemptTimeoutMs = Date.now();
 
-      this.logProgress(
-        this.stats.generatorCreatedAt,
-        this.stats.counter.removeNumAttempt,
-        this.stats.counter.hardReset,
-      );
+      // this.logProgress(
+      //   this.stats.generatorCreatedAt,
+      //   this.stats.counter.maxCellsRemoved,
+      //   this.stats.counter.removeNumAttempt,
+      //   this.stats.counter.hardReset
+      // );
 
       // Get a new list of positions, prioritized for removal.
       const positions = this.priorityAlgorithm();
@@ -321,12 +340,27 @@ export class SudokuV2 {
       return false;
     }
 
+    // Stats
+    this.stats.counter.maxCellsRemoved = Math.max(
+      this.stats.counter.maxCellsRemoved,
+      emptyCells,
+    );
+
+    posIndex % 10 === 0
+      ? this.logProgress(
+          this.stats.generatorCreatedAt,
+          this.stats.counter.maxCellsRemoved,
+          this.stats.counter.removeNumAttempt,
+          this.stats.counter.hardReset,
+        )
+      : null;
+
     if (emptyCells === targetEmpty) {
       this.stats.success = true;
       return true;
     }
 
-    if (posIndex + 1 >= positions.length) {
+    if (posIndex >= positions.length) {
       return false;
     }
 
@@ -524,16 +558,16 @@ export class SudokuV2 {
   }
 }
 
-const options = { logging: true, generatorTimeoutSeconds: 900 };
+const options = { logging: true, generatorTimeoutSeconds: 1200 };
 const generator = new SudokuV2(61, patternPriority, options);
+const config = generator.getConfig();
 
-console.log(`Starting generator with config: ${JSON.stringify(options)}\n`);
+console.log("Starting generator with config:", config, "\n");
 setTimeout(() => {
   generator.generate();
 
   const { data } = generator.getPuzzleAndSolution();
   const stats = generator.getStats();
-  const config = generator.getConfig();
 
   logDisplayBoard(data.puzzle);
   console.log(stats, config);
