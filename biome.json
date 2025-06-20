@@ -1,15 +1,26 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
   "files": {
-    "includes": ["**", "!**/.turbo/**"]
+    "includes": [
+      "**",
+      "!**/.turbo/**",
+      "!**/*.vue",
+      "!**/*.svelte",
+      "!**/*.astro"
+    ]
   },
   "formatter": {
     "lineWidth": 80,
     "indentStyle": "space",
-    "indentWidth": 2,
-    "includes": ["**", "!**/*.vue"]
+    "indentWidth": 2
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -29,28 +40,16 @@
         "noUnusedTemplateLiteral": "error",
         "useNumberNamespace": "error",
         "noInferrableTypes": "error",
-        "noUselessElse": "error"
+        "noUselessElse": "error",
+        "useConst": "off",
+        "useImportType": "off"
       }
-    },
-    "includes": ["**", "!**/*.vue"]
+    }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double",
       "trailingCommas": "all"
     }
-  },
-  "overrides": [
-    {
-      "includes": ["**", "!**/*.svelte", "!**/*.astro", "!**/*.vue"],
-      "linter": {
-        "rules": {
-          "style": {
-            "useConst": "off",
-            "useImportType": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }
