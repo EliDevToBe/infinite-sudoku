@@ -4,15 +4,18 @@ import plugins from "../src/plugins";
 import routes from "../src/routes";
 
 const server = Fastify({
-  logger: {
-    transport: {
-      target: "pino-pretty",
-      options: {
-        colorize: true,
-        singleLine: true,
-      },
-    },
-  },
+  logger:
+    process.env.NODE_ENV === "develop"
+      ? {
+          transport: {
+            target: "pino-pretty",
+            options: {
+              colorize: true,
+              singleLine: true,
+            },
+          },
+        }
+      : true,
 });
 
 server.register(hooks);
