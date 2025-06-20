@@ -9,12 +9,12 @@
       "path": "apps/api"
     },
     {
-      "name": "🤝 Shared",
-      "path": "packages/shared"
-    },
-    {
       "name": "💾 Database",
       "path": "packages/database"
+    },
+    {
+      "name": "🤝 Shared",
+      "path": "packages/shared"
     },
     {
       "name": "✨ Root",
@@ -44,6 +44,7 @@
       "Attributify",
       "autologin",
       "biomejs",
+      "bitmasks",
       "datasource",
       "dracula",
       "fillboard",
@@ -56,11 +57,14 @@
       "postgres",
       "postgresql",
       "preflights",
+      "primeuix",
       "primevue",
       "prisma",
       "unocss",
       "uuid",
-      "Uuid"
-    ]
+      "Uuid",
+      "vueuse"
+    ],
+    "svg.preview.background": "dark-transparent"
   }
 }

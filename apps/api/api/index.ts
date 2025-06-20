@@ -4,23 +4,28 @@ import plugins from "../src/plugins";
 import routes from "../src/routes";
 
 const server = Fastify({
-  logger: true,
+  logger:
+    process.env.NODE_ENV === "develop"
+      ? {
+          transport: {
+            target: "pino-pretty",
+            options: {
+              colorize: true,
+              singleLine: true,
+            },
+          },
+        }
+      : true,
 });
 
 server.register(hooks);
-console.info("\n🪝  Hooks registered 🪝");
+server.log.info("🪝  Hooks registered 🪝");
 
 server.register(plugins);
-console.info("⚡️ Plugins registered ⚡️");
-
-server.register((server, _opts, done) => {
-  server.prisma.$connect();
-  console.info("🔌 Prisma connected 🔌");
-  done();
-});
+server.log.info("⚡️ Plugins registered ⚡️");
 
 server.register(routes);
-console.info("✨ Routes registered ✨\n");
+server.log.info("✨ Routes registered ✨\n");
 
 server.after((err) => {
   if (err) {
