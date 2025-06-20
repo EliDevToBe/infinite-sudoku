@@ -1,3 +1,5 @@
+import { patternPriority } from "./priority-algorithm";
+
 type SudokuGrid = number[][];
 type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
 type Position = { row: number; col: number };
@@ -12,7 +14,7 @@ const _commonDifficultyLevelsByMissingCells = {
   DiabolicExpert: [60, 64],
 };
 
-const logDisplayBoard = (board: number[][]) => {
+const logDisplayBoard = (board: SudokuGrid) => {
   process.stdout.write("\x1b[0;0H\x1b[2J");
   console.log("=====================");
 
@@ -30,7 +32,12 @@ const logDisplayBoard = (board: number[][]) => {
   });
 };
 
-export class Sudoku {
+/**
+ * Sudoku puzzle generator that creates a complete, valid Sudoku board
+ * and then removes cells to create a puzzle of a specified difficulty
+ * with a guaranteed unique solution.
+ */
+export class SudokuV2 {
   private board: SudokuGrid;
   private completeBoard: SudokuGrid;
 
@@ -64,15 +71,25 @@ export class Sudoku {
     },
   };
 
+  private priorityAlgorithm: () => Position[];
+
+  /**
+   * Initializes a new Sudoku generator.
+   * @param difficulty The target number of empty cells (0-64).
+   * @param config Optional configuration for logging and timeout settings.
+   */
   constructor(
     difficulty: number,
+    priorityAlgorithm: () => Position[],
     config: { logging?: boolean; generatorTimeoutSeconds?: number } = {
       logging: false,
       generatorTimeoutSeconds: 300,
     },
   ) {
     this.stats.generatorCreatedAt = Date.now();
+
     this.config.difficultyLevel = difficulty;
+    this.priorityAlgorithm = priorityAlgorithm;
 
     this.config = { ...this.config, ...config };
 
@@ -86,16 +103,23 @@ export class Sudoku {
       this.config.difficultyLevel,
     );
 
+    // Initialize board
     this.board = Array(9)
       .fill(0)
       .map(() => Array(9).fill(0));
 
     this.solver(0, 0);
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
+  }
 
+  generate() {
+    // Starts removing cell process
     this.removeNumbers(this.config.difficultyLevel);
   }
 
+  /**
+   * Returns the generated puzzle and its complete solution.
+   */
   getPuzzleAndSolution(): { data: SudokuComplete } {
     return { data: { puzzle: this.board, solution: this.completeBoard } };
   }
@@ -144,13 +168,17 @@ export class Sudoku {
     this.stats.generatorFinishedAt = Date.now();
 
     this.stats.counter.priorityRatio =
-      this.stats.counter.priorityAttempt / this.stats.counter.removeNumAttempt;
+      this.stats.counter.priorityAttempt / this.stats.counter.hardReset;
 
     this.stats.generatorTimeTaken = `${this.logProgress(
       this.stats.generatorCreatedAt,
     )}`;
   }
 
+  /**
+   * Resets the board to a new valid Sudoku solution,
+   * in prevision of new attempts of removing numbers
+   */
   private resetBoard() {
     this.stats.counter.hardReset++;
     this.board = Array(9)
@@ -161,6 +189,11 @@ export class Sudoku {
     this.completeBoard = JSON.parse(JSON.stringify(this.board));
   }
 
+  /**
+   * Scale the backtrack timeout automatically ranging from 2000ms to 5000ms.
+   * @param difficulty The difficulty level.
+   * @returns The timeout in milliseconds.
+   */
   private calculateBacktrackTimeout = (difficulty: number): number => {
     const minTimeout = 2000;
     const timePerDifficulty = (5000 - minTimeout) / 64;
@@ -168,6 +201,9 @@ export class Sudoku {
     return Math.floor(minTimeout + timePerDifficulty * difficulty);
   };
 
+  /**
+   * Get a valid random row of numbers (1-9)
+   */
   private getValidRandomRow() {
     const row = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -178,6 +214,12 @@ export class Sudoku {
     return row;
   }
 
+  /**
+   * Fills the board with a complete and valid Sudoku solution.
+   * @param row The current row to process.
+   * @param col The current column to process.
+   * @returns True if the board is successfully filled, false otherwise.
+   */
   private solver(row: number, col: number): boolean {
     this.stats.execution.solver += 1;
 
@@ -208,7 +250,12 @@ export class Sudoku {
     return false;
   }
 
-  private removeNumbers(targetEmpty: number): void {
+  /**
+   * The main loop for removing numbers to generate a puzzle.
+   * It continues until a puzzle is found or the global timeout is reached.
+   * @param targetEmpty The target number of empty cells for the puzzle.
+   */
+  private removeNumbers(targetEmpty: number): boolean {
     let cellCountToRemove = targetEmpty;
 
     if (cellCountToRemove > 81)
@@ -227,16 +274,18 @@ export class Sudoku {
         this.stats.counter.hardReset,
       );
 
-      const positions = this.prioritizePositions();
+      // Get a new list of positions, prioritized for removal.
+      const positions = this.priorityAlgorithm();
 
       if (this.backtrack(positions, 0, 0, cellCountToRemove)) {
+        // Success case, puzzle found
         this.setFinalStats();
-
-        return;
+        return true;
       }
 
       this.stats.counter.removeNumAttempt++;
 
+      // If too many attempts fail, reset the board to avoid getting stuck.
       const currAttempt = this.stats.counter.removeNumAttempt;
       if (currAttempt && currAttempt % this.config.resetThreshold === 0) {
         this.resetBoard();
@@ -244,57 +293,26 @@ export class Sudoku {
     }
 
     this.setFinalStats();
+    return false;
   }
 
-  private prioritizePositions(): Position[] {
-    this.stats.counter.priorityAttempt++;
-
-    const zones: Record<string, Position[]> = {
-      diagonals: [],
-      corners: [],
-      edges: [],
-      centers: [],
-      others: [],
-    };
-
-    for (let i = 0; i < 9; i++) {
-      for (let j = 0; j < 9; j++) {
-        if (i === j || i + j === 8) {
-          zones.diagonals.push({ row: i, col: j });
-        } else if ((i === 0 || i === 8) && (j === 0 || j === 8)) {
-          zones.corners.push({ row: i, col: j });
-        } else if (i === 0 || i === 8 || j === 0 || j === 8) {
-          zones.edges.push({ row: i, col: j });
-        } else if (i % 3 === 1 && j % 3 === 1) {
-          zones.centers.push({ row: i, col: j });
-        } else {
-          zones.others.push({ row: i, col: j });
-        }
-      }
-    }
-
-    for (const zone of Object.values(zones)) {
-      for (let i = zone.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [zone[i], zone[j]] = [zone[j], zone[i]];
-      }
-    }
-
-    return [
-      ...zones.diagonals,
-      ...zones.corners,
-      ...zones.edges,
-      ...zones.others,
-      ...zones.centers,
-    ];
-  }
-
+  /**
+   * The core backtracking algorithm for removing cells.
+   * It tries to remove the cell at the current position index and checks if
+   * the resulting board still has a unique solution.
+   * @param positions The prioritized list of positions to try.
+   * @param posIndex The current index in the positions array.
+   * @param emptyCells The current count of removed cells.
+   * @param targetEmpty The target number of empty cells.
+   * @returns True if a valid puzzle is found, false otherwise.
+   */
   private backtrack(
     positions: Position[],
     posIndex: number,
     emptyCells: number,
     targetEmpty: number,
   ): boolean {
+    // Early abort if the current attempt is taking too long.
     if (
       Date.now() - this.attemptTimeoutMs >
       this.config.maxBacktrackTimeoutMs
@@ -319,22 +337,31 @@ export class Sudoku {
       return this.backtrack(positions, posIndex + 1, emptyCells, targetEmpty);
     }
 
+    // Temporarily remove the number from the cell.
     const temp = this.board[row][col];
     this.board[row][col] = 0;
 
+    // Check if the board still has only one solution.
     if (this.hasUniqueSolution()) {
+      // If successful, proceed to the next cell.
       if (
         this.backtrack(positions, posIndex + 1, emptyCells + 1, targetEmpty)
       ) {
+        // Successfully removed all target empty cells, puzzle is complete.
         return true;
       }
     }
 
+    // Backtrack: if the removal was unsuccessful, restore the cell.
     this.board[row][col] = temp;
 
     return this.backtrack(positions, posIndex + 1, emptyCells, targetEmpty);
   }
 
+  /**
+   * Checks if placing a number in a cell is valid according to Sudoku rules.
+   * (This is a slower, non-bitwise version used only for the initial board fill).
+   */
   private isValidCell(
     row: number,
     col: number,
@@ -356,9 +383,16 @@ export class Sudoku {
     return !rowNums.has(input) && !colNums.has(input) && !blockNums.has(input);
   }
 
+  /**
+   * A highly optimized function to check if the current board has exactly one solution.
+   * It uses bitwise operations and a Minimum Remaining Values (MRV) heuristic.
+   * @returns True if the solution is unique, false otherwise.
+   */
   private hasUniqueSolution(): boolean {
     this.stats.counter.possibleSolution = 0;
 
+    // --- Bitwise Setup ---
+    // Create bitmasks for each row, column, and box to track used numbers.
     const rows = Array(9).fill(0);
     const cols = Array(9).fill(0);
     const boxes = Array(9).fill(0);
@@ -366,9 +400,11 @@ export class Sudoku {
 
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
-        const val = this.board[r][c];
-        if (val !== 0) {
-          const mask = 1 << (val - 1);
+        const num = this.board[r][c];
+        if (num !== 0) {
+          // Actual bit setting
+          const mask = 1 << (num - 1);
+
           const boxIdx = Math.floor(r / 3) * 3 + Math.floor(c / 3);
           rows[r] |= mask;
           cols[c] |= mask;
@@ -389,21 +425,34 @@ export class Sudoku {
     return this.stats.counter.possibleSolution === 1;
   }
 
+  /**
+   * The recursive heart of the bitwise solver. It efficiently finds the number of
+   * possible solutions for the current board state.
+   * @param emptyCells An array of positions that are currently empty.
+   * @param rows An array of row bitmasks.
+   * @param cols An array of column bitmasks.
+   * @param boxes An array of 3x3 box bitmasks.
+   */
   private _countSolutions(
     emptyCells: Position[],
     rows: number[],
     cols: number[],
     boxes: number[],
   ): void {
+    // Early exit: if we've already found more than one solution, stop searching.
     if (this.stats.counter.possibleSolution > 1) {
       return;
     }
 
+    // Base case: if there are no more empty cells, we've found one complete solution.
     if (emptyCells.length === 0) {
       this.stats.counter.possibleSolution++;
       return;
     }
 
+    // --- Minimum Remaining Values (MRV) Heuristic ---
+    // Find the empty cell with the fewest possible candidates to explore it first.
+    // This prunes the search tree significantly.
     let bestCellIndex = -1;
     let minCandidates = 10;
     let bestCellCandidates: number[] = [];
@@ -411,11 +460,14 @@ export class Sudoku {
     for (let i = 0; i < emptyCells.length; i++) {
       const { row, col } = emptyCells[i];
       const boxIdx = Math.floor(row / 3) * 3 + Math.floor(col / 3);
+
+      // Combine the masks for the cell's row, column, and box to find all used numbers.
       const usedMask = rows[row] | cols[col] | boxes[boxIdx];
 
       const candidates = [];
       let numCandidates = 0;
 
+      // Check which numbers (1-9) are not in the used mask.
       for (let num = 1; num <= 9; num++) {
         if (!((usedMask >> (num - 1)) & 1)) {
           candidates.push(num);
@@ -429,11 +481,13 @@ export class Sudoku {
         bestCellCandidates = candidates;
       }
 
+      // Optimization: if a cell has only one possible candidate, it's the best choice.
       if (minCandidates <= 1) {
         break;
       }
     }
 
+    // If a cell has no candidates, this path is invalid. Backtrack.
     if (minCandidates === 0) {
       return;
     }
@@ -443,15 +497,21 @@ export class Sudoku {
       (_, index) => index !== bestCellIndex,
     );
 
+    // Try each valid candidate number in the chosen cell.
     for (const num of bestCellCandidates) {
       const mask = 1 << (num - 1);
       const boxIdx = Math.floor(row / 3) * 3 + Math.floor(col / 3);
 
+      // --- Forward Step: Place the number (update masks) ---
       rows[row] |= mask;
       cols[col] |= mask;
       boxes[boxIdx] |= mask;
 
       this._countSolutions(nextEmptyCells, rows, cols, boxes);
+
+      // --- Bitwise Backtrack: Un-place the number (revert masks) ---
+      // The bitwise NOT (~) inverts the mask.
+      // ANDing with the inverted mask un-sets the specific bit for the number.
 
       rows[row] &= ~mask;
       cols[col] &= ~mask;
@@ -464,10 +524,17 @@ export class Sudoku {
   }
 }
 
-const generator = new Sudoku(60, { logging: true });
-const { data } = generator.getPuzzleAndSolution();
-const stats = generator.getStats();
-const config = generator.getConfig();
+const options = { logging: true, generatorTimeoutSeconds: 900 };
+const generator = new SudokuV2(61, patternPriority, options);
 
-logDisplayBoard(data.puzzle);
-console.log(stats, config);
+console.log(`Starting generator with config: ${JSON.stringify(options)}\n`);
+setTimeout(() => {
+  generator.generate();
+
+  const { data } = generator.getPuzzleAndSolution();
+  const stats = generator.getStats();
+  const config = generator.getConfig();
+
+  logDisplayBoard(data.puzzle);
+  console.log(stats, config);
+}, 1000);

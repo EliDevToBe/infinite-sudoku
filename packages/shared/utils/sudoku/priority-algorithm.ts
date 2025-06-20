@@ -1,6 +1,11 @@
 export type Position = { row: number; col: number };
 
-// Most efficient
+/**
+ * Creates a prioritized list of cell positions to attempt removal from.
+ * This strategy aims to create more human-like and interesting puzzles using patterns.
+ * Most efficient for the time being.
+ * @returns An array of positions, sorted by priority zone.
+ */
 export const patternPriority = (): Position[] => {
   // Divide board into zones for batch randomization
   const zones = {
