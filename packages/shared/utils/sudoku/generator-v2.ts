@@ -65,6 +65,7 @@ export class SudokuV2 {
       priorityRatio: 0,
       possibleSolution: 0,
       maxCellsRemoved: 0,
+      maxCellsRemovedAt: 0,
     },
     execution: {
       solver: 0,
@@ -140,6 +141,7 @@ export class SudokuV2 {
   private logProgress = (
     startTime: number,
     maxCells?: number,
+    maxCellsRemovedAt?: number,
     attempts?: number,
     resets?: number,
   ) => {
@@ -153,6 +155,14 @@ export class SudokuV2 {
       hour12: false,
       timeZone: "UTC",
     }).format(date);
+
+    const formattedRemovedAt = new Intl.DateTimeFormat("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "UTC",
+    }).format(new Date(maxCellsRemovedAt ?? 0));
 
     const ms = (elapsedMs - startTime).toString().slice(-3);
 
@@ -175,7 +185,7 @@ export class SudokuV2 {
       console.info(
         `${
           hours[Number(formatted.split(":")[2]) % hours.length]
-        } Elapsed time: ${formatted}.${ms}ms - Max cells: ${maxCells} - Attempts: ${attempts} - Resets: ${resets}`,
+        } Elapsed time: ${formatted}.${ms}ms - Max cells: ${maxCells} (${formattedRemovedAt}) - Attempts: ${attempts} - Resets: ${resets}`,
       );
     }
 
@@ -341,6 +351,9 @@ export class SudokuV2 {
     }
 
     // Stats
+    if (emptyCells > this.stats.counter.maxCellsRemoved) {
+      this.stats.counter.maxCellsRemovedAt = Date.now();
+    }
     this.stats.counter.maxCellsRemoved = Math.max(
       this.stats.counter.maxCellsRemoved,
       emptyCells,
@@ -350,6 +363,7 @@ export class SudokuV2 {
       ? this.logProgress(
           this.stats.generatorCreatedAt,
           this.stats.counter.maxCellsRemoved,
+          this.stats.counter.maxCellsRemovedAt - this.stats.generatorCreatedAt,
           this.stats.counter.removeNumAttempt,
           this.stats.counter.hardReset,
         )
