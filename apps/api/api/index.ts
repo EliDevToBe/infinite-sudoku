@@ -42,7 +42,7 @@ server.ready((err) => {
 });
 
 server.get("/", (_req, res) => {
-  res.send({ status: "ok" });
+  res.redirect("/docs");
 });
 
 export default async (req: unknown, res: unknown) => {
