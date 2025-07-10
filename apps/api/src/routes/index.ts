@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
 import authRoutes from "./auth/auth.routes";
 import gridRoutes from "./grid.routes";
+import openapiRoutes from "./openapi/openapi.routes";
 import userRoutes from "./user.routes";
 import userGridRoutes from "./user-grid.routes";
 
@@ -11,7 +12,7 @@ export default fp(
     server.register(userRoutes);
     server.register(gridRoutes);
     server.register(userGridRoutes);
-
+    server.register(openapiRoutes);
     done();
   },
 );

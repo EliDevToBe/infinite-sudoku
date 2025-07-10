@@ -22,7 +22,11 @@ export default fp(
           };
         }
 
-        if (request.url.length > 1 && request.url.endsWith("/")) {
+        if (
+          request.url.length > 1 &&
+          request.url.endsWith("/") &&
+          !request.url.endsWith("docs/")
+        ) {
           reply.code(301).redirect(request.url.replace(/\/+$/, ""));
           return;
         }
