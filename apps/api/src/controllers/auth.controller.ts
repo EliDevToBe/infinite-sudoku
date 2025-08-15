@@ -4,6 +4,9 @@ import { useHash } from "../utils/hash";
 import { useToken } from "../utils/token";
 
 type RegisterInput = Prisma.userCreateInput;
+type LoginInput = {
+  email: string;
+};
 
 const { hashPassword } = useHash();
 const { generateToken, generateAccessToken } = useToken();
@@ -58,5 +61,48 @@ export const AuthController = () => {
     }
   };
 
-  return { register };
+  const login = async (
+    request: FastifyRequest<{ Body: LoginInput }>,
+    reply: FastifyReply,
+  ) => {
+    try {
+      const { email } = request.body;
+      const prisma = request.server.prisma;
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        return reply.status(401).send({ message: "Invalid credentials" });
+      }
+
+      const tokenizedUser = {
+        id: user.id,
+        email: user.email,
+      };
+
+      const token = generateToken(tokenizedUser);
+      const refreshToken = generateAccessToken(tokenizedUser);
+
+      const authUser = {
+        id: user.id,
+        email: user.email,
+        quality: user.quality,
+        role: user.role,
+      };
+
+      reply.headers({
+        "access-token": token,
+        "refresh-token": refreshToken,
+      });
+
+      return reply.status(200).send({
+        user: authUser,
+      });
+    } catch (error) {
+      reply.status(500).send({ message: "Internal server error", error });
+    }
+  };
+  return { register, login };
 };
