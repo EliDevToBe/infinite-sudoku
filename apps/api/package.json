@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --outDir ./dist",
-    "start": "npx tsx ./app.ts",
+    "start": "npx tsx api/index.ts",
     "dev": "npm run db:client && npx tsx --watch ./app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:client": "npx prisma generate",
