@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import { UserController } from "../controllers/user.controller";
-import { authenticated } from "../utils/auth";
+import { UserController } from "../controllers/user.controller.js";
+import { authenticated } from "../utils/auth.js";
 
 type UserInsert = Prisma.userCreateInput;
 type UserUpdate = Prisma.userUpdateInput;
