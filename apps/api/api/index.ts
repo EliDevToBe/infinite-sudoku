@@ -1,7 +1,7 @@
 import Fastify from "fastify";
-import hooks from "../src/hooks";
-import plugins from "../src/plugins";
-import routes from "../src/routes";
+import hooks from "../src/hooks/index";
+import plugins from "../src/plugins/index";
+import routes from "../src/routes/index";
 
 const server = Fastify({
   logger:
