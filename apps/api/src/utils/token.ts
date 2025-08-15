@@ -19,45 +19,64 @@ type VerifyTokenPayload = {
 };
 
 export const useToken = () => {
-  const generateRefreshToken = (payload: TokenPayload) => {
-    if (!process.env.JWT_REFRESH_SECRET) {
-      throw new Error("JWT_REFRESH_SECRET are not defined");
+  const generateToken = (
+    payload: TokenPayload,
+    params: { type: TokenType },
+  ) => {
+    if (!process.env.JWT_REFRESH_SECRET || !process.env.JWT_ACCESS_SECRET) {
+      throw new Error("JWT SECRETs are not defined");
     }
 
-    return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-      expiresIn: "2d",
-    });
+    if (params.type === "access") {
+      return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+        expiresIn: "5m",
+      });
+    }
+    if (params.type === "refresh") {
+      return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+        expiresIn: "2d",
+      });
+    }
+    throw new Error("Invalid token type");
   };
-  const verifyRefreshToken = (payload: VerifyTokenPayload) => {
-    if (!process.env.JWT_REFRESH_SECRET) {
-      throw new Error("JWT_REFRESH_SECRET are not defined");
+
+  const verifyToken = (payload: VerifyTokenPayload) => {
+    if (!process.env.JWT_REFRESH_SECRET || !process.env.JWT_ACCESS_SECRET) {
+      throw new Error("JWT SECRETs are not defined");
     }
 
-    return jwt.verify(
-      payload.token,
-      process.env.JWT_REFRESH_SECRET,
-    ) as AugmentedJwtPayload;
-  };
-
-  const generateAccessToken = (payload: TokenPayload) => {
-    if (!process.env.JWT_ACCESS_SECRET) {
-      throw new Error("JWT_ACCESS_SECRET are not defined");
+    let secret: string;
+    if (payload.type === "refresh") {
+      secret = process.env.JWT_REFRESH_SECRET;
+    }
+    if (payload.type === "access") {
+      secret = process.env.JWT_ACCESS_SECRET;
+    } else {
+      throw new Error("Invalid token type");
     }
 
-    return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-      expiresIn: "5m",
-    });
+    return jwt.verify(payload.token, secret) as AugmentedJwtPayload;
   };
-  const verifyAccessToken = (payload: VerifyTokenPayload) => {
-    if (!process.env.JWT_ACCESS_SECRET) {
-      throw new Error("JWT_ACCESS_SECRET are not defined");
-    }
 
-    return jwt.verify(
-      payload.token,
-      process.env.JWT_ACCESS_SECRET,
-    ) as AugmentedJwtPayload;
-  };
+  // const generateAccessToken = (payload: TokenPayload) => {
+  //   if (!process.env.JWT_ACCESS_SECRET) {
+  //     throw new Error("JWT_ACCESS_SECRET are not defined");
+  //   }
+
+  //   return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+  //     expiresIn: "5m",
+  //   });
+  // };
+  // const verifyAccessToken = (payload: VerifyTokenPayload) => {
+  //   if (!process.env.JWT_ACCESS_SECRET) {
+  //     throw new Error("JWT_ACCESS_SECRET are not defined");
+  //   }
+
+  //   return jwt.verify(
+  //     payload.token,
+  //     process.env.JWT_ACCESS_SECRET,
+  //   ) as AugmentedJwtPayload;
+  // };
 
   /**
    * Checks if an access token is expired.
@@ -70,10 +89,8 @@ export const useToken = () => {
   };
 
   return {
-    generateRefreshToken,
-    verifyRefreshToken,
-    generateAccessToken,
-    verifyAccessToken,
+    generateToken,
+    verifyToken,
     isJwtExpired,
   };
 };
