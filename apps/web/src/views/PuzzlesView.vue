@@ -30,6 +30,9 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import MainWrapper from "../components/MainWrapper.vue";
+import { useNavigation } from "@/composables/useNavigation";
+
+const { navigateTo } = useNavigation();
 
 const props = defineProps<{
   difficulty: string;
@@ -37,9 +40,12 @@ const props = defineProps<{
 
 const router = useRouter();
 
-function selectPuzzle(puzzleId: number) {
-  router.push(`/sudoku-game/${props.difficulty}/${puzzleId}`);
-}
+const selectPuzzle = (puzzleId: number) => {
+  navigateTo("puzzle-game", {
+    difficulty: props.difficulty,
+    id: `${puzzleId}`,
+  });
+};
 </script>
 
 <style scoped lang=""></style>

@@ -19,15 +19,16 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import MainWrapper from "../components/MainWrapper.vue";
+import { useNavigation } from "@/composables/useNavigation";
 
-const router = useRouter();
-const difficulties = ["Easy", "Medium", "Hard", "Expert"];
+const { navigateTo } = useNavigation();
 
-function selectDifficulty(difficulty: string) {
-  router.push(`/puzzles/${difficulty.toLowerCase()}`);
-}
+const difficulties = ["easy", "medium", "hard", "expert"];
+
+const selectDifficulty = (difficulty: string) => {
+  navigateTo("puzzle-choice", { difficulty });
+};
 </script>
 
 <style scoped lang=""></style>
