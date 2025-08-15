@@ -58,20 +58,30 @@ export default fp(
           title: "Sudoking API",
           description: "Sudoking API Documentation of the SudoKing web app",
         },
-        favicon: "../public/favicon.svg",
         defaultHttpClient: {
           targetKey: "node",
           clientKey: "fetch",
         },
+        // authentication: {
+        //   securitySchemes: {
+        //     apiKeyHeader: {
+        //       name: "access-token",
+        //       in: "header",
+        //       value: "APIKEY VALUE",
+        //     },
+        //     // For HTTP Bearer
+        //     // httpBearer: {
+        //     //   token: "xyz token value",
+        //     // },
+        //     // // For HTTP Basic
+        //     // httpBasic: {
+        //     //   username: "username",
+        //     //   password: "password",
+        //     // },
+        //   },
+        // },
       },
       hooks: {
-        // onRequest: (request, reply, done) => {
-        //   if (request.headers.docsToken !== "test") {
-        //     reply.status(401).send({ message: "Unauthorized" });
-        //     return;
-        //   }
-        //   done();
-        // },
         preHandler: (_, reply, done) => {
           reply.header(
             "Content-Security-Policy",

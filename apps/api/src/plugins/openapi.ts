@@ -10,17 +10,35 @@ export default fp(
           title: "Sudoking API",
           version: "1.0.0",
         },
-
         components: {
           securitySchemes: {
             apiKey: {
               type: "apiKey",
-              name: "authorization",
+              name: "access-token",
               in: "header",
+              description: "text",
             },
             basic: {
               type: "http",
               scheme: "basic",
+              description:
+                "Needed to log for the first time into the API as a query tool",
+            },
+            okay: {
+              type: "http",
+              scheme: "basic",
+              description:
+                "Needed to log for the first time into the API as a query tool",
+            },
+            refreshToken: {
+              type: "apiKey",
+              name: "refresh-token",
+              in: "header",
+            },
+            accessToken: {
+              type: "apiKey",
+              name: "access-token",
+              in: "header",
             },
           },
         },
