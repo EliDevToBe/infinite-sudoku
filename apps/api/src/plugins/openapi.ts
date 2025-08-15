@@ -10,17 +10,23 @@ export default fp(
           title: "Sudoking API",
           version: "1.0.0",
         },
+
         components: {
           securitySchemes: {
             apiKey: {
               type: "apiKey",
-              name: "apiKey",
+              name: "authorization",
               in: "header",
+            },
+            basic: {
+              type: "http",
+              scheme: "basic",
             },
           },
         },
       },
     });
+
     done();
   },
 );

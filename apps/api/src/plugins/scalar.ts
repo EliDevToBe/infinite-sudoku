@@ -7,8 +7,62 @@ export default fp(
     server.register(ScalarApiReference, {
       routePrefix: "/docs",
       configuration: {
-        title: "Sudoking API",
-        url: "/openapi.json",
+        hiddenClients: [
+          // Javascript
+          "jquery",
+          "axios",
+          "ofetch",
+          "xhr",
+          // Node
+          "undici",
+          // Dart
+          "http",
+          // Python
+          "python3",
+          "requests",
+          "httr",
+          "httpx_sync",
+          "httpx_async",
+          // Rust
+          "reqwest",
+          // Java/Android
+          "asynchttp",
+          "okhttp",
+          "nethttp",
+          "unirest",
+          // .NET
+          "restsharp",
+          "httpclient",
+          // Ruby
+          "clj_http",
+          // Go
+          "cohttp",
+          // Go & Ruby
+          "native",
+          // PHP
+          "guzzle",
+          // cURL and other HTTP clients
+          "libcurl",
+          "curl",
+          "httpie",
+          "wget",
+          // Objective-C
+          "nsurlsession",
+          // Powershell
+          "webrequest",
+          "restmethod",
+          // HTTP
+          "http1.1",
+        ],
+        metaData: {
+          title: "Sudoking API",
+          description: "Sudoking API Documentation of the SudoKing web app",
+        },
+        favicon: "../public/favicon.svg",
+        defaultHttpClient: {
+          targetKey: "node",
+          clientKey: "fetch",
+        },
       },
       hooks: {
         // onRequest: (request, reply, done) => {
