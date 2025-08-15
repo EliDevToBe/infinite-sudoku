@@ -1,12 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { useToken } from "./token";
 
-const {
-  verifyRefreshToken,
-  isJwtExpired,
-  generateAccessToken,
-  verifyAccessToken,
-} = useToken();
+const { verifyToken, isJwtExpired, generateToken } = useToken();
 
 export const authenticated = (
   request: FastifyRequest,
@@ -22,20 +17,23 @@ export const authenticated = (
   }
 
   try {
-    const access = verifyAccessToken({ token: accessToken, type: "access" });
+    const access = verifyToken({ token: accessToken, type: "access" });
     const hasAccessExpired = isJwtExpired(access);
 
-    const refresh = verifyRefreshToken({
+    const refresh = verifyToken({
       token: refreshToken,
       type: "refresh",
     });
     const hasRefreshExpired = isJwtExpired(refresh);
 
     if (hasAccessExpired && !hasRefreshExpired) {
-      request.headers["access-token"] = generateAccessToken({
-        id: access.id,
-        email: access.email,
-      });
+      request.headers["access-token"] = generateToken(
+        {
+          id: access.id,
+          email: access.email,
+        },
+        { type: "access" },
+      );
       return;
     }
 
@@ -45,7 +43,7 @@ export const authenticated = (
         "refresh-token": "",
       });
 
-      const now = Math.floor(Date.now() / 1000);
+      const now = Date.now();
       reply.code(401).send({
         code: 401,
         message: "Session expired END",

@@ -10,7 +10,7 @@ type LoginInput = {
 };
 
 const { hashPassword, verifyPassword } = useHash();
-const { generateAccessToken, generateRefreshToken } = useToken();
+const { generateToken } = useToken();
 
 export const AuthController = () => {
   const register = async (
@@ -39,8 +39,8 @@ export const AuthController = () => {
         email: user.email,
       };
 
-      const accessToken = generateAccessToken(tokenizedUser);
-      const refreshToken = generateRefreshToken(tokenizedUser);
+      const accessToken = generateToken(tokenizedUser, { type: "access" });
+      const refreshToken = generateToken(tokenizedUser, { type: "refresh" });
 
       const authUser = {
         id: user.id,
@@ -89,8 +89,8 @@ export const AuthController = () => {
         email: user.email,
       };
 
-      const accessToken = generateAccessToken(tokenizedUser);
-      const refreshToken = generateRefreshToken(tokenizedUser);
+      const accessToken = generateToken(tokenizedUser, { type: "access" });
+      const refreshToken = generateToken(tokenizedUser, { type: "refresh" });
 
       const authUser = {
         id: user.id,
