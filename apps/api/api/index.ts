@@ -30,7 +30,7 @@ server.log.info("✨ Routes registered ✨\n");
 server.after((err) => {
   if (err) {
     server.log.error(err);
-    server.close();
+    // server.close();
   }
 });
 
