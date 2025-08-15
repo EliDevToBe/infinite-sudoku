@@ -18,20 +18,20 @@ export default fp(
 
     server.decorate("prisma", prisma);
 
-    server.prisma
-      .$connect()
-      .then(() => {
-        server.log.info("🔌 Prisma connected to database 🔌");
-      })
-      .catch((error) => {
-        server.log.error("❌ Prisma connection failed:", error);
-      });
+    server.prisma.$connect();
+    //   .then(() => {
+    //     server.log.info("🔌 Prisma connected to database 🔌");
+    //   })
+    //   .catch((error) => {
+    //     server.log.error("❌ Prisma connection failed:", error);
+    //   });
 
-    server.addHook("onClose", async () => {
-      await prisma.$disconnect();
-      server.log.info("🔌 Prisma disconnected 🔌");
-    });
+    // server.addHook("onClose", async () => {
+    //   await prisma.$disconnect();
+    //   server.log.info("🔌 Prisma disconnected 🔌");
+    // });
 
+    server.log.info("🔌 Prisma connected 🔌");
     done();
   },
 );
