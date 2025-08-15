@@ -32,21 +32,6 @@ const routes = [
 export type RouteName = (typeof routes)[number]["name"];
 export type RouteParams = Record<RouteName, null | Record<string, string>>;
 
-// Define route parameters for each route
-// export type RouteParams = {
-//   home: never;
-//   difficulty: never;
-//   puzzles: { difficulty: string };
-//   "puzzles-game": { difficulty: string; id: string };
-// };
-
-// const routeParamsConfig: RouteParams = {
-//   home: null,
-//   difficulty: null,
-//   puzzles: { difficulty: "string" },
-//   game: { difficulty: "string", id: "string" },
-// };
-
 // Type-safe navigation
 export type NavigateTo = <T extends keyof RouteParams>(
   route: T,
