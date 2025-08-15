@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import { AuthController } from "../../controllers/auth.controller";
+import { AuthController } from "../../controllers/auth.controller.js";
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {

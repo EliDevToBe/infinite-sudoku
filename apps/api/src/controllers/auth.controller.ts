@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { useHash } from "../utils/hash";
-import { useToken } from "../utils/token";
+import { useHash } from "../utils/hash.js";
+import { useToken } from "../utils/token.js";
 
 type RegisterInput = Prisma.userCreateInput;
 type LoginInput = {

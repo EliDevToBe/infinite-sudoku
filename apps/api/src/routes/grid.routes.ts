@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import { GridController } from "../controllers/grid.controller";
-import { authenticated } from "../utils/auth";
+import { GridController } from "../controllers/grid.controller.js";
+import { authenticated } from "../utils/auth.js";
 
 type GridInsert = Prisma.gridCreateInput;
 
