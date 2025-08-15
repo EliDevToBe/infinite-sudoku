@@ -30,20 +30,8 @@ server.log.info("✨ Routes registered ✨\n");
 server.after((err) => {
   if (err) {
     server.log.error(err);
-    // server.close();
   }
 });
-
-// server.ready((err) => {
-//   if (err) {
-//     server.log.error(err);
-//     server.close();
-//   }
-// });
-
-// server.get("/", (_req, res) => {
-//   res.redirect("/docs");
-// });
 
 let isReady = false;
 
