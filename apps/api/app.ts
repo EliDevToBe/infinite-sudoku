@@ -1,5 +1,5 @@
 import http from "node:http";
-import api from "./api";
+import api from "./api/index.js";
 
 const server = http.createServer(api);
 

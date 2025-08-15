@@ -14,6 +14,7 @@ const fakerSeeder = async () => {
   const prisma = new PrismaClient();
 
   const userFactory = new UserFactory(faker, prisma);
+  await userFactory.createAdmin();
   const users = await userFactory.createMany(10);
   const userIds = users.map((user) => user.id);
 

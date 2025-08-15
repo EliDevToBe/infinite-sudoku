@@ -1,12 +1,16 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { useHash } from "../utils/hash";
-import { useToken } from "../utils/token";
+import { useHash } from "../utils/hash.js";
+import { useToken } from "../utils/token.js";
 
 type RegisterInput = Prisma.userCreateInput;
+type LoginInput = {
+  email: string;
+  password: string;
+};
 
-const { hashPassword } = useHash();
-const { generateToken, generateAccessToken } = useToken();
+const { hashPassword, verifyPassword } = useHash();
+const { generateToken } = useToken();
 
 export const AuthController = () => {
   const register = async (
@@ -35,8 +39,8 @@ export const AuthController = () => {
         email: user.email,
       };
 
-      const token = generateToken(tokenizedUser);
-      const refreshToken = generateAccessToken(tokenizedUser);
+      const accessToken = generateToken(tokenizedUser, { type: "access" });
+      const refreshToken = generateToken(tokenizedUser, { type: "refresh" });
 
       const authUser = {
         id: user.id,
@@ -46,7 +50,7 @@ export const AuthController = () => {
       };
 
       reply.headers({
-        "access-token": token,
+        "access-token": accessToken,
         "refresh-token": refreshToken,
       });
 
@@ -58,5 +62,54 @@ export const AuthController = () => {
     }
   };
 
-  return { register };
+  const login = async (
+    request: FastifyRequest<{ Body: LoginInput }>,
+    reply: FastifyReply,
+  ) => {
+    try {
+      const { email, password } = request.body;
+      const prisma = request.server.prisma;
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        return reply.status(401).send({ message: "Invalid credentials" });
+      }
+
+      const isPasswordValid = await verifyPassword(password, user.password);
+
+      if (!isPasswordValid) {
+        return reply.status(401).send({ message: "Invalid credentials" });
+      }
+
+      const tokenizedUser = {
+        id: user.id,
+        email: user.email,
+      };
+
+      const accessToken = generateToken(tokenizedUser, { type: "access" });
+      const refreshToken = generateToken(tokenizedUser, { type: "refresh" });
+
+      const authUser = {
+        id: user.id,
+        email: user.email,
+        quality: user.quality,
+        role: user.role,
+      };
+
+      reply.headers({
+        "access-token": accessToken,
+        "refresh-token": refreshToken,
+      });
+
+      return reply.status(200).send({
+        user: authUser,
+      });
+    } catch (error) {
+      reply.status(500).send({ message: "Internal server error", error });
+    }
+  };
+  return { register, login };
 };

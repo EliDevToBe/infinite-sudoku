@@ -22,20 +22,24 @@ export default fp(
           };
         }
 
-        if (request.url.length > 1 && request.url.endsWith("/")) {
+        if (
+          request.url.length > 1 &&
+          request.url.endsWith("/") &&
+          !request.url.endsWith("docs/")
+        ) {
           reply.code(301).redirect(request.url.replace(/\/+$/, ""));
           return;
         }
 
         // Handling missing ids
-        if (request.url.endsWith("/user-grid/grid")) {
-          reply.code(301).redirect(request.url.replace(/\/grid$/, ""));
-          return;
-        }
-        if (request.url.endsWith("/user-grid/user")) {
-          reply.code(301).redirect(request.url.replace(/\/user$/, ""));
-          return;
-        }
+        // if (request.url.endsWith("/user-grid/grid")) {
+        //   reply.code(301).redirect(request.url.replace(/\/grid$/, ""));
+        //   return;
+        // }
+        // if (request.url.endsWith("/user-grid/user")) {
+        //   reply.code(301).redirect(request.url.replace(/\/user$/, ""));
+        //   return;
+        // }
 
         done();
       },

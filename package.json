@@ -25,6 +25,7 @@
     "dev": "turbo dev",
     "dev:web": "turbo dev --filter=web",
     "dev:api": "turbo dev --filter=api",
+    "db:start": "turbo db:start --filter=database",
     "db:restart": "turbo db:restart --filter=database",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx @biomejs/biome lint",

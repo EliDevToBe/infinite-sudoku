@@ -1,7 +1,7 @@
 import Fastify from "fastify";
-import hooks from "../src/hooks";
-import plugins from "../src/plugins";
-import routes from "../src/routes";
+import hooks from "../src/hooks/index.js";
+import plugins from "../src/plugins/index.js";
+import routes from "../src/routes/index.js";
 
 const server = Fastify({
   logger:
@@ -30,22 +30,19 @@ server.log.info("✨ Routes registered ✨\n");
 server.after((err) => {
   if (err) {
     server.log.error(err);
-    server.close();
   }
 });
 
-server.ready((err) => {
-  if (err) {
-    server.log.error(err);
-    server.close();
-  }
-});
-
-server.get("/", (_req, res) => {
-  res.send({ status: "ok" });
-});
+let isReady = false;
 
 export default async (req: unknown, res: unknown) => {
-  await server.ready();
-  server.server.emit("request", req, res);
+  try {
+    if (!isReady) {
+      await server.ready();
+      isReady = true;
+    }
+    server.server.emit("request", req, res);
+  } catch (error) {
+    server.log.error(error);
+  }
 };
