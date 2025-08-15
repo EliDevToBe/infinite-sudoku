@@ -34,18 +34,27 @@ server.after((err) => {
   }
 });
 
-server.ready((err) => {
-  if (err) {
-    server.log.error(err);
-    server.close();
-  }
-});
+// server.ready((err) => {
+//   if (err) {
+//     server.log.error(err);
+//     server.close();
+//   }
+// });
 
 server.get("/", (_req, res) => {
   res.redirect("/docs");
 });
 
+let isReady = false;
+
 export default async (req: unknown, res: unknown) => {
-  await server.ready();
-  server.server.emit("request", req, res);
+  try {
+    if (!isReady) {
+      await server.ready();
+      isReady = true;
+    }
+    server.server.emit("request", req, res);
+  } catch (error) {
+    server.log.error(error);
+  }
 };
