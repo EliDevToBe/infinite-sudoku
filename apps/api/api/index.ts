@@ -41,9 +41,9 @@ server.after((err) => {
 //   }
 // });
 
-server.get("/", (_req, res) => {
-  res.redirect("/docs");
-});
+// server.get("/", (_req, res) => {
+//   res.redirect("/docs");
+// });
 
 let isReady = false;
 
