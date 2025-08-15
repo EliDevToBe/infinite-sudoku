@@ -6,10 +6,11 @@ import { useToken } from "../utils/token";
 type RegisterInput = Prisma.userCreateInput;
 type LoginInput = {
   email: string;
+  password: string;
 };
 
-const { hashPassword } = useHash();
-const { generateToken, generateAccessToken } = useToken();
+const { hashPassword, verifyPassword } = useHash();
+const { generateAccessToken, generateRefreshToken } = useToken();
 
 export const AuthController = () => {
   const register = async (
@@ -38,8 +39,8 @@ export const AuthController = () => {
         email: user.email,
       };
 
-      const token = generateToken(tokenizedUser);
-      const refreshToken = generateAccessToken(tokenizedUser);
+      const accessToken = generateAccessToken(tokenizedUser);
+      const refreshToken = generateRefreshToken(tokenizedUser);
 
       const authUser = {
         id: user.id,
@@ -49,7 +50,7 @@ export const AuthController = () => {
       };
 
       reply.headers({
-        "access-token": token,
+        "access-token": accessToken,
         "refresh-token": refreshToken,
       });
 
@@ -66,7 +67,7 @@ export const AuthController = () => {
     reply: FastifyReply,
   ) => {
     try {
-      const { email } = request.body;
+      const { email, password } = request.body;
       const prisma = request.server.prisma;
 
       const user = await prisma.user.findUnique({
@@ -77,13 +78,19 @@ export const AuthController = () => {
         return reply.status(401).send({ message: "Invalid credentials" });
       }
 
+      const isPasswordValid = await verifyPassword(password, user.password);
+
+      if (!isPasswordValid) {
+        return reply.status(401).send({ message: "Invalid credentials" });
+      }
+
       const tokenizedUser = {
         id: user.id,
         email: user.email,
       };
 
-      const token = generateToken(tokenizedUser);
-      const refreshToken = generateAccessToken(tokenizedUser);
+      const accessToken = generateAccessToken(tokenizedUser);
+      const refreshToken = generateRefreshToken(tokenizedUser);
 
       const authUser = {
         id: user.id,
@@ -93,7 +100,7 @@ export const AuthController = () => {
       };
 
       reply.headers({
-        "access-token": token,
+        "access-token": accessToken,
         "refresh-token": refreshToken,
       });
 

@@ -11,14 +11,13 @@ export default fp(
           description: "Login into API",
           tags: ["Login"],
           summary: "Login into API",
-          security: [{ basic: [] }],
-          consumes: ["application/json"],
-          produces: ["application/json"],
           body: {
             type: "object",
             properties: {
               email: { type: "string" },
+              password: { type: "string" },
             },
+            required: ["email", "password"],
           },
           response: {
             200: {},

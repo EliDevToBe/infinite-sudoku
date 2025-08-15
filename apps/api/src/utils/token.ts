@@ -19,36 +19,16 @@ type VerifyTokenPayload = {
 };
 
 export const useToken = () => {
-  const generateToken = (payload: TokenPayload) => {
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET are not defined");
-    }
-
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2d" });
-  };
-
-  const generateAccessToken = (payload: TokenPayload) => {
+  const generateRefreshToken = (payload: TokenPayload) => {
     if (!process.env.JWT_REFRESH_SECRET) {
       throw new Error("JWT_REFRESH_SECRET are not defined");
     }
 
     return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "2d",
     });
   };
-
-  const verifyToken = (payload: VerifyTokenPayload) => {
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET are not defined");
-    }
-
-    return jwt.verify(
-      payload.token,
-      process.env.JWT_SECRET,
-    ) as AugmentedJwtPayload;
-  };
-
-  const verifyAccessToken = (payload: VerifyTokenPayload) => {
+  const verifyRefreshToken = (payload: VerifyTokenPayload) => {
     if (!process.env.JWT_REFRESH_SECRET) {
       throw new Error("JWT_REFRESH_SECRET are not defined");
     }
@@ -59,21 +39,41 @@ export const useToken = () => {
     ) as AugmentedJwtPayload;
   };
 
+  const generateAccessToken = (payload: TokenPayload) => {
+    if (!process.env.JWT_ACCESS_SECRET) {
+      throw new Error("JWT_ACCESS_SECRET are not defined");
+    }
+
+    return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+      expiresIn: "5m",
+    });
+  };
+  const verifyAccessToken = (payload: VerifyTokenPayload) => {
+    if (!process.env.JWT_ACCESS_SECRET) {
+      throw new Error("JWT_ACCESS_SECRET are not defined");
+    }
+
+    return jwt.verify(
+      payload.token,
+      process.env.JWT_ACCESS_SECRET,
+    ) as AugmentedJwtPayload;
+  };
+
   /**
    * Checks if an access token is expired.
    * @param {JwtPayload} jwtPayload - The JWT payload to check.
    * @returns {boolean} True if the token is expired, false otherwise.
    */
-  const isAccessExpired = (jwtPayload: JwtPayload) => {
-    const now = Math.floor(Date.now() / 1000);
-    return (jwtPayload.exp ?? 0) - now < 0;
+  const isJwtExpired = (jwtPayload: JwtPayload) => {
+    const now = Date.now();
+    return now > (jwtPayload.exp ?? 0);
   };
 
   return {
-    generateToken,
+    generateRefreshToken,
+    verifyRefreshToken,
     generateAccessToken,
-    verifyToken,
     verifyAccessToken,
-    isAccessExpired,
+    isJwtExpired,
   };
 };

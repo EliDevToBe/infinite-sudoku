@@ -1,8 +1,12 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { useToken } from "./token";
 
-const { verifyToken, isAccessExpired, generateAccessToken, verifyAccessToken } =
-  useToken();
+const {
+  verifyRefreshToken,
+  isJwtExpired,
+  generateAccessToken,
+  verifyAccessToken,
+} = useToken();
 
 export const authenticated = (
   request: FastifyRequest,
@@ -18,11 +22,14 @@ export const authenticated = (
   }
 
   try {
-    const access = verifyToken({ token: accessToken, type: "access" });
-    const hasAccessExpired = isAccessExpired(access);
+    const access = verifyAccessToken({ token: accessToken, type: "access" });
+    const hasAccessExpired = isJwtExpired(access);
 
-    const refresh = verifyAccessToken({ token: refreshToken, type: "refresh" });
-    const hasRefreshExpired = isAccessExpired(refresh);
+    const refresh = verifyRefreshToken({
+      token: refreshToken,
+      type: "refresh",
+    });
+    const hasRefreshExpired = isJwtExpired(refresh);
 
     if (hasAccessExpired && !hasRefreshExpired) {
       request.headers["access-token"] = generateAccessToken({
