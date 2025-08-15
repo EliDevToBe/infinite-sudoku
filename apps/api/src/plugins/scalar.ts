@@ -1,12 +1,11 @@
-import ScalarApiReference from "@scalar/fastify-api-reference";
+// import ScalarApiReference from "@scalar/fastify-api-reference";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
-    // Register Scalar with error handling
     try {
-      server.register(ScalarApiReference, {
+      server.register(import("@scalar/fastify-api-reference"), {
         routePrefix: "/docs",
         configuration: {
           hiddenClients: [
@@ -94,7 +93,6 @@ export default fp(
         },
       });
     } catch (error: unknown) {
-      // If Scalar fails to load, log the error but don't crash the server
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       server.log.warn("⚠️ Scalar API Reference failed to load:", errorMessage);
