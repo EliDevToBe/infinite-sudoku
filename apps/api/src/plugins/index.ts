@@ -9,7 +9,11 @@ import scalar from "./scalar.js";
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
     server.register(openapi);
-    server.register(scalar);
+
+    if (process.env.NODE_ENV === "develop") {
+      server.register(scalar);
+    }
+
     server.register(cors);
     server.register(helmet);
     server.register(prisma);
