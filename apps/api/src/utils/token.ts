@@ -58,26 +58,6 @@ export const useToken = () => {
     return jwt.verify(payload.token, secret) as AugmentedJwtPayload;
   };
 
-  // const generateAccessToken = (payload: TokenPayload) => {
-  //   if (!process.env.JWT_ACCESS_SECRET) {
-  //     throw new Error("JWT_ACCESS_SECRET are not defined");
-  //   }
-
-  //   return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-  //     expiresIn: "5m",
-  //   });
-  // };
-  // const verifyAccessToken = (payload: VerifyTokenPayload) => {
-  //   if (!process.env.JWT_ACCESS_SECRET) {
-  //     throw new Error("JWT_ACCESS_SECRET are not defined");
-  //   }
-
-  //   return jwt.verify(
-  //     payload.token,
-  //     process.env.JWT_ACCESS_SECRET,
-  //   ) as AugmentedJwtPayload;
-  // };
-
   /**
    * Checks if an access token is expired.
    * @param {JwtPayload} jwtPayload - The JWT payload to check.
