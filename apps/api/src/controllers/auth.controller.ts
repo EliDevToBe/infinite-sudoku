@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { isProduction } from "@shared/isProduction.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { useHash } from "../utils/hash.js";
 import { useToken } from "../utils/token.js";
@@ -10,7 +11,7 @@ type LoginInput = {
 };
 
 const { hashPassword, verifyPassword } = useHash();
-const { generateToken } = useToken();
+const { generateToken, verifyToken, isJwtExpired } = useToken();
 
 export const AuthController = () => {
   const register = async (
@@ -99,9 +100,13 @@ export const AuthController = () => {
         role: user.role,
       };
 
-      reply.headers({
-        "access-token": accessToken,
-        "refresh-token": refreshToken,
+      reply.header("access-token", accessToken);
+
+      reply.setCookie("refresh-token", refreshToken, {
+        httpOnly: true,
+        secure: isProduction(),
+        maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
+        sameSite: "strict",
       });
 
       return reply.status(200).send({
@@ -111,5 +116,29 @@ export const AuthController = () => {
       reply.status(500).send({ message: "Internal server error", error });
     }
   };
-  return { register, login };
+
+  const refresh = async (request: FastifyRequest, reply: FastifyReply) => {
+    const refreshToken = request.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return reply.status(401).send({ clientMessage: "Unauthorized" });
+    }
+
+    const decoded = verifyToken({ token: refreshToken, type: "refresh" });
+    const hasRefreshExpired = isJwtExpired(decoded);
+
+    if (hasRefreshExpired) {
+      return reply.status(401).send({ clientMessage: "Unauthorized" });
+    }
+
+    const accessToken = generateToken(decoded, { type: "access" });
+
+    reply.headers({
+      "access-token": accessToken,
+    });
+
+    return reply.status(200);
+  };
+
+  return { register, login, refresh };
 };

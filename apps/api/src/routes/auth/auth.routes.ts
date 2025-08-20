@@ -20,7 +20,20 @@ export default fp(
             required: ["email", "password"],
           },
           response: {
-            200: {},
+            200: {
+              type: "object",
+              properties: {
+                user: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    email: { type: "string" },
+                    quality: { type: "string" },
+                    role: { type: "string" },
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -28,6 +41,8 @@ export default fp(
     );
 
     server.post("/auth/register", AuthController().register);
+
+    server.get("/auth/refresh", AuthController().refresh);
 
     done();
   },
