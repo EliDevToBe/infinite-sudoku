@@ -26,7 +26,9 @@ export default fp(
       },
       AuthController().login,
     );
+
     server.post("/auth/register", AuthController().register);
+
     done();
   },
 );
