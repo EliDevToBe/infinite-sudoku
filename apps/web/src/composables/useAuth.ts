@@ -32,7 +32,7 @@ export const useAuth = () => {
 
     if (!response.ok) {
       throwFrontError("Failed to authenticate", {
-        context: { email, password },
+        context: { email },
         error: new Error("Failed to authenticate"),
       });
     }
