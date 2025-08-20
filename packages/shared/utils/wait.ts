@@ -1,4 +1,4 @@
-import { centerText } from "./center-text";
+import { centerText } from "./centerText";
 
 export const wait = async () => {
   console.log(centerText(" -  - --== Waiting for db 😭 ==--- -  - "));

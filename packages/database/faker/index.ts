@@ -1,9 +1,11 @@
 import { fakerFR as faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
-import { centerText } from "../../shared/utils/center-text";
-import { GridFactory } from "./factories/grid-factory";
-import { UserFactory } from "./factories/user-factory";
-import { UserGridFactory } from "./factories/user-grid-factory";
+import { centerText } from "@shared/utils/index.js";
+import {
+  GridFactory,
+  UserFactory,
+  UserGridFactory,
+} from "./factories/index.js";
 
 const fakerSeeder = async () => {
   if (process.env.NODE_ENV !== "develop") {
@@ -16,7 +18,7 @@ const fakerSeeder = async () => {
   const userFactory = new UserFactory(faker, prisma);
   await userFactory.createAdmin();
   const users = await userFactory.createMany(10);
-  const userIds = users.map((user) => user.id);
+  const userIds = users.map((user) => user.id!);
 
   const gridFactory = new GridFactory(faker, prisma);
   const grids = await gridFactory.createMany(10);

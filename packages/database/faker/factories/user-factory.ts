@@ -9,7 +9,7 @@ export class UserFactory {
     private readonly prisma: PrismaClient,
   ) {}
 
-  async createMany(count: number) {
+  async createMany(count: number): Promise<User[]> {
     return Promise.all(
       Array.from({ length: count }, () =>
         this.prisma.user.create({
@@ -28,7 +28,7 @@ export class UserFactory {
     };
   }
 
-  async createAdmin() {
+  async createAdmin(): Promise<User> {
     return this.prisma.user.create({
       data: {
         ...this.create(),
