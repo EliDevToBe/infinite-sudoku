@@ -34,7 +34,7 @@ export class UserFactory {
         ...this.create(),
         email: "admin@rncp.com",
         password:
-          "$argon2id$v=19$m=65536,t=3,p=1$TYA1vt0zIbyAkhKBVaIjNg$heZx69OPUYCEhJK+a7dgAlQRIT6YKgsgm5uG6s+ybDw",
+          "$argon2id$v=19$m=65536,t=3,p=1$Cfx7JE/kt9xtXcAbEj5XyQ$Zxror4jXxDGGrBzA4cc2s5aR0JolsRxxTP1lHRSX/Cw",
         role: "admin",
       },
     });
