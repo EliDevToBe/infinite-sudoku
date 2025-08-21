@@ -11,7 +11,16 @@
         <button v-if="isAuthenticated" :class="ui.button" @click="logout">
           Logout
         </button>
-        <button>CLICK ME</button>
+        <button
+          @click="
+            () => {
+              console.log('CLICKED');
+              navigateTo('/design/', {});
+            }
+          "
+        >
+          GO DESIGN
+        </button>
       </div>
     </div>
   </MainWrapper>
@@ -19,14 +28,11 @@
 
 <script setup lang="ts">
 import { MainWrapper } from "@/components";
-import { useAuth } from "@/composables/useAuth";
-import { useNavigation } from "@/composables/useNavigation";
+import { useAuth, useNavigation } from "@/composables";
 import { onMounted } from "vue";
 
 const { login, logout, isAuthenticated, initializeAuth } = useAuth();
 const { navigateTo } = useNavigation();
-
-definePage({ meta: { requiresAuth: true } });
 
 const ui = {
   content: "flex flex-col h-full items-center justify-center bg-cyan-200",
