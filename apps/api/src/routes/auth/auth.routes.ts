@@ -40,6 +40,8 @@ export default fp(
       AuthController().login,
     );
 
+    server.post("/auth/logout", AuthController().logout);
+
     server.post("/auth/register", AuthController().register);
 
     server.get("/auth/refresh", AuthController().refresh);
