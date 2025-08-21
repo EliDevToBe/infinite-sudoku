@@ -11,9 +11,11 @@
     <header class="flex justify-center items-center">
       <slot name="header"></slot>
     </header>
+
     <main class="grow-1">
       <slot></slot>
     </main>
+
     <footer class="sticky bottom-0 flex flex-col items-center justify-center">
       <slot name="footer"></slot>
     </footer>
