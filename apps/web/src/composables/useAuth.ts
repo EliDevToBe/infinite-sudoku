@@ -79,7 +79,12 @@ export const useAuth = () => {
         const accessToken = response.headers.get("access-token");
 
         if (accessToken) {
+          const data = await response.json();
+
+          console.debug(data);
+
           setAccessToken(accessToken);
+          setCurrentUser(data.user);
           return accessToken;
         }
       }
@@ -96,17 +101,13 @@ export const useAuth = () => {
   };
 
   const initializeAuth = async () => {
-    try {
-      console.debug("Retrieving session...");
-      const accessToken = await refreshToken();
+    console.debug("Retrieving session...");
+    const accessToken = await refreshToken();
 
-      if (accessToken) {
-        console.debug("✅ Session restored");
-      } else {
-        console.debug("❌ No session found");
-      }
-    } catch (error) {
-      console.debug("❌ Failed to initialize session:", error);
+    if (accessToken) {
+      console.debug("✅ Session restored");
+    } else {
+      console.debug("❌ No session found");
     }
   };
 

@@ -7,9 +7,9 @@ type LoggedUser = {
   role: string;
 };
 
-export const useUser = () => {
-  const currentUser = ref<LoggedUser | null>(null);
+const currentUser = ref<LoggedUser | null>(null);
 
+export const useUser = () => {
   const setCurrentUser = (user: LoggedUser | null) => {
     currentUser.value = user;
   };
