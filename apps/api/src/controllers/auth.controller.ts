@@ -26,7 +26,7 @@ const REFRESH_TOKEN_COOKIE_OPTIONS = {
   secure: isProduction(),
   maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
   sameSite: "strict" as const,
-  path: "/auth",
+  path: "/",
 };
 
 export const AuthController = () => {
@@ -135,23 +135,30 @@ export const AuthController = () => {
     const refreshToken = request.cookies["refresh-token"];
 
     if (!refreshToken) {
+      request.server.log.warn("[refresh] No refresh token found");
       return reply.status(401).send({ clientMessage: "Unauthorized" });
     }
+
     try {
       const decoded = verifyToken({ token: refreshToken, type: "refresh" });
+
       const hasRefreshExpired = isJwtExpired(decoded);
 
       if (hasRefreshExpired) {
+        request.server.log.warn("[refresh] Refresh token expired");
         return reply.status(401).send({ clientMessage: "Unauthorized" });
       }
 
-      const accessToken = generateToken(decoded, { type: "access" });
+      const accessToken = generateToken(
+        { id: decoded.id, email: decoded.email },
+        { type: "access" },
+      );
 
       reply.headers({
         "access-token": accessToken,
       });
 
-      return reply.status(200);
+      return reply.status(200).send(accessToken);
     } catch (error) {
       console.error("Error refreshing token", error);
       return reply.status(500).send({ clientMessage: "Internal server error" });

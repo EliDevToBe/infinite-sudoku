@@ -1,10 +1,11 @@
+import { createSharedComposable } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { throwFrontError } from "@/utils/error";
 import { useUser } from "./useUser";
 
 const accessToken = ref<string | null>(null);
 
-export const useAuth = () => {
+export const useAuth = createSharedComposable(() => {
   const { setCurrentUser } = useUser();
 
   const isAuthenticated = computed(() => {
@@ -62,6 +63,9 @@ export const useAuth = () => {
     } finally {
       clearAccessToken();
       setCurrentUser(null);
+
+      console.log("accessToken after logout", accessToken.value);
+      console.log("isAuthenticated after logout", isAuthenticated.value);
     }
   };
 
@@ -76,12 +80,11 @@ export const useAuth = () => {
       );
 
       if (response.ok) {
-        const token = response.headers.get("access-token");
+        const accessToken = response.headers.get("access-token");
 
-        console.log("token from refresh", token);
-        if (token) {
-          setAccessToken(token);
-          return token;
+        if (accessToken) {
+          setAccessToken(accessToken);
+          return accessToken;
         }
       }
 
@@ -89,13 +92,25 @@ export const useAuth = () => {
       clearAccessToken();
       return null;
     } catch (error) {
+      console.error("Failed to refresh token", error);
       clearAccessToken();
 
-      throwFrontError("Failed to refresh token", {
-        context: "test context",
-        error: error as Error,
-      });
       return null;
+    }
+  };
+
+  const initializeAuth = async () => {
+    try {
+      console.debug("Initializing session...");
+      const accessToken = await refreshToken();
+
+      if (accessToken) {
+        console.log("✅ Session restored");
+      } else {
+        console.log("❌ No session found");
+      }
+    } catch (error) {
+      console.log("❌ Failed to initialize session:", error);
     }
   };
 
@@ -105,5 +120,6 @@ export const useAuth = () => {
     refreshToken,
     getAccessToken,
     logout,
+    initializeAuth,
   };
-};
+});

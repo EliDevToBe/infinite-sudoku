@@ -2,7 +2,12 @@
   <MainWrapper>
     <div :class="ui.content">
       <div class="h-5 flex flex-col gap-2">
-        <button :class="ui.button" @click="call">Login test</button>
+        <button v-if="!isAuthenticated" :class="ui.button" @click="call">
+          Login test
+        </button>
+        <button v-else :class="ui.button" @click="navigateTo('difficulty')">
+          Play
+        </button>
         <button v-if="isAuthenticated" :class="ui.button" @click="logout">
           Logout
         </button>
@@ -15,8 +20,9 @@
 import MainWrapper from "../components/MainWrapper.vue";
 import { useAuth } from "@/composables/useAuth";
 import { useNavigation } from "@/composables/useNavigation";
+import { onMounted, ref } from "vue";
 
-const { login, isAuthenticated, logout } = useAuth();
+const { login, logout, isAuthenticated, initializeAuth } = useAuth();
 const { navigateTo } = useNavigation();
 
 const ui = {
@@ -27,10 +33,13 @@ const ui = {
 
 const call = async () => {
   await login("admin@rncp.com", "<this is not the password>");
-  if (isAuthenticated.value) {
-    navigateTo("difficulty");
-  }
 };
+
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    await initializeAuth();
+  }
+});
 </script>
 
 <style scoped lang=""></style>

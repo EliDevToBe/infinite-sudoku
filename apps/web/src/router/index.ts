@@ -5,7 +5,7 @@ import HomeView from "../views/HomeView.vue";
 import PuzzlesView from "../views/PuzzlesView.vue";
 import SudokuGridView from "../views/SudokuGridView.vue";
 
-const { isAuthenticated } = useAuth();
+const { isAuthenticated, initializeAuth } = useAuth();
 
 const routes = [
   {
@@ -46,7 +46,14 @@ const router = createRouter({
   routes,
 });
 
+let authInitialized = false;
+
 router.beforeEach(async (to, _from) => {
+  if (!authInitialized && !isAuthenticated.value && to.name !== "home") {
+    await initializeAuth();
+    authInitialized = true;
+  }
+
   if (!isAuthenticated.value && to.name !== "home") {
     return { name: "home" };
   }

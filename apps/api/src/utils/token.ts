@@ -48,8 +48,7 @@ export const useToken = () => {
     let secret: string;
     if (payload.type === "refresh") {
       secret = process.env.JWT_REFRESH_SECRET;
-    }
-    if (payload.type === "access") {
+    } else if (payload.type === "access") {
       secret = process.env.JWT_ACCESS_SECRET;
     } else {
       throw new Error(`[verifyToken] Invalid token type: ${payload.type}`);
@@ -64,7 +63,8 @@ export const useToken = () => {
    * @returns {boolean} True if the token is expired, false otherwise.
    */
   const isJwtExpired = (jwtPayload: JwtPayload) => {
-    const now = Date.now();
+    const now = Date.now() / 1000;
+
     return now > (jwtPayload.exp ?? 0);
   };
 
