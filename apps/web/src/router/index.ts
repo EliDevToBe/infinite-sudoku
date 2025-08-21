@@ -1,33 +1,44 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useAuth } from "@/composables/useAuth";
-import { routes } from "./routerRoutes";
+import { handleHotUpdate, routes } from "vue-router/auto-routes";
+import { useAuth, useUser } from "@/composables";
 
 const { isAuthenticated, initializeAuth } = useAuth();
-
-export type RouteName = (typeof routes)[number]["name"];
-export type RouteParams = Record<RouteName, null | Record<string, string>>;
-
-// Type-safe navigation
-export type NavigateTo = <T extends keyof RouteParams>(
-  route: T,
-  params?: RouteParams[T],
-) => void;
+const { currentUser } = useUser();
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
+if (import.meta.hot) {
+  handleHotUpdate(router);
+}
+
 let authInitialized = false;
 
 router.beforeEach(async (to, _from) => {
-  if (!authInitialized && !isAuthenticated.value && to.name !== "home") {
+  // If not authenticated, try to initialize auth once
+  if (!authInitialized && !isAuthenticated.value) {
     await initializeAuth();
     authInitialized = true;
   }
 
-  if (!isAuthenticated.value && to.name !== "home") {
-    return { name: "home" };
+  // - If route need auth
+  // - User is not authenticated
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    return { name: "/" };
+  }
+
+  // - If route need auth
+  // - User is authenticated
+  // - User does not have the required role
+  if (
+    (to.meta.requiresAuth && !isAuthenticated.value) ||
+    (to.meta.roles &&
+      !(to.meta.roles as string[]).includes(currentUser.value?.role || ""))
+  ) {
+    console.debug(currentUser.value?.role);
+    return { name: "/" };
   }
 });
 
