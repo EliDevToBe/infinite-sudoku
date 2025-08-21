@@ -12,7 +12,7 @@ export const GridController = () => {
 
       reply.send(grids);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to get users", error });
+      reply.status(500).send({ clientMessage: "Failed to get users", error });
     }
   };
 
@@ -29,14 +29,14 @@ export const GridController = () => {
       });
 
       if (!grid) {
-        reply.status(404).send({ message: "Grid not found" });
+        reply.status(404).send({ clientMessage: "Grid not found" });
         return;
       }
 
       reply.send(grid);
     } catch (error) {
       reply.status(500).send({
-        message: "Failed to get grid",
+        clientMessage: "Failed to get grid",
         error,
         userId: request.params.id,
       });
@@ -53,7 +53,7 @@ export const GridController = () => {
 
       reply.send(grid);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to create grid", error });
+      reply.status(500).send({ clientMessage: "Failed to create grid", error });
     }
   };
 
@@ -66,9 +66,9 @@ export const GridController = () => {
 
     try {
       await prisma.grid.delete({ where: { id: gridId } });
-      reply.send({ message: "Grid deleted successfully" });
+      reply.send({ clientMessage: "Grid deleted successfully" });
     } catch (error) {
-      reply.status(500).send({ message: "Failed to delete grid", error });
+      reply.status(500).send({ clientMessage: "Failed to delete grid", error });
     }
   };
 
