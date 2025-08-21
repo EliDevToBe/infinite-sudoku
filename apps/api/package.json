@@ -30,7 +30,7 @@
     "prisma": "^6.9.0",
     "typescript": "^5.8.3",
     "zod": "^3.25.55",
-    "shared": "workspace:*"
+    "shared": "file:../../packages/shared"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
