@@ -1,5 +1,5 @@
 <template>
-  <SwitchUI v-model="isLightTheme" @update:modelValue="toggleTheme">
+  <SwitchUI @update:modelValue="toggleTheme">
     {{ isLightTheme ? "☀️" : "🌙" }}
   </SwitchUI>
 </template>
