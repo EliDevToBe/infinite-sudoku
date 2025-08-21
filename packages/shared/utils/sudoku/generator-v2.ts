@@ -1,7 +1,7 @@
 import { patternPriority } from "./priority-algorithm";
 
-type SudokuGrid = number[][];
-type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
+export type SudokuGrid = number[][];
+export type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
 type Position = { row: number; col: number };
 
 const _commonDifficultyLevelsByMissingCells = {

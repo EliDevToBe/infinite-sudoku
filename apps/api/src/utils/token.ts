@@ -37,7 +37,7 @@ export const useToken = () => {
         expiresIn: "2d",
       });
     }
-    throw new Error("Invalid token type");
+    throw new Error(`[generateToken] Invalid token type: ${params.type}`);
   };
 
   const verifyToken = (payload: VerifyTokenPayload) => {
@@ -48,35 +48,14 @@ export const useToken = () => {
     let secret: string;
     if (payload.type === "refresh") {
       secret = process.env.JWT_REFRESH_SECRET;
-    }
-    if (payload.type === "access") {
+    } else if (payload.type === "access") {
       secret = process.env.JWT_ACCESS_SECRET;
     } else {
-      throw new Error("Invalid token type");
+      throw new Error(`[verifyToken] Invalid token type: ${payload.type}`);
     }
 
     return jwt.verify(payload.token, secret) as AugmentedJwtPayload;
   };
-
-  // const generateAccessToken = (payload: TokenPayload) => {
-  //   if (!process.env.JWT_ACCESS_SECRET) {
-  //     throw new Error("JWT_ACCESS_SECRET are not defined");
-  //   }
-
-  //   return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-  //     expiresIn: "5m",
-  //   });
-  // };
-  // const verifyAccessToken = (payload: VerifyTokenPayload) => {
-  //   if (!process.env.JWT_ACCESS_SECRET) {
-  //     throw new Error("JWT_ACCESS_SECRET are not defined");
-  //   }
-
-  //   return jwt.verify(
-  //     payload.token,
-  //     process.env.JWT_ACCESS_SECRET,
-  //   ) as AugmentedJwtPayload;
-  // };
 
   /**
    * Checks if an access token is expired.
@@ -84,7 +63,8 @@ export const useToken = () => {
    * @returns {boolean} True if the token is expired, false otherwise.
    */
   const isJwtExpired = (jwtPayload: JwtPayload) => {
-    const now = Date.now();
+    const now = Date.now() / 1000;
+
     return now > (jwtPayload.exp ?? 0);
   };
 

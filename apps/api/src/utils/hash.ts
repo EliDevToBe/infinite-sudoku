@@ -16,6 +16,7 @@ export const useHash = () => {
     if (!process.env.ARGON_SECRET) {
       throw new Error("ARGON_SECRET is not defined");
     }
+
     return await argon2.hash(password, {
       ...config,
       secret: Buffer.from(process.env.ARGON_SECRET),
@@ -32,6 +33,7 @@ export const useHash = () => {
     if (!process.env.ARGON_SECRET) {
       throw new Error("ARGON_SECRET is not defined");
     }
+
     return await argon2.verify(hash, password, {
       ...config,
       secret: Buffer.from(process.env.ARGON_SECRET),

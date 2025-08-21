@@ -13,7 +13,7 @@ export const UserController = () => {
 
       reply.send(users);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to get users", error });
+      reply.status(500).send({ clientMessage: "Failed to get users", error });
     }
   };
 
@@ -29,14 +29,14 @@ export const UserController = () => {
       });
 
       if (!user) {
-        reply.status(404).send({ message: "User not found" });
+        reply.status(404).send({ clientMessage: "User not found" });
         return;
       }
 
       reply.send(user);
     } catch (error) {
       reply.status(500).send({
-        message: "Failed to get user",
+        clientMessage: "Failed to get user",
         error,
         userId: request.params.id,
       });
@@ -53,7 +53,7 @@ export const UserController = () => {
 
       reply.send(user);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to create user", error });
+      reply.status(500).send({ clientMessage: "Failed to create user", error });
     }
   };
 
@@ -71,7 +71,7 @@ export const UserController = () => {
 
       reply.send(user);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to update user", error });
+      reply.status(500).send({ clientMessage: "Failed to update user", error });
     }
   };
 
@@ -83,9 +83,9 @@ export const UserController = () => {
     const userId = request.params.id;
     try {
       await prisma.user.delete({ where: { id: userId } });
-      reply.send({ message: "User deleted successfully" });
+      reply.send({ clientMessage: "User deleted successfully" });
     } catch (error) {
-      reply.status(500).send({ message: "Failed to delete user", error });
+      reply.status(500).send({ clientMessage: "Failed to delete user", error });
     }
   };
 

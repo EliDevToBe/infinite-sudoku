@@ -1,6 +1,6 @@
 <template>
-  <SwitchUI :checked="isLightTheme" @update:modelValue="toggleTheme">
-    {{ !isLightTheme ? "🌙" : "☀️" }}
+  <SwitchUI v-model="isLightTheme" @update:modelValue="toggleTheme">
+    {{ isLightTheme ? "☀️" : "🌙" }}
   </SwitchUI>
 </template>
 

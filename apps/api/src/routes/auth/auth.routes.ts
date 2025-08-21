@@ -20,13 +20,32 @@ export default fp(
             required: ["email", "password"],
           },
           response: {
-            200: {},
+            200: {
+              type: "object",
+              properties: {
+                user: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    email: { type: "string" },
+                    quality: { type: "string" },
+                    role: { type: "string" },
+                  },
+                },
+              },
+            },
           },
         },
       },
       AuthController().login,
     );
+
+    server.post("/auth/logout", AuthController().logout);
+
     server.post("/auth/register", AuthController().register);
+
+    server.get("/auth/refresh", AuthController().refresh);
+
     done();
   },
 );

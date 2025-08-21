@@ -16,7 +16,9 @@ export const UserGridController = () => {
 
       reply.send(userGrids);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to get user grids", error });
+      reply
+        .status(500)
+        .send({ clientMessage: "Failed to get user grids", error });
     }
   };
 
@@ -33,14 +35,14 @@ export const UserGridController = () => {
       });
 
       if (!userGrid) {
-        reply.status(404).send({ message: "User grid not found" });
+        reply.status(404).send({ clientMessage: "User grid not found" });
         return;
       }
 
       reply.send(userGrid);
     } catch (error) {
       reply.status(500).send({
-        message: "Failed to get user grid",
+        clientMessage: "Failed to get user grid",
         error,
         userId: request.params.id,
       });
@@ -56,7 +58,7 @@ export const UserGridController = () => {
       const userId = request.params.id;
 
       if (!userId || userId === "") {
-        reply.status(400).send({ message: "User ID is required" });
+        reply.status(400).send({ clientMessage: "User ID is required" });
         return;
       }
 
@@ -65,14 +67,14 @@ export const UserGridController = () => {
       });
 
       if (!userGrid) {
-        reply.status(404).send({ message: "User grid not found" });
+        reply.status(404).send({ clientMessage: "User grid not found" });
         return;
       }
 
       reply.send(userGrid);
     } catch (error) {
       reply.status(500).send({
-        message: "Failed to get user grid",
+        clientMessage: "Failed to get user grid",
         error,
         userId: request.params.id,
       });
@@ -94,7 +96,7 @@ export const UserGridController = () => {
       reply.send(userGrid);
     } catch (error) {
       reply.status(500).send({
-        message: "Failed to get user grid",
+        clientMessage: "Failed to get user grid",
         error,
         gridId: request.params.id,
       });
@@ -111,7 +113,7 @@ export const UserGridController = () => {
 
       reply.send(userGrid);
     } catch (error) {
-      reply.status(500).send({ message: "Failed to create grid", error });
+      reply.status(500).send({ clientMessage: "Failed to create grid", error });
     }
   };
 
@@ -128,9 +130,11 @@ export const UserGridController = () => {
         where: { id: userGridId },
         data: body,
       });
-      reply.send({ message: "User grid updated successfully" });
+      reply.send({ clientMessage: "User grid updated successfully" });
     } catch (error) {
-      reply.status(500).send({ message: "Failed to update user grid", error });
+      reply
+        .status(500)
+        .send({ clientMessage: "Failed to update user grid", error });
     }
   };
 
@@ -143,9 +147,11 @@ export const UserGridController = () => {
 
     try {
       await prisma.user_grid.delete({ where: { id: userGridId } });
-      reply.send({ message: "User grid deleted successfully" });
+      reply.send({ clientMessage: "User grid deleted successfully" });
     } catch (error) {
-      reply.status(500).send({ message: "Failed to delete user grid", error });
+      reply
+        .status(500)
+        .send({ clientMessage: "Failed to delete user grid", error });
     }
   };
 

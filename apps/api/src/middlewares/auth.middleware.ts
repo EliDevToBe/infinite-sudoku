@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { useToken } from "./token.js";
+import { useToken } from "../utils/token.js";
 
 const { verifyToken, isJwtExpired, generateToken } = useToken();
 

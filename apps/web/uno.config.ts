@@ -8,7 +8,7 @@ export default defineConfig({
     colors: {
       lTheme: {
         surface: "#F5F6F4",
-        surfaceDark: "#D6DAD2",
+        surfaceOther: "#D6DAD2",
         light: "#c0caba",
         font: "#2f3e46",
         accent: "#228cdb",
@@ -17,7 +17,7 @@ export default defineConfig({
         font: "#F5F6F4",
         light: "#cad2c5",
         surface: "#2f3e46",
-        surfaceLight: "#415662",
+        surfaceOther: "#415662",
         accent: "#228cdb",
       },
     },

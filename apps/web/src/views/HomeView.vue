@@ -1,33 +1,45 @@
 <template>
   <MainWrapper>
-    <div class="flex flex-col h-full items-center justify-center">
-      <h2 class="text-3xl font-bold mb-8">Choose Difficulty</h2>
-      <div class="flex flex-col md:flex-row gap-6">
-        <div
-          v-for="difficulty in difficulties"
-          :key="difficulty"
-          class="p-8 w-64 h-32 border rounded-lg cursor-pointer flex items-center justify-center text-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shadow-md"
-          @click="selectDifficulty(difficulty)"
-        >
-          <h3 class="text-2xl font-semibold">
-            {{ difficulty }}
-          </h3>
-        </div>
+    <div :class="ui.content">
+      <div class="h-5 flex flex-col gap-2">
+        <button v-if="!isAuthenticated" :class="ui.button" @click="call">
+          Login test
+        </button>
+        <button v-else :class="ui.button" @click="navigateTo('difficulty')">
+          Play
+        </button>
+        <button v-if="isAuthenticated" :class="ui.button" @click="logout">
+          Logout
+        </button>
       </div>
     </div>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-import MainWrapper from "../components/MainWrapper.vue";
+import { MainWrapper } from "@/components";
+import { useAuth } from "@/composables/useAuth";
+import { useNavigation } from "@/composables/useNavigation";
+import { onMounted } from "vue";
 
-const router = useRouter();
-const difficulties = ["Easy", "Medium", "Hard", "Expert"];
+const { login, logout, isAuthenticated, initializeAuth } = useAuth();
+const { navigateTo } = useNavigation();
 
-function selectDifficulty(difficulty: string) {
-  router.push(`/puzzles/${difficulty.toLowerCase()}`);
-}
+const ui = {
+  content: "flex flex-col h-full items-center justify-center bg-cyan-200",
+  title: "text-3xl font-bold mb-8",
+  button: "bg-red-500 text-white p-2 rounded-md cursor-pointer",
+};
+
+const call = async () => {
+  await login("admin@rncp.com", "<this is not the password>");
+};
+
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    await initializeAuth();
+  }
+});
 </script>
 
 <style scoped lang=""></style>

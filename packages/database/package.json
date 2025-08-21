@@ -4,7 +4,7 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "db:start": "docker compose up -d && npx tsx ../shared/utils/wait.ts && npm run db:apply-migrations && npm run db:seed",
