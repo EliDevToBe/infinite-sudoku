@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuth } from "@/composables/useAuth";
 import DifficultyView from "../views/DifficultyView.vue";
 import HomeView from "../views/HomeView.vue";
 import PuzzlesView from "../views/PuzzlesView.vue";
 import SudokuGridView from "../views/SudokuGridView.vue";
+
+const { isAuthenticated } = useAuth();
 
 const routes = [
   {
@@ -41,6 +44,12 @@ export type NavigateTo = <T extends keyof RouteParams>(
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(async (to, _from) => {
+  if (!isAuthenticated.value && to.name !== "home") {
+    return { name: "home" };
+  }
 });
 
 export default router;
