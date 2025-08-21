@@ -29,8 +29,7 @@
     "pino-pretty": "^13.0.0",
     "prisma": "^6.9.0",
     "typescript": "^5.8.3",
-    "zod": "^3.25.55",
-    "shared": "file:../../packages/shared"
+    "zod": "^3.25.55"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
