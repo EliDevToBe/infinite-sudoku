@@ -11,17 +11,19 @@ import { useTheme } from "@/composables";
 const { isLightTheme, theme } = useTheme();
 
 type Props = {
-  type?: "primary";
+  variant?: "primary" | "secondary";
   size?: "icon" | "sm" | "md" | "lg";
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  type: "primary",
+  variant: "primary",
   size: "md",
 });
 
 const buttonClass = computed(() => {
-  return [ui.size[props.size], ui[theme.value][props.type], ui.base].join(" ");
+  return [ui.size[props.size], ui[theme.value][props.variant], ui.base].join(
+    " "
+  );
 });
 
 const ui = {
@@ -34,11 +36,15 @@ const ui = {
   },
   light: {
     primary:
-      "bg-lTheme-light text-lTheme-font hover:shadow-sm shadow-lTheme-accent",
+      "bg-lTheme-light text-lTheme-font shadow-xs shadow-lTheme-font hover:shadow-sm hover:shadow-lTheme-accent",
+    secondary:
+      "bg-lTheme-surfaceOther text-lTheme-accent outline-[1px] outline-lTheme-light  outline-lTheme-font hover:shadow-sm hover:shadow-lTheme-accent",
   },
   dark: {
     primary:
-      "bg-dTheme-surfaceOther text-dTheme-font hover:shadow-sm shadow-dTheme-accent",
+      "bg-dTheme-surfaceOther text-dTheme-font shadow-xs shadow-dTheme-surface hover:shadow-sm hover:shadow-dTheme-accent",
+    secondary:
+      "bg-dTheme-surfaceOther text-dTheme-font hover:shadow-sm hover:shadow-dTheme-accent",
   },
 };
 </script>
