@@ -53,6 +53,7 @@ export const AuthController = () => {
       secure: isProduction(),
       maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
       sameSite: "strict",
+      path: "/auth",
     });
 
     return authUser;
@@ -152,6 +153,7 @@ export const AuthController = () => {
       httpOnly: true,
       secure: isProduction(),
       sameSite: "strict",
+      path: "/auth",
     });
 
     reply.headers({
