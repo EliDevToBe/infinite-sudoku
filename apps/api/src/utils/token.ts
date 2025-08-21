@@ -37,7 +37,7 @@ export const useToken = () => {
         expiresIn: "2d",
       });
     }
-    throw new Error("Invalid token type");
+    throw new Error(`[generateToken] Invalid token type: ${params.type}`);
   };
 
   const verifyToken = (payload: VerifyTokenPayload) => {
@@ -52,7 +52,7 @@ export const useToken = () => {
     if (payload.type === "access") {
       secret = process.env.JWT_ACCESS_SECRET;
     } else {
-      throw new Error("Invalid token type");
+      throw new Error(`[verifyToken] Invalid token type: ${payload.type}`);
     }
 
     return jwt.verify(payload.token, secret) as AugmentedJwtPayload;

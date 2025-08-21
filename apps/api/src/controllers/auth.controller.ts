@@ -21,6 +21,14 @@ type LoginInput = {
 const { hashPassword, verifyPassword } = useHash();
 const { generateToken, verifyToken, isJwtExpired } = useToken();
 
+const REFRESH_TOKEN_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: isProduction(),
+  maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
+  sameSite: "strict" as const,
+  path: "/auth",
+};
+
 export const AuthController = () => {
   /**
    *  Helper function to augment reply object with headers and cookies
@@ -48,13 +56,11 @@ export const AuthController = () => {
       "access-token": accessToken,
     });
 
-    reply.setCookie("refresh-token", refreshToken, {
-      httpOnly: true,
-      secure: isProduction(),
-      maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
-      sameSite: "strict",
-      path: "/auth",
-    });
+    reply.setCookie(
+      "refresh-token",
+      refreshToken,
+      REFRESH_TOKEN_COOKIE_OPTIONS,
+    );
 
     return authUser;
   };
@@ -131,30 +137,29 @@ export const AuthController = () => {
     if (!refreshToken) {
       return reply.status(401).send({ clientMessage: "Unauthorized" });
     }
+    try {
+      const decoded = verifyToken({ token: refreshToken, type: "refresh" });
+      const hasRefreshExpired = isJwtExpired(decoded);
 
-    const decoded = verifyToken({ token: refreshToken, type: "refresh" });
-    const hasRefreshExpired = isJwtExpired(decoded);
+      if (hasRefreshExpired) {
+        return reply.status(401).send({ clientMessage: "Unauthorized" });
+      }
 
-    if (hasRefreshExpired) {
-      return reply.status(401).send({ clientMessage: "Unauthorized" });
+      const accessToken = generateToken(decoded, { type: "access" });
+
+      reply.headers({
+        "access-token": accessToken,
+      });
+
+      return reply.status(200);
+    } catch (error) {
+      console.error("Error refreshing token", error);
+      return reply.status(500).send({ clientMessage: "Internal server error" });
     }
-
-    const accessToken = generateToken(decoded, { type: "access" });
-
-    reply.headers({
-      "access-token": accessToken,
-    });
-
-    return reply.status(200);
   };
 
   const logout = async (_: FastifyRequest, reply: FastifyReply) => {
-    reply.clearCookie("refresh-token", {
-      httpOnly: true,
-      secure: isProduction(),
-      sameSite: "strict",
-      path: "/auth",
-    });
+    reply.clearCookie("refresh-token", REFRESH_TOKEN_COOKIE_OPTIONS);
 
     reply.headers({
       "access-token": "",
