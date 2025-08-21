@@ -17,10 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import MainWrapper from "../components/MainWrapper.vue";
+import { MainWrapper } from "@/components";
 import { useAuth } from "@/composables/useAuth";
 import { useNavigation } from "@/composables/useNavigation";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 
 const { login, logout, isAuthenticated, initializeAuth } = useAuth();
 const { navigateTo } = useNavigation();

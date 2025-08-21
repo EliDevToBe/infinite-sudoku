@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import MainWrapper from "../components/MainWrapper.vue";
+import { MainWrapper } from "@/components";
 import { useNavigation } from "@/composables/useNavigation";
 
 const { navigateTo } = useNavigation();
