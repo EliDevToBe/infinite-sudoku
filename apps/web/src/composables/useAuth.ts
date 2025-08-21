@@ -1,9 +1,12 @@
 import { computed, ref } from "vue";
 import { throwFrontError } from "@/utils/error";
+import { useUser } from "./useUser";
 
 const accessToken = ref<string | null>(null);
 
 export const useAuth = () => {
+  const { setCurrentUser } = useUser();
+
   const isAuthenticated = computed(() => {
     return !!accessToken.value;
   });
@@ -45,7 +48,21 @@ export const useAuth = () => {
     }
 
     const data = await response.json();
-    return data;
+    setCurrentUser(data.user);
+  };
+
+  const logout = async () => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Failed to logout", error);
+    } finally {
+      clearAccessToken();
+      setCurrentUser(null);
+    }
   };
 
   const refreshToken = async () => {
@@ -87,5 +104,6 @@ export const useAuth = () => {
     isAuthenticated,
     refreshToken,
     getAccessToken,
+    logout,
   };
 };
