@@ -1,11 +1,10 @@
-import { createSharedComposable } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { throwFrontError } from "@/utils/error";
 import { useUser } from "./useUser";
 
 const accessToken = ref<string | null>(null);
 
-export const useAuth = createSharedComposable(() => {
+export const useAuth = () => {
   const { setCurrentUser } = useUser();
 
   const isAuthenticated = computed(() => {
@@ -122,4 +121,4 @@ export const useAuth = createSharedComposable(() => {
     logout,
     initializeAuth,
   };
-});
+};
