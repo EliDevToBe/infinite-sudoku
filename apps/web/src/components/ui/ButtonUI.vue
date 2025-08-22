@@ -11,7 +11,7 @@ import { useTheme } from "@/composables";
 const { theme } = useTheme();
 
 type Props = {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
   size?: "icon" | "sm" | "md" | "lg";
 };
 
@@ -45,6 +45,11 @@ const ui = {
         outline-[1px] outline-lTheme-light outline-lTheme-font 
       hover:shadow-sm hover:shadow-lTheme-accent
       active:bg-lTheme-light`,
+    danger: `
+      bg-lTheme-danger text-lTheme-surface
+      shadow-xs shadow-lTheme-font 
+      hover:shadow-sm hover:shadow-lTheme-accent
+        active:bg-lTheme-dangerOther`,
   },
   dark: {
     primary: `
@@ -56,6 +61,11 @@ const ui = {
       bg-dTheme-surfaceOther text-dTheme-font 
       hover:shadow-sm hover:shadow-dTheme-accent
       active:bg-dTheme-surface active:text-dTheme-light`,
+    danger: `
+      bg-dTheme-danger text-dTheme-font
+      shadow-xs shadow-dTheme-surface
+      hover:shadow-sm hover:shadow-dTheme-accent
+      active:bg-dTheme-dangerOther active:text-dTheme-light`,
   },
 };
 </script>
