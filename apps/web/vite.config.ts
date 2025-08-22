@@ -3,14 +3,14 @@ import vue from "@vitejs/plugin-vue";
 import UnoCSS from "unocss/vite";
 import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
-import vueDevTools from "vite-plugin-vue-devtools";
+// import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vite.dev/config/s
 export default defineConfig({
   plugins: [
     VueRouter(),
     vue(),
-    vueDevTools(),
+    // vueDevTools(),
     UnoCSS({ configFile: "./uno.config.ts" }),
   ],
   resolve: {
