@@ -1,4 +1,5 @@
 import type { ApiEndpoint } from "@shared/endpoints";
+import { throwFrontError } from "@/utils/error";
 import { useAuth } from "./useAuth";
 
 export const useApi = () => {
@@ -7,7 +8,9 @@ export const useApi = () => {
   const fetchApi = async (payload: ApiEndpoint) => {
     const apiUrl = import.meta.env.VITE_API_URL;
     if (!apiUrl) {
-      throw new Error("API_URL is not defined");
+      throwFrontError("API_URL is not defined", {
+        endpoint: payload,
+      });
     }
 
     const { path, ...params } = payload;
@@ -32,6 +35,11 @@ export const useApi = () => {
 
       if (response.status === 401) {
         const newToken = await refreshToken();
+
+        if (!newToken) {
+          return { data: null, error: new Error("Failed to refresh token") };
+        }
+
         response = await makeRequest(newToken);
       }
 

@@ -108,7 +108,7 @@ export const AuthController = () => {
       });
 
       if (!user) {
-        return reply.status(401).send({ clientMessage: "Invalid credentials" });
+        return reply.status(404).send({ clientMessage: "User not found" });
       }
 
       const isPasswordValid = await verifyPassword(password, user.password);
@@ -135,7 +135,7 @@ export const AuthController = () => {
 
     if (!refreshToken) {
       request.server.log.warn("[refresh] No refresh token found");
-      return reply.status(401).send({ clientMessage: "Unauthorized" });
+      return reply.status(200).send(null);
     }
 
     try {
@@ -145,7 +145,7 @@ export const AuthController = () => {
 
       if (hasRefreshExpired) {
         request.server.log.warn("[refresh] Refresh token expired");
-        return reply.status(401).send({ clientMessage: "Unauthorized" });
+        return reply.status(200).send(null);
       }
 
       const accessToken = generateToken(

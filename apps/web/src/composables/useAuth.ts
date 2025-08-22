@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { throwFrontError } from "@/utils/error";
+import { Logger } from "./useLogger";
 import { useUser } from "./useUser";
 
 const accessToken = ref<string | null>(null);
@@ -24,31 +25,42 @@ export const useAuth = () => {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
 
-    if (!response.ok) {
-      throwFrontError("Failed to authenticate", {
-        context: { email },
-        error: new Error("Failed to authenticate"),
-      });
+      const tempData = await response.json();
+      const message = tempData.clientMessage;
+
+      if (!response.ok && message) {
+        console.log("DEBUG", tempData);
+        throwFrontError("Failed to authenticate", {
+          email,
+          message,
+        });
+      }
+
+      const token = response.headers.get("access-token");
+
+      if (token) {
+        setAccessToken(token);
+        console.debug("✅ Successfully logged in");
+      }
+
+      const data = await response.json();
+      setCurrentUser(data.user);
+    } catch (error) {
+      Logger.error(error);
     }
-
-    const token = response.headers.get("access-token");
-
-    if (token) {
-      setAccessToken(token);
-      console.debug("✅ Successfully logged in");
-    }
-
-    const data = await response.json();
-    setCurrentUser(data.user);
   };
 
   const logout = async () => {
