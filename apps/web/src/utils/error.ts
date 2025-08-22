@@ -1,13 +1,9 @@
 class FrontError extends Error {
   constructor(
     message: string,
-    public context: {
-      code?: number;
-      status?: string;
-      [key: string]: unknown;
-    } = {},
+    public context: Record<string, unknown>,
   ) {
-    super(message);
+    super(`❌ ${message}`);
     this.name = "FrontError";
   }
 }
@@ -15,20 +11,17 @@ class FrontError extends Error {
 // Wrapper function that logs and throws
 export const throwFrontError = (
   message: string,
-  contextOpts: { context: string | Record<string, unknown>; error: Error },
+  contextOpts: Record<string, unknown>,
 ) => {
   const error = new FrontError(message, {
     context: contextOpts,
     url: window.location.href,
-  });
-
-  // Log the error with context
-  console.error(`❌ ${message}`, {
-    error: error.message,
-    context: contextOpts,
-    stack: error.stack,
     timestamp: new Date().toISOString(),
   });
 
   throw error;
+};
+
+export const isFrontError = (error: unknown): error is FrontError => {
+  return error instanceof FrontError && typeof error.message === "string";
 };

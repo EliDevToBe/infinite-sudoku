@@ -5,11 +5,21 @@
         <button v-if="!isAuthenticated" :class="ui.button" @click="call">
           Login test
         </button>
-        <button v-else :class="ui.button" @click="navigateTo('difficulty')">
+        <button v-else :class="ui.button" @click="navigateTo('/play/')">
           Play
         </button>
         <button v-if="isAuthenticated" :class="ui.button" @click="logout">
           Logout
+        </button>
+        <button
+          @click="
+            () => {
+              console.log('CLICKED');
+              navigateTo('/design/');
+            }
+          "
+        >
+          GO DESIGN
         </button>
       </div>
     </div>
@@ -18,8 +28,7 @@
 
 <script setup lang="ts">
 import { MainWrapper } from "@/components";
-import { useAuth } from "@/composables/useAuth";
-import { useNavigation } from "@/composables/useNavigation";
+import { useAuth, useNavigation } from "@/composables";
 import { onMounted } from "vue";
 
 const { login, logout, isAuthenticated, initializeAuth } = useAuth();

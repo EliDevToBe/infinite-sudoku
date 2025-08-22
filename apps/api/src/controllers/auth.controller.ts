@@ -42,15 +42,14 @@ export const AuthController = () => {
       email: user.email,
     };
 
-    const accessToken = generateToken(tokenizedUser, { type: "access" });
-    const refreshToken = generateToken(tokenizedUser, { type: "refresh" });
-
     const authUser = {
-      id: user.id,
-      email: user.email,
+      ...tokenizedUser,
       quality: user.quality,
       role: user.role,
     };
+
+    const accessToken = generateToken(tokenizedUser, { type: "access" });
+    const refreshToken = generateToken(authUser, { type: "refresh" });
 
     reply.headers({
       "access-token": accessToken,
@@ -109,7 +108,7 @@ export const AuthController = () => {
       });
 
       if (!user) {
-        return reply.status(401).send({ clientMessage: "Invalid credentials" });
+        return reply.status(404).send({ clientMessage: "User not found" });
       }
 
       const isPasswordValid = await verifyPassword(password, user.password);
@@ -136,7 +135,7 @@ export const AuthController = () => {
 
     if (!refreshToken) {
       request.server.log.warn("[refresh] No refresh token found");
-      return reply.status(401).send({ clientMessage: "Unauthorized" });
+      return reply.status(200).send(null);
     }
 
     try {
@@ -146,7 +145,7 @@ export const AuthController = () => {
 
       if (hasRefreshExpired) {
         request.server.log.warn("[refresh] Refresh token expired");
-        return reply.status(401).send({ clientMessage: "Unauthorized" });
+        return reply.status(200).send(null);
       }
 
       const accessToken = generateToken(
@@ -154,11 +153,20 @@ export const AuthController = () => {
         { type: "access" },
       );
 
+      const authUser = {
+        id: decoded.id,
+        email: decoded.email,
+        quality: decoded.quality,
+        role: decoded.role,
+      };
+
       reply.headers({
         "access-token": accessToken,
       });
 
-      return reply.status(200).send(accessToken);
+      return reply.status(200).send({
+        user: authUser,
+      });
     } catch (error) {
       console.error("Error refreshing token", error);
       return reply.status(500).send({ clientMessage: "Internal server error" });
