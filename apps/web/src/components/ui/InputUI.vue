@@ -39,7 +39,7 @@ const ui = {
   base: "rounded-md cursor-pointer transition-all duration-150 ease-in-out p-2",
   size: {
     icon: "min-w-6 h-6 text-xs justify-center items-center flex",
-    sm: "min-w-15 h-8 text-sm",
+    sm: "min-w-15 h-6 text-xs",
     md: "min-w-20 h-10 text-md",
     lg: "min-w-24 h-12 text-lg",
   },
