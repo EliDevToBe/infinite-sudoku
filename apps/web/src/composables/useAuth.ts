@@ -81,8 +81,6 @@ export const useAuth = () => {
         if (accessToken) {
           const data = await response.json();
 
-          console.debug(data);
-
           setAccessToken(accessToken);
           setCurrentUser(data.user);
           return accessToken;
