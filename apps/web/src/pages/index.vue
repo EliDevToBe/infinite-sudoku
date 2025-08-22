@@ -29,6 +29,35 @@
 
         <ButtonUI v-else @click="logout"> Logout </ButtonUI>
 
+        <div class="flex flex-col items-center gap-2 bg-green-300">
+          <FormField
+            name="pseudo"
+            type="text"
+            placeholder="Pseudo"
+            size="sm"
+            label="Pseudo"
+            v-model="pseudo"
+          />
+
+          <FormField
+            name="email"
+            type="email"
+            placeholder="Email"
+            size="sm"
+            label="Email"
+            v-model="email"
+          />
+
+          <FormField
+            name="password"
+            type="password"
+            placeholder="Password"
+            size="sm"
+            label="Password"
+            v-model="password"
+          />
+        </div>
+
         <ButtonUI
           size="sm"
           v-if="isAuthenticated"
@@ -47,10 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { MainWrapper } from "@/components";
+import { FormField, MainWrapper } from "@/components";
 import { useAuth, useNavigation } from "@/composables";
 import { onMounted, ref, watch } from "vue";
-import { ButtonUI } from "@/components/ui";
+import { ButtonUI, InputUI } from "@/components/ui";
 
 const { login, logout, isAuthenticated, initializeAuth } = useAuth();
 const { navigateTo } = useNavigation();
@@ -86,6 +115,10 @@ watch(showForm, () => {
     }, 1000);
   }
 });
+
+const email = ref("");
+const password = ref("");
+const pseudo = ref("");
 
 const toggleForm = () => {
   showForm.value = !showForm.value;
