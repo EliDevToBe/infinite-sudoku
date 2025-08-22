@@ -29,10 +29,10 @@ const buttonClass = computed(() => {
 const ui = {
   base: "rounded-md cursor-pointer text-center transition-all duration-150 ease-in-out",
   size: {
-    icon: "min-w-6 h-6 text-xs justify-center items-center flex",
-    sm: "min-w-15 h-8 text-sm p-1",
-    md: "min-w-20 h-10 text-md p-2",
-    lg: "min-w-24 h-12 text-lg p-2",
+    icon: "w-6 h-6 text-xs justify-center items-center flex",
+    sm: "w-15 h-8 text-xs p-1",
+    md: "w-20 h-10 text-md p-2",
+    lg: "w-24 h-12 text-lg p-2",
   },
   light: {
     primary:
