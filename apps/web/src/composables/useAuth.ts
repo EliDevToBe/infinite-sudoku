@@ -38,11 +38,10 @@ export const useAuth = () => {
         },
       );
 
-      const tempData = await response.json();
-      const message = tempData.clientMessage;
+      const data = await response.json();
+      const message = data.clientMessage;
 
       if (!response.ok && message) {
-        console.log("DEBUG", tempData);
         throwFrontError("Failed to authenticate", {
           email,
           message,
@@ -56,7 +55,6 @@ export const useAuth = () => {
         console.debug("✅ Successfully logged in");
       }
 
-      const data = await response.json();
       setCurrentUser(data.user);
     } catch (error) {
       Logger.error(error);
