@@ -1,17 +1,37 @@
 <template>
   <MainWrapper>
     <div :class="ui.content">
-      <div class="h-5 flex flex-col gap-2">
-        <button v-if="!isAuthenticated" :class="ui.button" @click="call">
-          Login test
-        </button>
-        <button v-else :class="ui.button" @click="navigateTo('/play/')">
-          Play
-        </button>
-        <button v-if="isAuthenticated" :class="ui.button" @click="logout">
-          Logout
-        </button>
-        <button
+      <div :class="ui.buttonWrapper" class="bg-red-300">
+        <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
+
+        <div
+          v-if="!isAuthenticated"
+          class="relative flex items-center"
+          :class="verticalAnimation.join(' ')"
+        >
+          <ButtonUI
+            size="sm"
+            class="z--1 absolute isolate"
+            :class="lateralLeftAnimation.join(' ')"
+          >
+            Register
+          </ButtonUI>
+
+          <ButtonUI
+            class="transition-transform transition-ease"
+            :class="lateralRightAnimation.join(' ')"
+            size="md"
+            @click="toggleForm"
+          >
+            Login
+          </ButtonUI>
+        </div>
+
+        <ButtonUI v-else @click="logout"> Logout </ButtonUI>
+
+        <ButtonUI
+          size="sm"
+          v-if="isAuthenticated"
           @click="
             () => {
               console.log('CLICKED');
@@ -19,8 +39,8 @@
             }
           "
         >
-          GO DESIGN
-        </button>
+          DESIGN
+        </ButtonUI>
       </div>
     </div>
   </MainWrapper>
@@ -29,15 +49,46 @@
 <script setup lang="ts">
 import { MainWrapper } from "@/components";
 import { useAuth, useNavigation } from "@/composables";
-import { onMounted } from "vue";
+import { onMounted, ref, watch } from "vue";
+import { ButtonUI } from "@/components/ui";
 
 const { login, logout, isAuthenticated, initializeAuth } = useAuth();
 const { navigateTo } = useNavigation();
 
 const ui = {
-  content: "flex flex-col h-full items-center justify-center bg-cyan-200",
+  content: "flex justify-center items-center h-full",
   title: "text-3xl font-bold mb-8",
-  button: "bg-red-500 text-white p-2 rounded-md cursor-pointer",
+  buttonWrapper: "flex flex-col gap-2 items-center w-75 h-75",
+};
+
+const showForm = ref(false);
+const isAnimatedPosition = ref(false);
+const verticalAnimation = ref<string[]>(["duration-500"]);
+const lateralRightAnimation = ref<string[]>(["duration-1s"]);
+const lateralLeftAnimation = ref<string[]>(["duration-1s"]);
+
+watch(isAnimatedPosition, () => console.log(isAnimatedPosition.value));
+
+watch(showForm, () => {
+  if (showForm.value) {
+    verticalAnimation.value.push("translate-y-30");
+
+    setTimeout(() => {
+      lateralRightAnimation.value.push("translate-x-20");
+      lateralLeftAnimation.value.push("translate-x--20");
+    }, 500);
+  } else {
+    lateralRightAnimation.value.pop();
+    lateralLeftAnimation.value.pop();
+
+    setTimeout(() => {
+      verticalAnimation.value.pop();
+    }, 1000);
+  }
+});
+
+const toggleForm = () => {
+  showForm.value = !showForm.value;
 };
 
 const call = async () => {
