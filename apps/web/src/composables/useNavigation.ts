@@ -1,4 +1,4 @@
-import { useRouter } from "vue-router";
+import { type RouteLocationRaw, useRouter } from "vue-router";
 import type { RouteNamedMap } from "vue-router/auto-routes";
 
 export const useNavigation = () => {
@@ -11,9 +11,9 @@ export const useNavigation = () => {
       : [params?: never]
   ) => {
     if (args[0]) {
-      router.push({ name: route, params: args[0] });
+      router.push({ name: route as T, params: args[0] } as RouteLocationRaw);
     } else {
-      router.push({ name: route });
+      router.push({ name: route as T } as RouteLocationRaw);
     }
   };
 

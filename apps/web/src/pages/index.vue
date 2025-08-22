@@ -15,7 +15,7 @@
           @click="
             () => {
               console.log('CLICKED');
-              navigateTo('/design/', {});
+              navigateTo('/design/');
             }
           "
         >

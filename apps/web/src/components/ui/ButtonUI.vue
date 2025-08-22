@@ -8,7 +8,7 @@
 import { withDefaults, defineProps, computed } from "vue";
 import { useTheme } from "@/composables";
 
-const { isLightTheme, theme } = useTheme();
+const { theme } = useTheme();
 
 type Props = {
   variant?: "primary" | "secondary";

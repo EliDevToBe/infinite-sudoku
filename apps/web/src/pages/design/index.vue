@@ -22,16 +22,40 @@
         </div>
       </div>
 
-      <div :class="ui.formWrapper">
+      <form :class="ui.formWrapper">
+        <div :class="ui.formContainer">
+          <label for="name">Pseudo</label>
+          <InputUI
+            type="text"
+            id="pseudo"
+            placeholder="Enter your name"
+            size="icon"
+          />
+        </div>
         <div :class="ui.formContainer">
           <label for="name">Name</label>
-          <InputUI type="text" id="name" />
+          <InputUI
+            type="text"
+            id="name"
+            placeholder="Enter your name"
+            size="sm"
+            variant="secondary"
+          />
         </div>
         <div :class="ui.formContainer">
           <label for="email">Email</label>
-          <InputUI type="email" id="email" />
+          <InputUI type="email" id="email" placeholder="Enter your email" />
         </div>
-      </div>
+        <div :class="ui.formContainer">
+          <label for="password">Password</label>
+          <InputUI
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            size="lg"
+          />
+        </div>
+      </form>
     </MainContent>
   </MainWrapper>
 </template>
