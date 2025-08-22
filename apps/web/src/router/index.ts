@@ -18,7 +18,7 @@ let authInitialized = false;
 
 router.beforeEach(async (to, _from) => {
   // If not authenticated, try to initialize auth once
-  if (!authInitialized && !isAuthenticated.value) {
+  if (!authInitialized && !isAuthenticated.value && to.name !== "/") {
     await initializeAuth();
     authInitialized = true;
   }
