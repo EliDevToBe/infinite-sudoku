@@ -1,8 +1,10 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="bg-red-200">Test Slot #sub-header</div>
-      <ToggleTheme />
+      <div class="flex justify-center items-center">
+        <div class="bg-red-200">Test Slot #sub-header</div>
+        <ToggleTheme />
+      </div>
     </template>
 
     <MainContent class="h-max gap-5">
