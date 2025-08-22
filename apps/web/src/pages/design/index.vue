@@ -21,18 +21,31 @@
           <ButtonUI size="lg" variant="secondary">Button 4</ButtonUI>
         </div>
       </div>
+
+      <div :class="ui.formWrapper">
+        <div :class="ui.formContainer">
+          <label for="name">Name</label>
+          <InputUI type="text" id="name" />
+        </div>
+        <div :class="ui.formContainer">
+          <label for="email">Email</label>
+          <InputUI type="email" id="email" />
+        </div>
+      </div>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
 import { MainContent, MainWrapper, ToggleTheme } from "@/components";
-import { ButtonUI } from "@/components/ui";
+import { ButtonUI, InputUI } from "@/components/ui";
 definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
   buttonWrapper: "flex flex-col w-[50%] gap-5",
   buttonContainer: "flex justify-between items-center gap-5",
+  formWrapper: "flex flex-col w-[50%] gap-5",
+  formContainer: "flex flex-col gap-2",
 };
 </script>
 
