@@ -4,7 +4,7 @@
     <InputUI
       :id="name"
       :size="size"
-      v-model="model"
+      v-model="inputValue"
       :type="type"
       :placeholder="placeholder"
       :name="name"
@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<Props>(), {
   name: "",
 });
 
-const model = defineModel<string>();
+const inputValue = defineModel<string>();
 
 const ui = {
   label: {

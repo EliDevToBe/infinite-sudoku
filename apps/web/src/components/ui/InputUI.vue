@@ -5,6 +5,8 @@
     class="inset"
     :placeholder="placeholder"
     :autocomplete="autocomplete"
+    v-model="model"
+    :style="hasError ? ui.hasError : ''"
   />
 </template>
 
@@ -14,12 +16,15 @@ import { useTheme } from "@/composables";
 
 const { theme } = useTheme();
 
+const model = defineModel<string>();
+
 type Props = {
   variant?: "primary" | "secondary";
   size?: "icon" | "sm" | "md" | "lg";
   type?: "text" | "email" | "password" | "number" | "tel" | "url" | "search";
   placeholder?: string;
   autocomplete?: "on" | "off";
+  hasError?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,10 +34,17 @@ const props = withDefaults(defineProps<Props>(), {
   autocomplete: "off",
 });
 
+const errorClass = computed(() => {
+  return props.hasError ? ui.hasError : "";
+});
+
 const inputClass = computed(() => {
-  return [ui.size[props.size], ui[theme.value][props.variant], ui.base].join(
-    " "
-  );
+  return [
+    ui.size[props.size],
+    ui[theme.value][props.variant],
+    ui.base,
+    errorClass.value,
+  ].join(" ");
 });
 
 const ui = {
@@ -54,6 +66,7 @@ const ui = {
     secondary: `bg-dTheme-surfaceOther text-dTheme-font 
       md:hover:shadow-sm md:hover:shadow-dTheme-accent`,
   },
+  hasError: "box-shadow: 0 0 2px 2px var(--colors-lTheme-danger)",
 };
 </script>
 

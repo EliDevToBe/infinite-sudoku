@@ -139,8 +139,11 @@ import { FormField, MainWrapper } from "@/components";
 import { useAuth, useNavigation } from "@/composables";
 import { onMounted, ref, watch, Transition } from "vue";
 import { ButtonUI } from "@/components/ui";
+import { normalize, verifyEmail } from "@/utils/cleanString";
+import { throwFrontError } from "@/utils/error";
+import { Logger } from "@/composables/useLogger";
 
-const { login, logout, isAuthenticated, initializeAuth } = useAuth();
+const { logout, isAuthenticated, initializeAuth, login } = useAuth();
 const { navigateTo } = useNavigation();
 
 const ui = {
@@ -197,13 +200,19 @@ const form = ref({
   pseudo: "",
 });
 
+const hasError = ref({
+  email: false,
+  password: false,
+  pseudo: false,
+});
+
 onMounted(async () => {
   if (!isAuthenticated.value) {
     await initializeAuth();
   }
 });
 
-const toggleButtonActions = () => {
+const toggleButtonActions = async () => {
   if (!isMenuOpen.value) {
     showForm.value = !showForm.value;
     return;
@@ -212,7 +221,29 @@ const toggleButtonActions = () => {
   if (showRegister.value) {
     console.log("REGISTER FLOW");
   } else {
-    console.log("LOGIN FLOW");
+    await loginFlow();
+  }
+};
+
+const loginFlow = async () => {
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+
+  try {
+    if (!email || !verifyEmail(email)) {
+      hasError.value.email = true;
+      throwFrontError("Invalid email format", { email });
+    }
+    if (!password) {
+      hasError.value.password = true;
+      throwFrontError("Password is required", { password });
+    }
+
+    const response = await login(email, password);
+
+    console.log("LOGIN RESPONSE", response);
+  } catch (error) {
+    Logger.error(error);
   }
 };
 </script>
