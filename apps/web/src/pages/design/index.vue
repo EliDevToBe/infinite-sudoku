@@ -24,16 +24,15 @@
         </div>
       </div>
 
+      <FormField
+        name="pseudo"
+        type="text"
+        placeholder="Pseudo"
+        size="sm"
+        label="Pseudo"
+      />
+
       <form :class="ui.formWrapper">
-        <div :class="ui.formContainer">
-          <label for="name">Pseudo</label>
-          <InputUI
-            type="text"
-            id="pseudo"
-            placeholder="Enter your name"
-            size="icon"
-          />
-        </div>
         <div :class="ui.formContainer">
           <label for="name">Name</label>
           <InputUI
@@ -63,9 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import { MainContent, MainWrapper, ToggleTheme } from "@/components";
+import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
 import { ButtonUI, InputUI } from "@/components/ui";
-definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
+// definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
   buttonWrapper: "flex flex-col w-[50%] gap-5",
