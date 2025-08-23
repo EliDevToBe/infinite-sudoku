@@ -1,7 +1,7 @@
 <template>
   <MainWrapper>
     <div :class="ui.content">
-      <div :class="ui.menuWrapper" class="bg-red-300">
+      <div :class="ui.menuWrapper">
         <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
 
         <!-- REGISTER / LOGIN -->
