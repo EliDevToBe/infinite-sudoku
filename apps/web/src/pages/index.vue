@@ -23,7 +23,7 @@
               class="transition-transform transition-ease"
               :class="lateralRightAnimation.join(' ')"
               size="md"
-              @click="toggleForm"
+              @click="toggleButtonActions"
             >
               Login
             </ButtonUI>
@@ -32,14 +32,23 @@
           <ButtonUI v-else @click="logout"> Logout </ButtonUI>
 
           <!-- FORM -->
-          <div v-if="isAnimatedPosition" :class="ui.formWrapper">
+          <div v-if="isMenuOpen" :class="ui.formWrapper">
+            <ButtonUI
+              class="absolute top-0 right-0"
+              size="icon-xs"
+              variant="ghost"
+              @click="console.log('CLICKED CLOSING')"
+            >
+              x
+            </ButtonUI>
+
             <FormField
               name="pseudo"
               type="text"
               placeholder="Pseudo"
               size="sm"
               label="Pseudo"
-              v-model="pseudo"
+              v-model="form.pseudo"
             />
 
             <FormField
@@ -48,7 +57,7 @@
               placeholder="Email"
               size="sm"
               label="Email"
-              v-model="email"
+              v-model="form.email"
             />
 
             <div>
@@ -58,7 +67,7 @@
                 placeholder="Password"
                 size="sm"
                 label="Password"
-                v-model="password"
+                v-model="form.password"
               />
               <div
                 role="link"
@@ -108,12 +117,12 @@ const ui = {
 };
 
 const showForm = ref(false);
-const isAnimatedPosition = ref(false);
+const isMenuOpen = ref(false);
 const verticalAnimation = ref<string[]>(["duration-500"]);
 const lateralRightAnimation = ref<string[]>(["duration-1s"]);
 const lateralLeftAnimation = ref<string[]>(["duration-1s"]);
 
-watch(isAnimatedPosition, () => console.log(isAnimatedPosition.value));
+watch(isMenuOpen, () => console.log(isMenuOpen.value));
 
 watch(showForm, () => {
   if (showForm.value) {
@@ -124,7 +133,7 @@ watch(showForm, () => {
       lateralLeftAnimation.value.push("translate-x--20");
 
       setTimeout(() => {
-        isAnimatedPosition.value = true;
+        isMenuOpen.value = true;
       }, 1000);
     }, 500);
   } else {
@@ -135,18 +144,25 @@ watch(showForm, () => {
       verticalAnimation.value.pop();
 
       setTimeout(() => {
-        isAnimatedPosition.value = false;
+        isMenuOpen.value = false;
       }, 500);
     }, 1000);
   }
 });
 
-const email = ref("");
-const password = ref("");
-const pseudo = ref("");
+const form = ref({
+  email: "",
+  password: "",
+  pseudo: "",
+});
 
-const toggleForm = () => {
-  showForm.value = !showForm.value;
+const toggleButtonActions = () => {
+  if (!isMenuOpen.value) {
+    showForm.value = !showForm.value;
+    return;
+  }
+
+  console.log("LOGIN FLOW");
 };
 
 const call = async () => {
