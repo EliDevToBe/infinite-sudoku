@@ -168,7 +168,7 @@ import { FormField, MainWrapper } from "@/components";
 import { useAuth, useNavigation } from "@/composables";
 import { onMounted, ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
-import { normalize, verifyEmail, hasProfanity } from "@/utils";
+import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 
@@ -278,10 +278,9 @@ const mainActions = async () => {
     showForm.value = !showForm.value;
     return;
   }
-
   if (showRegister.value) {
-    console.log("REGISTER FLOW");
-  } else {
+    await registerFlow();
+  } else if (!showRegister.value) {
     await loginFlow();
   }
 };
@@ -329,16 +328,38 @@ const validatePassword = (
   return true;
 };
 
-const loginFlow = async () => {
-  const email = normalize(form.value.email);
-  const password = form.value.password.trim();
-
+const validateEmail = (email: string) => {
   try {
     if (!email || !verifyEmail(email)) {
       hasError.value.email = true;
       emailErrors.value = "Invalid email format";
     }
+  } catch (error) {
+    throwFrontError("Error validating email", { email, error });
+  }
+};
 
+const validatePseudo = (pseudo: string) => {
+  try {
+    if (!pseudo || !verifyPseudo(pseudo)) {
+      hasError.value.pseudo = true;
+      pseudoErrors.value = "Invalid pseudo";
+    }
+    if (hasProfanity(pseudo)) {
+      hasError.value.pseudo = true;
+      pseudoErrors.value = "Pseudo contains profanity";
+    }
+  } catch (error) {
+    throwFrontError("Error validating pseudo", { pseudo, error });
+  }
+};
+
+const loginFlow = async () => {
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+
+  try {
+    validateEmail(email);
     validatePassword(password, "loginAction");
 
     if (hasAnyError.value) {
@@ -349,6 +370,25 @@ const loginFlow = async () => {
   } catch (error) {
     Logger.error(error);
   }
+};
+
+const registerFlow = async () => {
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+  const pseudo = form.value.pseudo.trim();
+
+  try {
+    validatePseudo(pseudo);
+    validateEmail(email);
+    validatePassword(password, "register");
+
+    if (hasAnyError.value) {
+      return;
+    }
+
+    console.warn("REGISTER CALL");
+    // await register(email, password, pseudo);
+  } catch (error) {}
 };
 </script>
 
