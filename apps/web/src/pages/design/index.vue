@@ -11,7 +11,7 @@
       <h1 class="text-3xl font-bold sticky top-0">DESIGN VIEW</h1>
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
-          <ButtonUI size="icon">x</ButtonUI>
+          <ButtonUI size="icon" variant="danger">x</ButtonUI>
           <ButtonUI size="sm">Button 2</ButtonUI>
           <ButtonUI size="md">Button 3</ButtonUI>
           <ButtonUI size="lg">Button 4</ButtonUI>
