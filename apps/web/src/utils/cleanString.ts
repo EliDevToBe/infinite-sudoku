@@ -1,4 +1,4 @@
-export const cleanString = (str: string) => {
+export const normalize = (str: string) => {
   return str.trim().toLowerCase();
 };
 
