@@ -1,17 +1,121 @@
 <template>
   <MainWrapper>
     <div :class="ui.content">
-      <div class="h-5 flex flex-col gap-2">
-        <button v-if="!isAuthenticated" :class="ui.button" @click="call">
-          Login test
-        </button>
-        <button v-else :class="ui.button" @click="navigateTo('/play/')">
-          Play
-        </button>
-        <button v-if="isAuthenticated" :class="ui.button" @click="logout">
-          Logout
-        </button>
-        <button
+      <div :class="ui.menuWrapper">
+        <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
+
+        <!-- REGISTER / LOGIN -->
+        <div class="flex flex-col items-center isolate">
+          <div
+            v-if="!isAuthenticated"
+            class="relative flex items-center justify-center transition-ease"
+            :class="verticalAnimation.join(' ')"
+          >
+            <ButtonUI
+              v-if="isFormAppearing"
+              size="sm"
+              class="z--1 absolute transition-transform transition-ease"
+              :class="lateralLeftAnimation.join(' ')"
+              @click="showForm = false"
+            >
+              Cancel
+            </ButtonUI>
+
+            <ButtonUI
+              v-if="!showRegister"
+              class="transition-transform transition-ease"
+              :class="lateralRightAnimation.join(' ')"
+              size="md"
+              @click="toggleButtonActions"
+            >
+              Login
+            </ButtonUI>
+
+            <ButtonUI
+              v-if="showRegister"
+              class="transition-transform transition-ease"
+              :class="lateralRightAnimation.join(' ')"
+              size="md"
+              @click="toggleButtonActions"
+            >
+              Register
+            </ButtonUI>
+          </div>
+
+          <ButtonUI v-else @click="logout"> Logout </ButtonUI>
+
+          <!-- FORM -->
+
+          <Transition
+            enter-active-class="transition-all duration-800 ease-out"
+            enter-from-class="opacity-0 transform -translate-y-2 scale-95"
+            enter-to-class="opacity-100 transform translate-y-0 scale-100"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 transform translate-y-0 scale-100"
+            leave-to-class="opacity-0 transform -translate-y-2 scale-95"
+          >
+            <div v-if="isFormAppearing" :class="ui.formWrapper">
+              <Transition
+                enter-active-class="transition-all translate-y--5 duration-300 ease-in-out"
+                enter-from-class="opacity-50 transform scale-95"
+                enter-to-class="opacity-100 transform translate-y-0 scale-100"
+              >
+                <FormField
+                  v-if="showRegister"
+                  name="pseudo"
+                  type="text"
+                  placeholder="Pseudo"
+                  size="sm"
+                  label="Pseudo"
+                  v-model="form.pseudo"
+                />
+              </Transition>
+
+              <FormField
+                name="email"
+                type="email"
+                placeholder="Email"
+                size="sm"
+                label="Email"
+                v-model="form.email"
+              />
+
+              <div>
+                <FormField
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  size="sm"
+                  label="Password"
+                  v-model="form.password"
+                />
+                <div
+                  v-if="!showRegister"
+                  role="link"
+                  class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
+                  @click="
+                    console.warn('Forgotten password flow not yet implemented')
+                  "
+                >
+                  Forgot password?
+                </div>
+              </div>
+
+              <div
+                v-if="!showRegister"
+                role="link"
+                class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
+                @click="showRegister = true"
+              >
+                Don't have an account? Register
+              </div>
+            </div>
+          </Transition>
+        </div>
+
+        <ButtonUI
+          size="sm"
+          v-if="isAuthenticated"
           @click="
             () => {
               console.log('CLICKED');
@@ -19,36 +123,94 @@
             }
           "
         >
-          GO DESIGN
-        </button>
+          DESIGN
+        </ButtonUI>
       </div>
     </div>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { MainWrapper } from "@/components";
+import { FormField, MainWrapper } from "@/components";
 import { useAuth, useNavigation } from "@/composables";
-import { onMounted } from "vue";
+import { onMounted, ref, watch, Transition } from "vue";
+import { ButtonUI } from "@/components/ui";
 
 const { login, logout, isAuthenticated, initializeAuth } = useAuth();
 const { navigateTo } = useNavigation();
 
 const ui = {
-  content: "flex flex-col h-full items-center justify-center bg-cyan-200",
+  content: "flex justify-center items-center h-full",
   title: "text-3xl font-bold mb-8",
-  button: "bg-red-500 text-white p-2 rounded-md cursor-pointer",
+  menuWrapper: "flex flex-col gap-2 items-center w-75 h-75",
+  formWrapper:
+    "flex flex-col w-45 p-2 gap-2 items-center bg-dTheme-light absolute z-1 rounded-sm",
 };
 
-const call = async () => {
-  await login("admin@rncp.com", "<this is not the password>");
-};
+const showForm = ref(false);
+const showRegister = ref(false);
+const isFormAppearing = ref(false);
+
+const isMenuOpen = ref(false);
+
+const verticalAnimation = ref<string[]>(["duration-500"]);
+const lateralRightAnimation = ref<string[]>(["duration-800"]);
+const lateralLeftAnimation = ref<string[]>(["duration-800"]);
+
+watch(showForm, () => {
+  if (showForm.value) {
+    verticalAnimation.value.push("translate-y-44");
+
+    isFormAppearing.value = true;
+    setTimeout(() => {
+      lateralRightAnimation.value.push("translate-x-20");
+      lateralLeftAnimation.value.push("translate-x--20");
+
+      setTimeout(() => {
+        isMenuOpen.value = true;
+      }, 800);
+    }, 500);
+  } else {
+    lateralRightAnimation.value.pop();
+    lateralLeftAnimation.value.pop();
+
+    setTimeout(() => {
+      verticalAnimation.value.pop();
+
+      isFormAppearing.value = false;
+
+      setTimeout(() => {
+        isMenuOpen.value = false;
+        showRegister.value = false;
+      }, 500);
+    }, 800);
+  }
+});
+
+const form = ref({
+  email: "",
+  password: "",
+  pseudo: "",
+});
 
 onMounted(async () => {
   if (!isAuthenticated.value) {
     await initializeAuth();
   }
 });
+
+const toggleButtonActions = () => {
+  if (!isMenuOpen.value) {
+    showForm.value = !showForm.value;
+    return;
+  }
+
+  if (showRegister.value) {
+    console.log("REGISTER FLOW");
+  } else {
+    console.log("LOGIN FLOW");
+  }
+};
 </script>
 
 <style scoped lang=""></style>
