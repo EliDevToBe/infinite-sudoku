@@ -16,9 +16,9 @@
               size="sm"
               class="z--1 absolute transition-transform transition-ease"
               :class="lateralLeftAnimation.join(' ')"
-              @click="showForm = false"
+              @click="secondaryActions"
             >
-              Cancel
+              {{ showRegister ? "<<<" : "Cancel" }}
             </ButtonUI>
 
             <ButtonUI
@@ -26,7 +26,7 @@
               class="transition-transform transition-ease"
               :class="lateralRightAnimation.join(' ')"
               size="md"
-              @click="toggleButtonActions"
+              @click="mainActions"
             >
               Login
             </ButtonUI>
@@ -36,7 +36,7 @@
               class="transition-transform transition-ease"
               :class="lateralRightAnimation.join(' ')"
               size="md"
-              @click="toggleButtonActions"
+              @click="mainActions"
             >
               Register
             </ButtonUI>
@@ -123,21 +123,25 @@
                   Don't have an account? Register
                 </div>
               </div>
-              <span
-                v-if="hasError.email"
-                class="text-lTheme-danger text-[9px] text-center"
-                >{{ emailErrors }}</span
-              >
-              <span
-                v-if="hasError.password"
-                class="text-lTheme-danger text-[9px] text-center"
-                >{{ passwordErrors }}</span
-              >
-              <span
-                v-if="hasError.pseudo"
-                class="text-lTheme-danger text-[9px] text-center"
-                >{{ pseudoErrors }}</span
-              >
+
+              <!-- ERRORS -->
+              <div class="flex flex-col">
+                <span
+                  v-if="hasError.email"
+                  class="text-lTheme-danger text-[9px] text-center"
+                  >{{ emailErrors }}</span
+                >
+                <span
+                  v-if="hasError.password"
+                  class="text-lTheme-danger text-[9px] text-center"
+                  >{{ passwordErrors }}</span
+                >
+                <span
+                  v-if="hasError.pseudo"
+                  class="text-lTheme-danger text-[9px] text-center"
+                  >{{ pseudoErrors }}</span
+                >
+              </div>
             </form>
           </Transition>
         </div>
@@ -189,6 +193,7 @@ const verticalAnimation = ref<string[]>(["duration-500"]);
 const lateralRightAnimation = ref<string[]>(["duration-400"]);
 const lateralLeftAnimation = ref<string[]>(["duration-400"]);
 
+// Handles animations
 watch(showForm, () => {
   if (showForm.value) {
     verticalAnimation.value.push("translate-y-44");
@@ -219,22 +224,28 @@ watch(showForm, () => {
   }
 });
 
+// When menu is closed, reset state
 watch(isMenuOpen, () => {
-  // When menu is closed, reset state
   if (!isMenuOpen.value) {
     form.value.email = "";
     form.value.password = "";
     form.value.pseudo = "";
 
-    hasError.value.email = false;
-    hasError.value.password = false;
-    hasError.value.pseudo = false;
+    resetErrors();
 
     emailErrors.value = "";
     passwordErrors.value = "";
     pseudoErrors.value = "";
   }
 });
+
+const resetErrors = () => {
+  hasError.value.email = false;
+  hasError.value.password = false;
+  hasError.value.pseudo = false;
+};
+
+watch(showRegister, resetErrors);
 
 const form = ref({
   email: "",
@@ -262,7 +273,7 @@ onMounted(async () => {
   }
 });
 
-const toggleButtonActions = async () => {
+const mainActions = async () => {
   if (!isMenuOpen.value) {
     showForm.value = !showForm.value;
     return;
@@ -272,6 +283,18 @@ const toggleButtonActions = async () => {
     console.log("REGISTER FLOW");
   } else {
     await loginFlow();
+  }
+};
+
+const secondaryActions = () => {
+  if (!showRegister.value) {
+    showForm.value = false;
+    return;
+  }
+
+  if (showRegister.value) {
+    showRegister.value = false;
+    return;
   }
 };
 
