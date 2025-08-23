@@ -1,4 +1,8 @@
-import { normalize, verifyEmail, verifyPseudo } from "./cleanString";
-import { hasProfanity } from "./profanity";
+import {
+  hasProfanity,
+  normalize,
+  verifyEmail,
+  verifyPseudo,
+} from "./cleanString";
 
-export { hasProfanity, normalize, verifyEmail, verifyPseudo };
+export { normalize, verifyEmail, verifyPseudo, hasProfanity };
