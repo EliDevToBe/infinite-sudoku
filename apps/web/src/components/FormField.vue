@@ -8,6 +8,7 @@
       :type="type"
       :placeholder="placeholder"
       :name="name"
+      :hasError="hasError"
     />
   </div>
 </template>
@@ -23,6 +24,7 @@ type Props = {
   placeholder?: string;
   size?: "sm" | "md" | "lg";
   horizontal?: boolean;
+  hasError?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {

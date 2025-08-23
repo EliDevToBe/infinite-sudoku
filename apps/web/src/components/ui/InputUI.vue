@@ -66,7 +66,7 @@ const ui = {
     secondary: `bg-dTheme-surfaceOther text-dTheme-font 
       md:hover:shadow-sm md:hover:shadow-dTheme-accent`,
   },
-  hasError: "box-shadow: 0 0 2px 2px var(--colors-lTheme-danger)",
+  hasError: "box-shadow: inset 1px -1px 5px var(--colors-lTheme-danger)",
 };
 </script>
 
