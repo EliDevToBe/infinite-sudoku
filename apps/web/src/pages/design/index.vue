@@ -41,6 +41,7 @@
             placeholder="Enter your name"
             size="sm"
             variant="secondary"
+            hasError
           />
         </div>
         <div :class="ui.formContainer">

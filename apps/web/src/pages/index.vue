@@ -45,7 +45,6 @@
           <ButtonUI v-else @click="logout"> Logout </ButtonUI>
 
           <!-- FORM -->
-
           <Transition
             enter-active-class="transition-all duration-800 ease-out"
             enter-from-class="opacity-0 transform -translate-y-2 scale-95"
@@ -54,62 +53,67 @@
             leave-from-class="opacity-100 transform translate-y-0 scale-100"
             leave-to-class="opacity-0 transform -translate-y-2 scale-95"
           >
-            <div v-if="isFormAppearing" :class="ui.formWrapper">
-              <Transition
-                enter-active-class="transition-all translate-y--5 duration-300 ease-in-out"
-                enter-from-class="opacity-50 transform scale-95"
-                enter-to-class="opacity-100 transform translate-y-0 scale-100"
-              >
-                <FormField
-                  v-if="showRegister"
-                  name="pseudo"
-                  type="text"
-                  placeholder="Pseudo"
-                  size="sm"
-                  label="Pseudo"
-                  v-model="form.pseudo"
-                />
-              </Transition>
+            <form v-if="isFormAppearing" :class="ui.formWrapper">
+              <div :class="ui.formContent">
+                <Transition
+                  enter-active-class="transition-all translate-y--5 duration-300 ease-in-out"
+                  enter-from-class="opacity-50 transform scale-95"
+                  enter-to-class="opacity-100 transform translate-y-0 scale-100"
+                >
+                  <FormField
+                    v-if="showRegister"
+                    name="pseudo"
+                    type="text"
+                    placeholder="Pseudo"
+                    size="sm"
+                    label="Pseudo"
+                    v-model="form.pseudo"
+                  />
+                </Transition>
 
-              <FormField
-                name="email"
-                type="email"
-                placeholder="Email"
-                size="sm"
-                label="Email"
-                v-model="form.email"
-              />
-
-              <div>
                 <FormField
-                  name="password"
-                  type="password"
-                  placeholder="Password"
+                  name="email"
+                  type="email"
+                  placeholder="Email"
                   size="sm"
-                  label="Password"
-                  v-model="form.password"
+                  label="Email"
+                  v-model="form.email"
                 />
+
+                <div>
+                  <FormField
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    size="sm"
+                    label="Password"
+                    v-model="form.password"
+                  />
+                  <div
+                    v-if="!showRegister"
+                    role="link"
+                    class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
+                    @click="
+                      console.warn(
+                        'Forgotten password flow not yet implemented'
+                      )
+                    "
+                  >
+                    Forgot password?
+                  </div>
+                </div>
+
                 <div
                   v-if="!showRegister"
                   role="link"
                   class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
-                  @click="
-                    console.warn('Forgotten password flow not yet implemented')
-                  "
+                  @click="showRegister = true"
                 >
-                  Forgot password?
+                  Don't have an account? Register
                 </div>
               </div>
-
-              <div
-                v-if="!showRegister"
-                role="link"
-                class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
-                @click="showRegister = true"
-              >
-                Don't have an account? Register
-              </div>
-            </div>
+              <span class="text-lTheme-danger text-[9px]">error</span>
+            </form>
           </Transition>
         </div>
 
@@ -143,8 +147,8 @@ const ui = {
   content: "flex justify-center items-center h-full",
   title: "text-3xl font-bold mb-8",
   menuWrapper: "flex flex-col gap-2 items-center w-75 h-75",
-  formWrapper:
-    "flex flex-col w-45 p-2 gap-2 items-center bg-dTheme-light absolute z-1 rounded-sm",
+  formWrapper: `flex flex-col w-45 items-center absolute z-1 rounded-sm`,
+  formContent: `flex flex-col w-full p-2 gap-2 items-center bg-dTheme-light rounded-sm`,
 };
 
 const showForm = ref(false);
