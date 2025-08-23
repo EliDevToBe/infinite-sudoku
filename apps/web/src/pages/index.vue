@@ -172,7 +172,7 @@ import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 
-const { logout, isAuthenticated, initializeAuth, login } = useAuth();
+const { logout, isAuthenticated, initializeAuth, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 
 const ui = {
@@ -386,8 +386,7 @@ const registerFlow = async () => {
       return;
     }
 
-    console.warn("REGISTER CALL");
-    // await register(email, password, pseudo);
+    await register({ email, password, pseudo });
   } catch (error) {}
 };
 </script>
