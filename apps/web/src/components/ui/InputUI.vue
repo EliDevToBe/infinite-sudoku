@@ -44,14 +44,15 @@ const ui = {
     lg: "min-w-24 h-12 text-lg",
   },
   light: {
-    primary: "bg-lTheme-light text-lTheme-font ",
-    secondary:
-      "bg-dTheme-light text-lTheme-accent outline-[1px] outline-lTheme-light  outline-lTheme-font hover:shadow-sm hover:shadow-lTheme-accent",
+    primary: `bg-lTheme-light text-lTheme-font `,
+    secondary: `bg-dTheme-light text-lTheme-accent 
+        outline-[1px] outline-lTheme-light outline-lTheme-font 
+      md:hover:shadow-sm md:hover:shadow-lTheme-accent`,
   },
   dark: {
-    primary: "bg-dTheme-surfaceOther text-dTheme-font ",
-    secondary:
-      "bg-dTheme-surfaceOther text-dTheme-font hover:shadow-sm hover:shadow-dTheme-accent",
+    primary: `bg-dTheme-surfaceOther text-dTheme-font `,
+    secondary: `bg-dTheme-surfaceOther text-dTheme-font 
+      md:hover:shadow-sm md:hover:shadow-dTheme-accent`,
   },
 };
 </script>
@@ -62,7 +63,15 @@ const ui = {
   box-shadow: inset 1px -1px 1px #2f3e46;
   transition: all 150 ease-in-out;
 }
-.inset:hover {
+
+@media (hover: hover) {
+  .inset:hover {
+    box-shadow: inset 2px -1px 4px #228cdb;
+    transition: all 150 ease-in-out;
+  }
+}
+
+.inset:focus {
   box-shadow: inset 2px -1px 4px #228cdb;
   transition: all 150 ease-in-out;
 }

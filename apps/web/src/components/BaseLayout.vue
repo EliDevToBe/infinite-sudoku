@@ -1,5 +1,5 @@
 <template>
-  <main
+  <div
     class="w-screen h-screen flex flex-col"
     :class="{
       'bg-[linear-gradient(to_bottom,rgba(245,246,244,1)_0%,rgba(214,218,210,1)_100%)] ':
@@ -19,7 +19,7 @@
     <footer class="sticky bottom-0 flex flex-col items-center justify-center">
       <slot name="footer"></slot>
     </footer>
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">

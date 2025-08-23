@@ -39,17 +39,17 @@ const ui = {
     primary: `
        bg-lTheme-light text-lTheme-font
        shadow-xs shadow-lTheme-font
-       hover:shadow-sm hover:shadow-lTheme-accent
+       md:hover:shadow-sm md:hover:shadow-lTheme-accent
         active:bg-lTheme-surfaceOther`,
     secondary: `
         bg-lTheme-surfaceOther text-lTheme-accent
         outline-[1px] outline-lTheme-light outline-lTheme-font
-      hover:shadow-sm hover:shadow-lTheme-accent
+      md:hover:shadow-sm md:hover:shadow-lTheme-accent
       active:bg-lTheme-light`,
     danger: `
       bg-lTheme-danger text-lTheme-surface
       shadow-xs shadow-lTheme-font
-      hover:shadow-sm hover:shadow-lTheme-accent
+      md:hover:shadow-sm md:hover:shadow-lTheme-accent
         active:bg-lTheme-dangerOther`,
     ghost: ``,
   },
@@ -57,20 +57,20 @@ const ui = {
     primary: `
       bg-dTheme-surfaceOther text-dTheme-font
       shadow-xs shadow-dTheme-surface
-      hover:shadow-sm hover:shadow-dTheme-accent
+      md:hover:shadow-sm md:hover:shadow-dTheme-accent
       active:bg-dTheme-surface active:text-dTheme-light`,
     secondary: `
       bg-dTheme-surfaceOther text-dTheme-font
-      hover:shadow-sm hover:shadow-dTheme-accent
+      md:hover:shadow-sm md:hover:shadow-dTheme-accent
       active:bg-dTheme-surface active:text-dTheme-light`,
     danger: `
       bg-dTheme-danger text-dTheme-font
       shadow-xs shadow-dTheme-surface
-      hover:shadow-sm hover:shadow-dTheme-accent
+      md:hover:shadow-sm md:hover:shadow-dTheme-accent
       active:bg-dTheme-dangerOther active:text-dTheme-light`,
-    ghost: `text-gray-500 outline-none outline-gray-600 hover:bg-gray-500 hover:bg-opacity-15 `,
+    ghost: `text-gray-500 outline-none outline-gray-600 md:hover:bg-gray-500 md:hover:bg-opacity-15 `,
   },
 };
 </script>
 
-<style scoped lang=""></style>
+<style scoped lang="css"></style>

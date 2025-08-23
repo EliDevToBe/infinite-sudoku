@@ -2,6 +2,7 @@
   <div :class="{ 'flex flex-row gap-2 items-center': horizontal }">
     <label :for="name" :class="labelClass">{{ label }}</label>
     <InputUI
+      :id="name"
       :size="size"
       v-model="model"
       :type="type"
@@ -35,9 +36,9 @@ const model = defineModel<string>();
 
 const ui = {
   label: {
-    sm: "text-xs text-lTheme-font block",
-    md: "text-sm text-lTheme-font block",
-    lg: "text-md text-lTheme-font block",
+    sm: "text-xs text-black block",
+    md: "text-sm text-black block",
+    lg: "text-md text-black block",
   },
 };
 
