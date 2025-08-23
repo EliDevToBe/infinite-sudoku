@@ -68,6 +68,8 @@
                     size="sm"
                     label="Pseudo"
                     v-model="form.pseudo"
+                    :hasError="hasError.pseudo"
+                    @input="hasError.pseudo = false"
                   />
                 </Transition>
 
@@ -78,6 +80,8 @@
                   size="sm"
                   label="Email"
                   v-model="form.email"
+                  :hasError="hasError.email"
+                  @input="hasError.email = false"
                 />
 
                 <div>
@@ -88,6 +92,13 @@
                     size="sm"
                     label="Password"
                     v-model="form.password"
+                    :hasError="hasError.password"
+                    @input="
+                      validatePassword(
+                        form.password,
+                        showRegister ? 'register' : 'login'
+                      )
+                    "
                   />
                   <div
                     v-if="!showRegister"
@@ -112,7 +123,21 @@
                   Don't have an account? Register
                 </div>
               </div>
-              <span class="text-lTheme-danger text-[9px]">error</span>
+              <span
+                v-if="hasError.email"
+                class="text-lTheme-danger text-[9px] text-center"
+                >{{ emailErrors }}</span
+              >
+              <span
+                v-if="hasError.password"
+                class="text-lTheme-danger text-[9px] text-center"
+                >{{ passwordErrors }}</span
+              >
+              <span
+                v-if="hasError.pseudo"
+                class="text-lTheme-danger text-[9px] text-center"
+                >{{ pseudoErrors }}</span
+              >
             </form>
           </Transition>
         </div>
@@ -137,9 +162,9 @@
 <script setup lang="ts">
 import { FormField, MainWrapper } from "@/components";
 import { useAuth, useNavigation } from "@/composables";
-import { onMounted, ref, watch, Transition } from "vue";
+import { onMounted, ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
-import { normalize, verifyEmail } from "@/utils/cleanString";
+import { normalize, verifyEmail, hasProfanity } from "@/utils";
 import { throwFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 
@@ -161,8 +186,8 @@ const isFormAppearing = ref(false);
 const isMenuOpen = ref(false);
 
 const verticalAnimation = ref<string[]>(["duration-500"]);
-const lateralRightAnimation = ref<string[]>(["duration-800"]);
-const lateralLeftAnimation = ref<string[]>(["duration-800"]);
+const lateralRightAnimation = ref<string[]>(["duration-400"]);
+const lateralLeftAnimation = ref<string[]>(["duration-400"]);
 
 watch(showForm, () => {
   if (showForm.value) {
@@ -175,7 +200,7 @@ watch(showForm, () => {
 
       setTimeout(() => {
         isMenuOpen.value = true;
-      }, 800);
+      }, 400);
     }, 500);
   } else {
     lateralRightAnimation.value.pop();
@@ -190,7 +215,24 @@ watch(showForm, () => {
         isMenuOpen.value = false;
         showRegister.value = false;
       }, 500);
-    }, 800);
+    }, 400);
+  }
+});
+
+watch(isMenuOpen, () => {
+  // When menu is closed, reset state
+  if (!isMenuOpen.value) {
+    form.value.email = "";
+    form.value.password = "";
+    form.value.pseudo = "";
+
+    hasError.value.email = false;
+    hasError.value.password = false;
+    hasError.value.pseudo = false;
+
+    emailErrors.value = "";
+    passwordErrors.value = "";
+    pseudoErrors.value = "";
   }
 });
 
@@ -200,11 +242,19 @@ const form = ref({
   pseudo: "",
 });
 
+const hasAnyError = computed(() => {
+  return Object.values(hasError.value).some((error) => error);
+});
+
 const hasError = ref({
   email: false,
   password: false,
   pseudo: false,
 });
+
+const pseudoErrors = ref();
+const emailErrors = ref();
+const passwordErrors = ref();
 
 onMounted(async () => {
   if (!isAuthenticated.value) {
@@ -225,6 +275,37 @@ const toggleButtonActions = async () => {
   }
 };
 
+const validatePassword = (
+  password: string,
+  context: "login" | "loginAction" | "register"
+) => {
+  hasError.value.password = false;
+
+  if (!password) {
+    hasError.value.password = true;
+    passwordErrors.value = "Password is required";
+    return false;
+  }
+
+  if (context === "register" || context === "loginAction") {
+    if (password.length < 8 || password.length > 32) {
+      hasError.value.password = true;
+      passwordErrors.value = "Password must be 8-32 chars long";
+      return false;
+    }
+  }
+
+  if (context === "register") {
+    if (!/[A-Z]/.test(password)) {
+      hasError.value.password = true;
+      passwordErrors.value = "Password requires at least 1 uppercase";
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const loginFlow = async () => {
   const email = normalize(form.value.email);
   const password = form.value.password.trim();
@@ -232,16 +313,16 @@ const loginFlow = async () => {
   try {
     if (!email || !verifyEmail(email)) {
       hasError.value.email = true;
-      throwFrontError("Invalid email format", { email });
-    }
-    if (!password) {
-      hasError.value.password = true;
-      throwFrontError("Password is required", { password });
+      emailErrors.value = "Invalid email format";
     }
 
-    const response = await login(email, password);
+    validatePassword(password, "loginAction");
 
-    console.log("LOGIN RESPONSE", response);
+    if (hasAnyError.value) {
+      return;
+    }
+
+    await login(email, password);
   } catch (error) {
     Logger.error(error);
   }
