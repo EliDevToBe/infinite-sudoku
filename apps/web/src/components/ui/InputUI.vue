@@ -42,15 +42,16 @@ const errorClass = computed(() => {
 
 const inputClass = computed(() => {
   return [
-    ui.size[props.size],
-    ui[theme.value][props.variant],
     ui.base,
+    ui.size[props.size],
     errorClass.value,
+    props.disabled ? ui.disabled : ui[theme.value][props.variant],
   ].join(" ");
 });
 
 const ui = {
   base: "rounded-md cursor-pointer transition-all duration-150 ease-in-out p-2",
+  disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
     icon: "min-w-6 h-6 text-xs justify-center items-center flex",
     sm: "min-w-15 h-6 text-xs",

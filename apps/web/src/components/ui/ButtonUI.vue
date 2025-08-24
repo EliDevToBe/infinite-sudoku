@@ -43,7 +43,7 @@ const buttonClass = computed(() => {
 
 const ui = {
   base: "gap-1 flex items-center justify-center cursor-pointer text-center transition-all duration-150 ease-in-out",
-  disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700 ",
+  disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
