@@ -5,7 +5,7 @@ export const normalize = (str: string) => {
 };
 
 export const verifyEmail = (email: string) => {
-  return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+  return email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
 };
 
 export const verifyPseudo = (pseudo: string) => {
