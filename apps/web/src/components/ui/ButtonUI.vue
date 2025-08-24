@@ -9,7 +9,11 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <SpinnerIcon v-if="isLoading" />
+      <VueIcon
+        v-if="isLoading"
+        name="svg-spinners:ring-resize"
+        :color="COLORS.lTheme.accent"
+      />
     </Transition>
   </button>
 </template>
@@ -17,7 +21,7 @@
 <script setup lang="ts">
 import { withDefaults, defineProps, computed } from "vue";
 import { useTheme } from "@/composables";
-import SpinnerIcon from "./SpinnerIcon.vue";
+import { COLORS } from "@/utils/constants";
 
 const { theme } = useTheme();
 

@@ -1,15 +1,17 @@
 <template>
-  <BaseLayout>
-    <template #header>
-      <MainTitle />
-    </template>
+  <VueApp>
+    <BaseLayout>
+      <template #header>
+        <MainTitle />
+      </template>
 
-    <MainWrapper>
-      <RouterView />
-    </MainWrapper>
+      <MainWrapper>
+        <RouterView />
+      </MainWrapper>
 
-    <template #footer> FOOTER </template>
-  </BaseLayout>
+      <template #footer> FOOTER </template>
+    </BaseLayout>
+  </VueApp>
 </template>
 
 <script setup lang="ts">

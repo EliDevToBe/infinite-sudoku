@@ -75,19 +75,19 @@ const ui = {
 <style scoped lang="css">
 .inset {
   outline: none;
-  box-shadow: inset 1px -1px 1px #2f3e46;
+  box-shadow: inset 1px -1px 1px var(--colors-lTheme-font);
   transition: all 150 ease-in-out;
 }
 
 @media (hover: hover) {
   .inset:hover {
-    box-shadow: inset 2px -1px 4px #228cdb;
+    box-shadow: inset 2px -1px 4px var(--colors-lTheme-accent);
     transition: all 150 ease-in-out;
   }
 }
 
 .inset:focus {
-  box-shadow: inset 2px -1px 4px #228cdb;
+  box-shadow: inset 2px -1px 4px var(--colors-lTheme-accent);
   transition: all 150 ease-in-out;
 }
 </style>

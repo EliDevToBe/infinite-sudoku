@@ -1,5 +1,18 @@
 <template>
   <MainWrapper>
+    <template #sub-header v-if="isAdmin">
+      <ButtonUI
+        size="sm"
+        @click="
+          () => {
+            navigateTo('/design/');
+          }
+        "
+      >
+        DESIGN
+      </ButtonUI>
+    </template>
+
     <div :class="ui.content">
       <div :class="ui.menuWrapper">
         <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
@@ -174,19 +187,6 @@
             </form>
           </Transition>
         </div>
-
-        <ButtonUI
-          size="sm"
-          v-if="isAuthenticated"
-          @click="
-            () => {
-              console.log('CLICKED');
-              navigateTo('/design/');
-            }
-          "
-        >
-          DESIGN
-        </ButtonUI>
       </div>
     </div>
   </MainWrapper>
@@ -194,13 +194,14 @@
 
 <script setup lang="ts">
 import { FormField, MainWrapper } from "@/components";
-import { useAuth, useNavigation } from "@/composables";
+import { useAuth, useNavigation, useUser } from "@/composables";
 import { onMounted, ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
 import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 
+const { isAdmin } = useUser();
 const { logout, isAuthenticated, initializeAuth, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 

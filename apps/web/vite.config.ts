@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from "node:url";
+import ui from "@nuxt/ui/vite";
 import vue from "@vitejs/plugin-vue";
 import UnoCSS from "unocss/vite";
 import VueRouter from "unplugin-vue-router/vite";
@@ -11,6 +12,9 @@ export default defineConfig({
     VueRouter(),
     vue(),
     // vueDevTools(),
+    ui({
+      prefix: "Vue",
+    }),
     UnoCSS({ configFile: "./uno.config.ts" }),
   ],
   resolve: {
