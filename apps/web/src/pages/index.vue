@@ -27,6 +27,8 @@
               :class="lateralRightAnimation.join(' ')"
               size="md"
               @click="mainActions"
+              :isLoading="isMainActionLoading"
+              :disabled="isFormLocked"
             >
               Login
             </ButtonUI>
@@ -37,12 +39,16 @@
               :class="lateralRightAnimation.join(' ')"
               size="md"
               @click="mainActions"
+              :isLoading="isMainActionLoading"
+              :disabled="isFormLocked"
             >
               Register
             </ButtonUI>
           </div>
 
-          <ButtonUI v-else @click="logout"> Logout </ButtonUI>
+          <ButtonUI v-else @click="logoutFlow" :isLoading="isLogoutLoading">
+            Logout
+          </ButtonUI>
 
           <!-- FORM -->
           <Transition
@@ -70,6 +76,7 @@
                     v-model="form.pseudo"
                     :hasError="hasError.pseudo"
                     @input="validatePseudo(form.pseudo)"
+                    :disabled="isFormLocked"
                   />
                 </Transition>
 
@@ -87,6 +94,7 @@
                       showRegister ? 'register' : 'login'
                     )
                   "
+                  :disabled="isFormLocked"
                 />
 
                 <div class="flex flex-col gap-2">
@@ -105,6 +113,7 @@
                           showRegister ? 'register' : 'login'
                         )
                       "
+                      :disabled="isFormLocked"
                     />
                     <div
                       v-if="!showRegister"
@@ -130,6 +139,7 @@
                     v-model="form.confirmPassword"
                     :hasError="hasError.confirmPassword"
                     @input="confirmPasswords"
+                    :disabled="isFormLocked"
                   />
                 </div>
 
@@ -211,10 +221,16 @@ const showRegister = ref(false);
 const isFormAppearing = ref(false);
 const isMenuOpen = ref(false);
 
+const isMainActionLoading = ref(false);
+const isLogoutLoading = ref(false);
+const isFormLocked = computed(() => {
+  return isMainActionLoading.value || isLogoutLoading.value;
+});
+
 // Handles animations
 watch(showForm, () => {
   if (showForm.value) {
-    verticalAnimation.value.push("translate-y-55");
+    verticalAnimation.value.push("translate-y-58");
 
     isFormAppearing.value = true;
     setTimeout(() => {
@@ -335,6 +351,7 @@ const mainActions = async () => {
     showForm.value = !showForm.value;
     return;
   }
+
   if (showRegister.value) {
     await registerFlow();
   } else if (!showRegister.value) {
@@ -498,6 +515,8 @@ const validatePseudo = (pseudo: string) => {
 };
 
 const loginFlow = async () => {
+  isMainActionLoading.value = true;
+
   const email = normalize(form.value.email);
   const password = form.value.password.trim();
 
@@ -509,13 +528,20 @@ const loginFlow = async () => {
       return;
     }
 
-    await login(email, password);
+    const success = await login(email, password);
+    if (success) {
+      navigateTo("/play/");
+    }
   } catch (error) {
     Logger.error(error);
+  } finally {
+    isMainActionLoading.value = false;
   }
 };
 
 const registerFlow = async () => {
+  isMainActionLoading.value = true;
+
   const email = normalize(form.value.email);
   const password = form.value.password.trim();
   const pseudo = form.value.pseudo.trim();
