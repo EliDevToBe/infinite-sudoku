@@ -13,7 +13,7 @@ export default defineConfig({
     vue(),
     // vueDevTools(),
     ui({
-      prefix: "Nuxt",
+      prefix: "Vue",
     }),
     UnoCSS({ configFile: "./uno.config.ts" }),
   ],

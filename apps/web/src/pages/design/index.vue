@@ -19,7 +19,7 @@
         <div :class="ui.buttonContainer">
           <ButtonUI size="icon-xs" variant="ghost">x</ButtonUI>
           <ButtonUI size="sm" variant="secondary">Button 2</ButtonUI>
-          <ButtonUI size="md">Button 3</ButtonUI>
+          <ButtonUI size="md" isLoading>Loading</ButtonUI>
           <ButtonUI size="lg" variant="secondary">Button 4</ButtonUI>
         </div>
       </div>
