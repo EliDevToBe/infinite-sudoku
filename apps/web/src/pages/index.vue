@@ -8,7 +8,7 @@
         <div class="flex flex-col items-center isolate">
           <div
             v-if="!isAuthenticated"
-            class="relative flex items-center justify-center transition-ease"
+            class="relative flex items-center justify-center transition-ease z-2"
             :class="verticalAnimation.join(' ')"
           >
             <ButtonUI
