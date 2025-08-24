@@ -2,7 +2,7 @@
   <input
     :type="type"
     :class="inputClass"
-    class="inset"
+    v-bind="disabled ? null : { class: 'inset' }"
     :placeholder="placeholder"
     :autocomplete="autocomplete"
     v-model="model"
