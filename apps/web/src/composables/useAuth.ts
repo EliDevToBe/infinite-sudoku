@@ -56,7 +56,7 @@ export const useAuth = () => {
 
       if (token) {
         setAccessToken(token);
-        console.debug("✅ Successfully registered");
+        console.debug("✅ Registered");
       }
 
       setCurrentUser(data.user);
@@ -94,12 +94,14 @@ export const useAuth = () => {
 
       if (token) {
         setAccessToken(token);
-        console.debug("✅ Successfully logged in");
+        console.debug("✅ Logged in");
       }
 
       setCurrentUser(data.user);
+      return true;
     } catch (error) {
       Logger.error(error);
+      return false;
     }
   };
 
@@ -109,12 +111,15 @@ export const useAuth = () => {
         method: "POST",
         credentials: "include",
       });
-      console.debug("✅ Successfully logged out");
-    } catch (error) {
-      console.error("Failed to logout", error);
-    } finally {
+
       clearAccessToken();
       setCurrentUser(null);
+      console.debug("✅ Logged out");
+
+      return true;
+    } catch (error) {
+      throwFrontError("Failed to logout", { error });
+      return false;
     }
   };
 
