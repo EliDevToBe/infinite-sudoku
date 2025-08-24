@@ -1,9 +1,6 @@
 <template>
   <MainWrapper>
-    <template
-      #sub-header
-      v-if="currentUser ? currentUser.role === 'admin' : false"
-    >
+    <template #sub-header v-if="isAdmin">
       <ButtonUI
         size="sm"
         @click="
@@ -204,7 +201,7 @@ import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 
-const { currentUser } = useUser();
+const { isAdmin } = useUser();
 const { logout, isAuthenticated, initializeAuth, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 

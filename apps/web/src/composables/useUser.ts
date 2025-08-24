@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 type LoggedUser = {
   id: string;
@@ -14,5 +14,9 @@ export const useUser = () => {
     currentUser.value = user;
   };
 
-  return { currentUser, setCurrentUser };
+  const isAdmin = computed(() => {
+    return currentUser.value ? currentUser.value.role === "admin" : false;
+  });
+
+  return { currentUser, setCurrentUser, isAdmin };
 };
