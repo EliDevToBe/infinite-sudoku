@@ -9,6 +9,7 @@
       :placeholder="placeholder"
       :name="name"
       :hasError="hasError"
+      :disabled="disabled"
     />
   </div>
 </template>
@@ -25,6 +26,7 @@ type Props = {
   size?: "sm" | "md" | "lg";
   horizontal?: boolean;
   hasError?: boolean;
+  disabled?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
