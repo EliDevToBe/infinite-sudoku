@@ -530,9 +530,25 @@ const registerFlow = async () => {
       return;
     }
 
-    await register({ email, password, pseudo });
+    const success = await register({ email, password, pseudo });
+    if (success) {
+      navigateTo("/play/");
+    }
   } catch (error) {
     Logger.error(error);
+  } finally {
+    isMainActionLoading.value = false;
+  }
+};
+
+const logoutFlow = async () => {
+  isLogoutLoading.value = true;
+  try {
+    await logout();
+  } catch (error) {
+    Logger.error(error);
+  } finally {
+    isLogoutLoading.value = false;
   }
 };
 </script>
