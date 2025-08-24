@@ -12,7 +12,7 @@
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
           <ButtonUI size="icon" variant="danger">x</ButtonUI>
-          <ButtonUI size="sm">Button 2</ButtonUI>
+          <ButtonUI size="sm" disabled>Disabled</ButtonUI>
           <ButtonUI size="md">Button 3</ButtonUI>
           <ButtonUI size="lg">Button 4</ButtonUI>
         </div>
@@ -27,9 +27,10 @@
       <FormField
         name="pseudo"
         type="text"
-        placeholder="Pseudo"
+        placeholder="DISABLED"
         size="sm"
         label="Pseudo"
+        disabled
       />
 
       <form :class="ui.formWrapper">
@@ -41,6 +42,7 @@
             placeholder="Enter your name"
             size="sm"
             variant="secondary"
+            hasError
           />
         </div>
         <div :class="ui.formContainer">

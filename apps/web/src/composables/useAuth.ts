@@ -24,6 +24,49 @@ export const useAuth = () => {
     accessToken.value = null;
   };
 
+  const register = async (payload: {
+    email: string;
+    password: string;
+    pseudo: string;
+  }) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/register`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        },
+      );
+
+      const data = await response.json();
+      const message = data.clientMessage;
+
+      if (!response.ok && message) {
+        throwFrontError("Failed to register", {
+          email: payload.email,
+          message,
+        });
+      }
+
+      const token = response.headers.get("access-token");
+
+      if (token) {
+        setAccessToken(token);
+        console.debug("✅ Registered");
+      }
+
+      setCurrentUser(data.user);
+      return true;
+    } catch (error) {
+      Logger.error(error);
+      return false;
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       const response = await fetch(
@@ -52,12 +95,14 @@ export const useAuth = () => {
 
       if (token) {
         setAccessToken(token);
-        console.debug("✅ Successfully logged in");
+        console.debug("✅ Logged in");
       }
 
       setCurrentUser(data.user);
+      return true;
     } catch (error) {
       Logger.error(error);
+      return false;
     }
   };
 
@@ -67,11 +112,15 @@ export const useAuth = () => {
         method: "POST",
         credentials: "include",
       });
-    } catch (error) {
-      console.error("Failed to logout", error);
-    } finally {
+
       clearAccessToken();
       setCurrentUser(null);
+      console.debug("✅ Logged out");
+
+      return true;
+    } catch (error) {
+      throwFrontError("Failed to logout", { error });
+      return false;
     }
   };
 
@@ -126,5 +175,6 @@ export const useAuth = () => {
     getAccessToken,
     logout,
     initializeAuth,
+    register,
   };
 };

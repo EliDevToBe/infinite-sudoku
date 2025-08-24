@@ -1,18 +1,31 @@
 <template>
-  <button :class="buttonClass">
+  <button :class="buttonClass" :disabled="disabled || isLoading">
     <slot></slot>
+    <Transition
+      enter-active-class="transition-all duration-150 ease-in-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-150 ease-in-out"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <SpinnerIcon v-if="isLoading" />
+    </Transition>
   </button>
 </template>
 
 <script setup lang="ts">
 import { withDefaults, defineProps, computed } from "vue";
 import { useTheme } from "@/composables";
+import SpinnerIcon from "./SpinnerIcon.vue";
 
 const { theme } = useTheme();
 
 type Props = {
   variant?: "primary" | "secondary" | "danger" | "ghost";
   size?: "icon-xs" | "icon" | "sm" | "md" | "lg";
+  isLoading?: boolean;
+  disabled?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,19 +34,22 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const buttonClass = computed(() => {
-  return [ui.size[props.size], ui[theme.value][props.variant], ui.base].join(
-    " "
-  );
+  return [
+    ui.size[props.size],
+    ui.base,
+    props.disabled ? ui.disabled : ui[theme.value][props.variant],
+  ].join(" ");
 });
 
 const ui = {
-  base: "cursor-pointer text-center transition-all duration-150 ease-in-out",
+  base: "gap-1 flex items-center justify-center cursor-pointer text-center transition-all duration-150 ease-in-out",
+  disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
-    "icon-xs": "w-4 h-4 text-xs justify-center items-center flex rounded-full",
-    icon: "w-6 h-6 text-xs justify-center items-center flex rounded-md ",
-    sm: "w-15 h-8 text-xs p-1 rounded-md ",
-    md: "w-20 h-10 text-md p-2 rounded-md",
-    lg: "w-24 h-12 text-lg p-2 rounded-md",
+    "icon-xs": "w-4 h-4 text-xs rounded-full",
+    icon: "w-6 h-6 text-xs rounded-md ",
+    sm: "min-w-15 h-8 text-xs p-1 rounded-md ",
+    md: "min-w-20 h-10 text-md p-2 rounded-md",
+    lg: "min-w-24 h-12 text-lg p-2 rounded-md",
   },
   light: {
     primary: `

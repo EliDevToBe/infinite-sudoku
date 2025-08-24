@@ -1,10 +1,12 @@
 <template>
   <input
     :type="type"
-    :class="inputClass"
-    class="inset"
+    :class="[inputClass, disabled ? null : 'inset']"
     :placeholder="placeholder"
     :autocomplete="autocomplete"
+    v-model="model"
+    :style="hasError ? ui.hasError : ''"
+    :disabled="disabled"
   />
 </template>
 
@@ -14,12 +16,16 @@ import { useTheme } from "@/composables";
 
 const { theme } = useTheme();
 
+const model = defineModel<string>();
+
 type Props = {
   variant?: "primary" | "secondary";
   size?: "icon" | "sm" | "md" | "lg";
   type?: "text" | "email" | "password" | "number" | "tel" | "url" | "search";
   placeholder?: string;
   autocomplete?: "on" | "off";
+  hasError?: boolean;
+  disabled?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,14 +35,22 @@ const props = withDefaults(defineProps<Props>(), {
   autocomplete: "off",
 });
 
+const errorClass = computed(() => {
+  return props.hasError ? ui.hasError : "";
+});
+
 const inputClass = computed(() => {
-  return [ui.size[props.size], ui[theme.value][props.variant], ui.base].join(
-    " "
-  );
+  return [
+    ui.base,
+    ui.size[props.size],
+    errorClass.value,
+    props.disabled ? ui.disabled : ui[theme.value][props.variant],
+  ].join(" ");
 });
 
 const ui = {
   base: "rounded-md cursor-pointer transition-all duration-150 ease-in-out p-2",
+  disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
     icon: "min-w-6 h-6 text-xs justify-center items-center flex",
     sm: "min-w-15 h-6 text-xs",
@@ -54,6 +68,7 @@ const ui = {
     secondary: `bg-dTheme-surfaceOther text-dTheme-font 
       md:hover:shadow-sm md:hover:shadow-dTheme-accent`,
   },
+  hasError: "box-shadow: inset 1px -1px 5px var(--colors-lTheme-danger)",
 };
 </script>
 

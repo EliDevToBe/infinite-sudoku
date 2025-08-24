@@ -4,10 +4,12 @@
     <InputUI
       :id="name"
       :size="size"
-      v-model="model"
+      v-model="inputValue"
       :type="type"
       :placeholder="placeholder"
       :name="name"
+      :hasError="hasError"
+      :disabled="disabled"
     />
   </div>
 </template>
@@ -23,6 +25,8 @@ type Props = {
   placeholder?: string;
   size?: "sm" | "md" | "lg";
   horizontal?: boolean;
+  hasError?: boolean;
+  disabled?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,7 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   name: "",
 });
 
-const model = defineModel<string>();
+const inputValue = defineModel<string>();
 
 const ui = {
   label: {
