@@ -109,6 +109,7 @@ export const useAuth = () => {
         method: "POST",
         credentials: "include",
       });
+      console.debug("✅ Successfully logged out");
     } catch (error) {
       console.error("Failed to logout", error);
     } finally {
