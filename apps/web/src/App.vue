@@ -1,15 +1,17 @@
 <template>
-  <BaseLayout>
-    <template #header>
-      <MainTitle />
-    </template>
+  <NuxtApp>
+    <BaseLayout>
+      <template #header>
+        <MainTitle />
+      </template>
 
-    <MainWrapper>
-      <RouterView />
-    </MainWrapper>
+      <MainWrapper>
+        <RouterView />
+      </MainWrapper>
 
-    <template #footer> FOOTER </template>
-  </BaseLayout>
+      <template #footer> FOOTER </template>
+    </BaseLayout>
+  </NuxtApp>
 </template>
 
 <script setup lang="ts">
