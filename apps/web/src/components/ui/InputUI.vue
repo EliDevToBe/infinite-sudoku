@@ -7,6 +7,7 @@
     :autocomplete="autocomplete"
     v-model="model"
     :style="hasError ? ui.hasError : ''"
+    :disabled="disabled"
   />
 </template>
 
@@ -25,6 +26,7 @@ type Props = {
   placeholder?: string;
   autocomplete?: "on" | "off";
   hasError?: boolean;
+  disabled?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
