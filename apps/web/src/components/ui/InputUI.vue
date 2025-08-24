@@ -1,8 +1,7 @@
 <template>
   <input
     :type="type"
-    :class="inputClass"
-    v-bind="disabled ? null : { class: 'inset' }"
+    :class="[inputClass, disabled ? null : 'inset']"
     :placeholder="placeholder"
     :autocomplete="autocomplete"
     v-model="model"
