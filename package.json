@@ -31,7 +31,8 @@
     "lint": "npx @biomejs/biome lint",
     "format": "npx @biomejs/biome format",
     "check": "npx @biomejs/biome check",
-    "check:fix": "npx @biomejs/biome check --write --no-errors-on-unmatched"
+    "check:fix": "npx @biomejs/biome check --write --no-errors-on-unmatched",
+    "postinstall": "npm rebuild @rollup/rollup-linux-x64-gnu --optional"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
