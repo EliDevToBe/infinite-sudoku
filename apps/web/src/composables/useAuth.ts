@@ -60,9 +60,10 @@ export const useAuth = () => {
       }
 
       setCurrentUser(data.user);
+      return true;
     } catch (error) {
       Logger.error(error);
-      throw error;
+      return false;
     }
   };
 
