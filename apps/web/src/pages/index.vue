@@ -28,7 +28,7 @@
               size="md"
               @click="mainActions"
               :isLoading="isMainActionLoading"
-              :disabled="isFormLocked"
+              :disabled="isMainActionLoading"
             >
               Login
             </ButtonUI>
@@ -40,7 +40,7 @@
               size="md"
               @click="mainActions"
               :isLoading="isMainActionLoading"
-              :disabled="isFormLocked"
+              :disabled="isMainActionLoading"
             >
               Register
             </ButtonUI>
@@ -76,7 +76,7 @@
                     v-model="form.pseudo"
                     :hasError="hasError.pseudo"
                     @input="validatePseudo(form.pseudo)"
-                    :disabled="isFormLocked"
+                    :disabled="isMainActionLoading"
                   />
                 </Transition>
 
@@ -94,7 +94,7 @@
                       showRegister ? 'register' : 'login'
                     )
                   "
-                  :disabled="isFormLocked"
+                  :disabled="isMainActionLoading"
                 />
 
                 <div class="flex flex-col gap-2">
@@ -113,7 +113,7 @@
                           showRegister ? 'register' : 'login'
                         )
                       "
-                      :disabled="isFormLocked"
+                      :disabled="isMainActionLoading"
                     />
                     <div
                       v-if="!showRegister"
@@ -139,7 +139,7 @@
                     v-model="form.confirmPassword"
                     :hasError="hasError.confirmPassword"
                     @input="confirmPasswords"
-                    :disabled="isFormLocked"
+                    :disabled="isMainActionLoading"
                   />
                 </div>
 
@@ -223,9 +223,6 @@ const isMenuOpen = ref(false);
 
 const isMainActionLoading = ref(false);
 const isLogoutLoading = ref(false);
-const isFormLocked = computed(() => {
-  return isMainActionLoading.value || isLogoutLoading.value;
-});
 
 // Handles animations
 watch(showForm, () => {
