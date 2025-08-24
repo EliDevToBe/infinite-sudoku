@@ -1,5 +1,5 @@
 <template>
-  <NuxtApp>
+  <VueApp>
     <BaseLayout>
       <template #header>
         <MainTitle />
@@ -11,7 +11,7 @@
 
       <template #footer> FOOTER </template>
     </BaseLayout>
-  </NuxtApp>
+  </VueApp>
 </template>
 
 <script setup lang="ts">
