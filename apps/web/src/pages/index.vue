@@ -377,7 +377,7 @@ const clearErrorText = (field: ErrorField, type: ErrorType) => {
 const validatePassword = (
   password: string,
   context: "login" | "loginAction" | "register"
-) => {
+): boolean => {
   hasError.value.password = false;
 
   clearErrorText("password", "required");
@@ -388,6 +388,7 @@ const validatePassword = (
       type: "required",
       message: "Password is required",
     });
+    return false;
   }
 
   if (context === "register" || context === "loginAction") {
@@ -459,8 +460,19 @@ const validateEmail = (email: string, context?: "login" | "register") => {
   hasError.value.email = false;
 
   try {
+    clearErrorText("email", "required");
+    if (!email) {
+      hasError.value.email = true;
+      errors.value.push({
+        field: "email",
+        type: "required",
+        message: "Email is required",
+      });
+      return;
+    }
+
     clearErrorText("email", "invalid");
-    if (!email || !verifyEmail(email)) {
+    if (!verifyEmail(email)) {
       hasError.value.email = true;
       errors.value.push({
         field: "email",
@@ -477,8 +489,19 @@ const validatePseudo = (pseudo: string) => {
   try {
     hasError.value.pseudo = false;
 
+    clearErrorText("pseudo", "required");
+    if (!pseudo) {
+      hasError.value.pseudo = true;
+      errors.value.push({
+        field: "pseudo",
+        type: "required",
+        message: "Pseudo is required",
+      });
+      return;
+    }
+
     clearErrorText("pseudo", "invalid");
-    if (!pseudo || !verifyPseudo(pseudo)) {
+    if (!verifyPseudo(pseudo)) {
       hasError.value.pseudo = true;
       errors.value.push({
         field: "pseudo",
