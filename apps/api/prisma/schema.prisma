@@ -8,7 +8,7 @@ datasource db {
 }
 
 model grid {
-  id         String      @id @default(uuid()) @db.Uuid
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   puzzle     Json
   solution   Json
   difficulty Int         @db.SmallInt
@@ -18,7 +18,7 @@ model grid {
 }
 
 model user {
-  id                  String      @id @default(uuid()) @db.Uuid
+  id                  String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   pseudo              String
   email               String      @unique(map: "user_email_unique")
   password            String
@@ -32,7 +32,7 @@ model user {
 }
 
 model user_grid {
-  id            String    @id @default(uuid()) @db.Uuid
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id       String    @db.Uuid
   grid_id       String    @db.Uuid
   backup_wip    Json?
