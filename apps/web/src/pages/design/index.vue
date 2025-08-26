@@ -20,7 +20,12 @@
           <ButtonUI size="icon-xs" variant="ghost">x</ButtonUI>
           <ButtonUI size="sm" variant="secondary">Button 2</ButtonUI>
           <ButtonUI size="md" isLoading>Loading</ButtonUI>
-          <ButtonUI size="lg" variant="secondary">Button 4</ButtonUI>
+          <ButtonUI
+            size="lg"
+            variant="secondary"
+            @click="console.log(currentUser)"
+            >Who am I ?</ButtonUI
+          >
         </div>
       </div>
 
@@ -73,6 +78,7 @@
 import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
 import { ButtonUI, InputUI } from "@/components/ui";
 import { usePresetToast } from "@/composables/toast";
+import { useUser } from "@/composables/useUser";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -82,12 +88,15 @@ const ui = {
   formContainer: "flex flex-col gap-2",
 };
 
+const { currentUser } = useUser();
 const { toastInfo, toastSuccess, toastError } = usePresetToast();
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });
   toastSuccess({ description: "This is a success toast" });
-  toastError({ description: "This is a error toast" });
+  toastError(new Error("This is a new error"), {
+    description: "This is a error toast",
+  });
 };
 </script>
 
