@@ -158,6 +158,7 @@ export const AuthController = () => {
       const authUser = {
         id: decoded.id,
         email: decoded.email,
+        pseudo: decoded.pseudo,
         quality: decoded.quality,
         role: decoded.role,
       };

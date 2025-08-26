@@ -149,9 +149,11 @@ export const useAuth = () => {
 
     if (accessToken) {
       console.debug("✅ Session restored");
-    } else {
-      console.debug("❌ No session found");
+      return true;
     }
+
+    console.debug("❌ No session found");
+    return false;
   };
 
   return {
