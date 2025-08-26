@@ -8,6 +8,7 @@ type RegisterInput = Prisma.userCreateInput;
 type User = Prisma.userGetPayload<{
   select: {
     id: true;
+    pseudo: true;
     email: true;
     quality: true;
     role: true;
@@ -44,6 +45,7 @@ export const AuthController = () => {
 
     const authUser = {
       ...tokenizedUser,
+      pseudo: user.pseudo,
       quality: user.quality,
       role: user.role,
     };

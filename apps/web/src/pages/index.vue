@@ -200,10 +200,12 @@ import { ButtonUI } from "@/components/ui";
 import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
+import { usePresetToast } from "@/composables/toast";
 
-const { isAdmin } = useUser();
+const { isAdmin, currentUser } = useUser();
 const { logout, isAuthenticated, initializeAuth, login, register } = useAuth();
 const { navigateTo } = useNavigation();
+const { toastSuccess, toastError } = usePresetToast();
 
 const ui = {
   content: "flex justify-center items-center h-full",
@@ -551,10 +553,14 @@ const loginFlow = async () => {
 
     const success = await login(email, password);
     if (success) {
+      toastSuccess({
+        title: "Login successful",
+        description: `Welcome ${currentUser.value?.pseudo} !`,
+      });
       navigateTo("/play/");
     }
   } catch (error) {
-    Logger.error(error);
+    toastError(error, { description: "An error occurred" });
   } finally {
     isMainActionLoading.value = false;
   }
@@ -579,6 +585,7 @@ const registerFlow = async () => {
 
     const success = await register({ email, password, pseudo });
     if (success) {
+      toastSuccess({ description: "Register successful" });
       navigateTo("/play/");
     }
   } catch (error) {

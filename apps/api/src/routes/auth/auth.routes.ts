@@ -28,6 +28,7 @@ export default fp(
                   properties: {
                     id: { type: "string" },
                     email: { type: "string" },
+                    pseudo: { type: "string" },
                     quality: { type: "string" },
                     role: { type: "string" },
                   },

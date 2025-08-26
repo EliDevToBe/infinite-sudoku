@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 type LoggedUser = {
   id: string;
   email: string;
+  pseudo: string;
   quality: string;
   role: string;
 };
