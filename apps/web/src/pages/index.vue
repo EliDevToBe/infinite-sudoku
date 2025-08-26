@@ -13,7 +13,7 @@
       </ButtonUI>
     </template>
 
-    <div :class="ui.content">
+    <MainContent>
       <div :class="ui.menuWrapper">
         <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
 
@@ -188,14 +188,14 @@
           </Transition>
         </div>
       </div>
-    </div>
+    </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { FormField, MainWrapper } from "@/components";
+import { FormField, MainContent, MainWrapper } from "@/components";
 import { useAuth, useNavigation, useUser } from "@/composables";
-import { onMounted, ref, watch, Transition, computed } from "vue";
+import { ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
 import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError, isFrontError } from "@/utils/error";
@@ -208,7 +208,6 @@ const { navigateTo } = useNavigation();
 const { toastSuccess, toastError } = usePresetToast();
 
 const ui = {
-  content: "flex justify-center items-center h-full",
   title: "text-3xl font-bold mb-8",
   menuWrapper: "flex flex-col gap-2 items-center w-75 h-75",
   formWrapper: `flex flex-col w-45 items-center absolute z-1 rounded-sm`,
