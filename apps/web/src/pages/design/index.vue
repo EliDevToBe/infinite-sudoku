@@ -67,7 +67,7 @@
 
       <div>
         <ButtonUI size="sm" variant="danger" @click="showToast">
-          Toasting
+          Multi Toasting (x3)
         </ButtonUI>
       </div>
     </MainContent>
