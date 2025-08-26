@@ -1,9 +1,9 @@
-class FrontError extends Error {
+export class FrontError extends Error {
   constructor(
     message: string,
     public context: Record<string, unknown>,
   ) {
-    super(`❌ ${message}`);
+    super(`${message}`);
     this.name = "FrontError";
   }
 }
