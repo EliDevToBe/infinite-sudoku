@@ -198,12 +198,14 @@ import { useAuth, useNavigation, useUser } from "@/composables";
 import { onMounted, ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
 import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
-import { throwFrontError } from "@/utils/error";
+import { throwFrontError, isFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
+import { usePresetToast } from "@/composables/toast";
 
-const { isAdmin } = useUser();
-const { logout, isAuthenticated, initializeAuth, login, register } = useAuth();
+const { isAdmin, currentUser } = useUser();
+const { logout, isAuthenticated, login, register } = useAuth();
 const { navigateTo } = useNavigation();
+const { toastSuccess, toastError } = usePresetToast();
 
 const ui = {
   content: "flex justify-center items-center h-full",
@@ -338,11 +340,16 @@ const hasAnyError = computed(() => {
   return Object.values(hasError.value).some((error) => error);
 });
 
-onMounted(async () => {
-  if (!isAuthenticated.value) {
-    await initializeAuth();
-  }
-});
+// onMounted(async () => {
+//   if (!isAuthenticated.value) {
+//     await initializeAuth();
+//     if (currentUser.value) {
+//       toastInfo({
+//         description: `Welcome back ${currentUser.value.pseudo} !`,
+//       });
+//     }
+//   }
+// });
 
 const mainActions = async () => {
   if (!isMenuOpen.value) {
@@ -551,10 +558,18 @@ const loginFlow = async () => {
 
     const success = await login(email, password);
     if (success) {
+      toastSuccess({
+        title: "Login successful",
+        description: `Welcome ${currentUser.value?.pseudo} !`,
+      });
       navigateTo("/play/");
     }
   } catch (error) {
-    Logger.error(error);
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
   } finally {
     isMainActionLoading.value = false;
   }
@@ -579,6 +594,7 @@ const registerFlow = async () => {
 
     const success = await register({ email, password, pseudo });
     if (success) {
+      toastSuccess({ description: "Register successful" });
       navigateTo("/play/");
     }
   } catch (error) {

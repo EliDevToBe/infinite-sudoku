@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { handleHotUpdate, routes } from "vue-router/auto-routes";
 import { useAuth, useUser } from "@/composables";
+import { usePresetToast } from "@/composables/toast";
 
 const { isAuthenticated, initializeAuth } = useAuth();
 const { currentUser } = useUser();
+const { toastInfo } = usePresetToast();
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,8 +20,19 @@ let authInitialized = false;
 
 router.beforeEach(async (to, _from) => {
   // If not authenticated, try to initialize auth once
-  if (!authInitialized && !isAuthenticated.value && to.name !== "/") {
-    await initializeAuth();
+  if (
+    !authInitialized &&
+    !isAuthenticated.value
+    // && to.name !== "/"
+  ) {
+    const success = await initializeAuth();
+
+    if (success && currentUser.value) {
+      toastInfo({
+        description: `Welcome back ${currentUser.value.pseudo} !`,
+      });
+    }
+
     authInitialized = true;
   }
 

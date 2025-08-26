@@ -7,7 +7,7 @@
       </div>
     </template>
 
-    <MainContent class="h-max gap-5 overflow-hidden">
+    <MainContent class="h-max gap-5 overflow-hidden p-5">
       <h1 class="text-3xl font-bold sticky top-0">DESIGN VIEW</h1>
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
@@ -20,7 +20,12 @@
           <ButtonUI size="icon-xs" variant="ghost">x</ButtonUI>
           <ButtonUI size="sm" variant="secondary">Button 2</ButtonUI>
           <ButtonUI size="md" isLoading>Loading</ButtonUI>
-          <ButtonUI size="lg" variant="secondary">Button 4</ButtonUI>
+          <ButtonUI
+            size="lg"
+            variant="secondary"
+            @click="console.log(currentUser)"
+            >Who am I ?</ButtonUI
+          >
         </div>
       </div>
 
@@ -62,7 +67,7 @@
 
       <div>
         <ButtonUI size="sm" variant="danger" @click="showToast">
-          Toasting
+          Multi Toasting (x3)
         </ButtonUI>
       </div>
     </MainContent>
@@ -72,6 +77,8 @@
 <script setup lang="ts">
 import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
 import { ButtonUI, InputUI } from "@/components/ui";
+import { usePresetToast } from "@/composables/toast";
+import { useUser } from "@/composables/useUser";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -81,16 +88,16 @@ const ui = {
   formContainer: "flex flex-col gap-2",
 };
 
-const toast = useToast();
+const { currentUser } = useUser();
+const { toastInfo, toastSuccess, toastError } = usePresetToast();
 
-function showToast() {
-  toast.add({
-    title: "Uh oh! Something went wrong.",
-    description: "There was a problem with your request.",
-    icon: "i-lucide-wifi",
-    progress: false,
+const showToast = () => {
+  toastInfo({ description: "This is a info toast" });
+  toastSuccess({ description: "This is a success toast" });
+  toastError(new Error("This is a new error"), {
+    description: "This is a error toast",
   });
-}
+};
 </script>
 
 <style scoped lang=""></style>
