@@ -100,7 +100,7 @@ export const useAuth = () => {
       console.debug("✅ Logged in");
     }
 
-    await setCurrentUser(data.user);
+    setCurrentUser(data.user);
     return true;
   };
 
