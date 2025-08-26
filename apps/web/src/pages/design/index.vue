@@ -7,7 +7,7 @@
       </div>
     </template>
 
-    <MainContent class="h-max gap-5">
+    <MainContent class="h-max gap-5 overflow-hidden">
       <h1 class="text-3xl font-bold sticky top-0">DESIGN VIEW</h1>
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
@@ -59,6 +59,12 @@
           />
         </div>
       </form>
+
+      <div>
+        <ButtonUI size="sm" variant="danger" @click="showToast">
+          Toasting
+        </ButtonUI>
+      </div>
     </MainContent>
   </MainWrapper>
 </template>
@@ -69,11 +75,22 @@ import { ButtonUI, InputUI } from "@/components/ui";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
-  buttonWrapper: "flex flex-col w-[50%] gap-5",
+  buttonWrapper: "flex flex-col w-[75%] gap-5",
   buttonContainer: "flex justify-between items-center gap-5",
-  formWrapper: "flex flex-col w-[50%] gap-5",
+  formWrapper: "flex flex-col w-[75%] gap-5",
   formContainer: "flex flex-col gap-2",
 };
+
+const toast = useToast();
+
+function showToast() {
+  toast.add({
+    title: "Uh oh! Something went wrong.",
+    description: "There was a problem with your request.",
+    icon: "i-lucide-wifi",
+    progress: false,
+  });
+}
 </script>
 
 <style scoped lang=""></style>
