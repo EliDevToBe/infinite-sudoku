@@ -1,5 +1,5 @@
 <template>
-  <VueApp :toaster="toastConfig" :ui="ui">
+  <VueApp :toaster="toastConfig">
     <BaseLayout>
       <template #header>
         <MainTitle />
