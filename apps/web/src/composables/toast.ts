@@ -13,6 +13,7 @@ export const usePresetToast = () => {
       ui: {
         title: "text-lTheme-accent",
         icon: "text-lTheme-accent",
+        description: "text-dTheme-font",
       },
     });
   };
@@ -25,6 +26,7 @@ export const usePresetToast = () => {
       color: "success",
       ui: {
         title: "text-green-400",
+        description: "text-dTheme-font",
       },
     });
   };
@@ -40,6 +42,7 @@ export const usePresetToast = () => {
       color: "error",
       ui: {
         title: "text-red-400",
+        description: "text-dTheme-font",
       },
       duration: 3000,
     });

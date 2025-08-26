@@ -28,7 +28,7 @@ const toastConfig: ToasterProps = {
     viewport: "max-w-[300px] w-[75%]",
   },
   expand: false,
-  duration: 2000,
+  duration: 2500,
   progress: false,
 };
 </script>
