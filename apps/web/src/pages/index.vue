@@ -203,7 +203,7 @@ import { Logger } from "@/composables/useLogger";
 import { usePresetToast } from "@/composables/toast";
 
 const { isAdmin, currentUser } = useUser();
-const { logout, isAuthenticated, initializeAuth, login, register } = useAuth();
+const { logout, isAuthenticated, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 const { toastSuccess, toastError } = usePresetToast();
 
@@ -340,11 +340,16 @@ const hasAnyError = computed(() => {
   return Object.values(hasError.value).some((error) => error);
 });
 
-onMounted(async () => {
-  if (!isAuthenticated.value) {
-    await initializeAuth();
-  }
-});
+// onMounted(async () => {
+//   if (!isAuthenticated.value) {
+//     await initializeAuth();
+//     if (currentUser.value) {
+//       toastInfo({
+//         description: `Welcome back ${currentUser.value.pseudo} !`,
+//       });
+//     }
+//   }
+// });
 
 const mainActions = async () => {
   if (!isMenuOpen.value) {
