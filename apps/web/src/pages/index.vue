@@ -90,6 +90,7 @@
                     :hasError="hasError.pseudo"
                     @input="validatePseudo(form.pseudo)"
                     :disabled="isMainActionLoading"
+                    required
                   />
                 </Transition>
 
@@ -101,6 +102,7 @@
                   label="Email"
                   v-model="form.email"
                   :hasError="hasError.email"
+                  v-bind="{ required: showRegister }"
                   @input="
                     validateEmail(
                       form.email,
@@ -127,6 +129,7 @@
                         )
                       "
                       :disabled="isMainActionLoading"
+                      v-bind="{ required: showRegister }"
                     />
                     <div
                       v-if="!showRegister"
@@ -142,18 +145,27 @@
                     </div>
                   </div>
 
-                  <FormField
-                    v-if="showRegister"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm Password"
-                    size="sm"
-                    label="Confirm Password"
-                    v-model="form.confirmPassword"
-                    :hasError="hasError.confirmPassword"
-                    @input="confirmPasswords"
-                    :disabled="isMainActionLoading"
-                  />
+                  <div>
+                    <FormField
+                      v-if="showRegister"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm Password"
+                      size="sm"
+                      label="Confirm Password"
+                      v-model="form.confirmPassword"
+                      :hasError="hasError.confirmPassword"
+                      @input="confirmPasswords"
+                      :disabled="isMainActionLoading"
+                      required
+                    />
+                    <div
+                      v-if="showRegister"
+                      class="text-[8px] text-lTheme-font"
+                    >
+                      <span class="text-lTheme-danger">*</span>Required
+                    </div>
+                  </div>
                 </div>
 
                 <div
