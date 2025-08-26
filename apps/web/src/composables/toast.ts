@@ -1,3 +1,5 @@
+import { Logger } from "./useLogger";
+
 // The namespace useToast is already used by @nuxt/ui
 
 export const usePresetToast = () => {
@@ -5,7 +7,7 @@ export const usePresetToast = () => {
 
   const toastInfo = (params: { description: string; title?: string }) => {
     toast.add({
-      title: params.title || "Information",
+      title: params.title || "Info",
       description: params.description,
       icon: "i-lucide-info",
       ui: {
@@ -27,7 +29,10 @@ export const usePresetToast = () => {
     });
   };
 
-  const toastError = (params: { description: string; title?: string }) => {
+  const toastError = (
+    error: unknown,
+    params: { description: string; title?: string },
+  ) => {
     toast.add({
       title: params.title || "Error",
       description: params.description,
@@ -38,6 +43,8 @@ export const usePresetToast = () => {
       },
       duration: 3000,
     });
+
+    Logger.error(error);
   };
 
   return {
