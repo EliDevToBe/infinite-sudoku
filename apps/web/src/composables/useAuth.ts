@@ -74,11 +74,22 @@ export const useAuth = () => {
     const data = await response.json();
     const message = data.clientMessage;
 
+    if (!response.ok && response.status === 404) {
+      throwFrontError("No account found", {
+        email,
+      });
+    }
+
+    if (!response.ok && response.status === 401) {
+      throwFrontError("Invalid credentials", {
+        email,
+      });
+    }
+
     if (!response.ok && message) {
       throwFrontError("Failed to login", {
         email,
         message,
-        status: response.status,
       });
     }
 

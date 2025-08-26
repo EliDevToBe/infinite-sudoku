@@ -198,7 +198,7 @@ import { useAuth, useNavigation, useUser } from "@/composables";
 import { onMounted, ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
 import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
-import { throwFrontError } from "@/utils/error";
+import { throwFrontError, isFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 import { usePresetToast } from "@/composables/toast";
 
@@ -560,7 +560,11 @@ const loginFlow = async () => {
       navigateTo("/play/");
     }
   } catch (error) {
-    toastError(error, { description: "An error occurred" });
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
   } finally {
     isMainActionLoading.value = false;
   }
