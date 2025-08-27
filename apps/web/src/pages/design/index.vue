@@ -70,86 +70,6 @@
           Multi Toasting (x3)
         </ButtonUI>
       </div>
-
-      <div>
-        <div
-          class="flex w-150 items-center justify-between bg-dTheme-surfaceOther rounded-md p-1 pl-2 pr-2"
-        >
-          <div
-            class="flex grow box-border p-1 justify-center cursor-pointer"
-            :class="{
-              'bg-dTheme-surface rounded-md': difficulty === 'easy',
-            }"
-            @click="difficulty = 'easy'"
-          >
-            <input
-              type="radio"
-              value="easy"
-              name="difficulty"
-              id="easy"
-              appearance-none
-              v-model="difficulty"
-              :checked="difficulty === 'easy'"
-            />
-            <label for="easy">Easy</label>
-          </div>
-          <div
-            class="flex grow box-border p-1 justify-center"
-            :class="{
-              'bg-dTheme-surface rounded-md': difficulty === 'medium',
-            }"
-            @click="difficulty = 'medium'"
-          >
-            <input
-              type="radio"
-              value="medium"
-              name="difficulty"
-              id="medium"
-              appearance-none
-              v-model="difficulty"
-              :checked="difficulty === 'medium'"
-            />
-            <label for="medium">Medium</label>
-          </div>
-          <div
-            class="flex grow box-border p-1 justify-center"
-            :class="{
-              'bg-dTheme-surface rounded-md': difficulty === 'hard',
-            }"
-            @click="difficulty = 'hard'"
-          >
-            <input
-              type="radio"
-              value="hard"
-              name="difficulty"
-              id="hard"
-              appearance-none
-              v-model="difficulty"
-              :checked="difficulty === 'hard'"
-            />
-            <label for="hard">Hard</label>
-          </div>
-          <div
-            class="flex grow box-border p-1 justify-center"
-            :class="{
-              'bg-dTheme-surface rounded-md': difficulty === 'hardcore',
-            }"
-            @click="difficulty = 'hardcore'"
-          >
-            <input
-              type="radio"
-              value="hardcore"
-              name="difficulty"
-              id="hardcore"
-              appearance-none
-              v-model="difficulty"
-              :checked="difficulty === 'hardcore'"
-              class=""
-            />
-            <label for="hardcore">Hardcore</label>
-          </div>
-        </div>
-      </div>
     </MainContent>
   </MainWrapper>
 </template>
@@ -179,8 +99,6 @@ const showToast = () => {
     description: "This is a error toast",
   });
 };
-
-const difficulty = ref<string>("medium");
 </script>
 
 <style scoped lang=""></style>
