@@ -33,9 +33,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { defineModel } from "vue";
 
-const difficulty = ref<string>("medium");
+const difficulty = defineModel<string>();
 </script>
 
 <style scoped></style>
