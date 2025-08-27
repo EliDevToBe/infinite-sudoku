@@ -20,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { InputUI } from "@/components/ui";
 import { computed } from "vue";
 
 type Props = {
