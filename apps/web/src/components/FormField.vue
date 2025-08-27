@@ -1,6 +1,11 @@
 <template>
   <div :class="{ 'flex flex-row gap-2 items-center': horizontal }">
-    <label :for="name" :class="labelClass">{{ label }}</label>
+    <label :for="name" :class="labelClass"
+      >{{ label
+      }}<span class="text-lTheme-danger">
+        {{ props.required ? "*" : "" }}
+      </span>
+    </label>
     <InputUI
       :id="name"
       :size="size"
@@ -15,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { InputUI } from "@/components/ui";
 import { computed } from "vue";
 
 type Props = {
@@ -27,6 +31,7 @@ type Props = {
   horizontal?: boolean;
   hasError?: boolean;
   disabled?: boolean;
+  required?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {

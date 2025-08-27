@@ -1,9 +1,8 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="flex justify-center items-center">
-        <div class="bg-red-200">Test Slot #sub-header</div>
-        <ToggleTheme />
+      <div class="flex items-center justify-center">
+        <OptionBar />
       </div>
     </template>
 
@@ -79,6 +78,7 @@ import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
 import { ButtonUI, InputUI } from "@/components/ui";
 import { usePresetToast } from "@/composables/toast";
 import { useUser } from "@/composables/useUser";
+import { ref } from "vue";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {

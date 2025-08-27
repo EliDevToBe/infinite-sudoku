@@ -13,7 +13,7 @@
       </ButtonUI>
     </template>
 
-    <div :class="ui.content">
+    <MainContent>
       <div :class="ui.menuWrapper">
         <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
 
@@ -90,6 +90,7 @@
                     :hasError="hasError.pseudo"
                     @input="validatePseudo(form.pseudo)"
                     :disabled="isMainActionLoading"
+                    required
                   />
                 </Transition>
 
@@ -101,6 +102,7 @@
                   label="Email"
                   v-model="form.email"
                   :hasError="hasError.email"
+                  v-bind="{ required: showRegister }"
                   @input="
                     validateEmail(
                       form.email,
@@ -127,6 +129,7 @@
                         )
                       "
                       :disabled="isMainActionLoading"
+                      v-bind="{ required: showRegister }"
                     />
                     <div
                       v-if="!showRegister"
@@ -142,18 +145,27 @@
                     </div>
                   </div>
 
-                  <FormField
-                    v-if="showRegister"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm Password"
-                    size="sm"
-                    label="Confirm Password"
-                    v-model="form.confirmPassword"
-                    :hasError="hasError.confirmPassword"
-                    @input="confirmPasswords"
-                    :disabled="isMainActionLoading"
-                  />
+                  <div>
+                    <FormField
+                      v-if="showRegister"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm Password"
+                      size="sm"
+                      label="Confirm Password"
+                      v-model="form.confirmPassword"
+                      :hasError="hasError.confirmPassword"
+                      @input="confirmPasswords"
+                      :disabled="isMainActionLoading"
+                      required
+                    />
+                    <div
+                      v-if="showRegister"
+                      class="text-[8px] text-lTheme-font"
+                    >
+                      <span class="text-lTheme-danger">*</span>Required
+                    </div>
+                  </div>
                 </div>
 
                 <div
@@ -188,14 +200,14 @@
           </Transition>
         </div>
       </div>
-    </div>
+    </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { FormField, MainWrapper } from "@/components";
+import { FormField, MainContent, MainWrapper } from "@/components";
 import { useAuth, useNavigation, useUser } from "@/composables";
-import { onMounted, ref, watch, Transition, computed } from "vue";
+import { ref, watch, Transition, computed } from "vue";
 import { ButtonUI } from "@/components/ui";
 import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
 import { throwFrontError, isFrontError } from "@/utils/error";
@@ -208,7 +220,6 @@ const { navigateTo } = useNavigation();
 const { toastSuccess, toastError } = usePresetToast();
 
 const ui = {
-  content: "flex justify-center items-center h-full",
   title: "text-3xl font-bold mb-8",
   menuWrapper: "flex flex-col gap-2 items-center w-75 h-75",
   formWrapper: `flex flex-col w-45 items-center absolute z-1 rounded-sm`,
