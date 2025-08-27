@@ -77,7 +77,7 @@ const ui = {
   dark: {
     primary: `
       bg-dTheme-surfaceOther text-dTheme-font
-      shadow-xs shadow-black shadow-opacity-50
+      shadow-xs shadow-black 
       md:hover:shadow-sm md:hover:shadow-dTheme-accent
       active:bg-dTheme-surface active:text-dTheme-light`,
     secondary: `
