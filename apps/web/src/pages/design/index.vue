@@ -159,6 +159,7 @@ import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
 import { ButtonUI, InputUI } from "@/components/ui";
 import { usePresetToast } from "@/composables/toast";
 import { useUser } from "@/composables/useUser";
+import { ref } from "vue";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -178,6 +179,8 @@ const showToast = () => {
     description: "This is a error toast",
   });
 };
+
+const difficulty = ref<string>("medium");
 </script>
 
 <style scoped lang=""></style>
