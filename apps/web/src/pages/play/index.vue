@@ -1,7 +1,9 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <OptionBar />
+      <div class="flex items-center justify-center">
+        <OptionBar />
+      </div>
     </template>
   </MainWrapper>
 </template>
