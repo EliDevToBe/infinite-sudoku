@@ -1,9 +1,8 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="flex justify-center items-center">
-        <div class="bg-red-200">Test Slot #sub-header</div>
-        <ToggleTheme />
+      <div class="flex items-center justify-center">
+        <OptionBar />
       </div>
     </template>
 
