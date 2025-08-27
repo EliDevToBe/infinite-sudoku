@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-150 items-center justify-between bg-dTheme-surfaceOther rounded-md p-1 pl-2 pr-2"
+    class="flex w-[95%] max-w-150 items-center justify-between bg-dTheme-surfaceOther rounded-md p-1 pl-2 pr-2"
   >
     <RadioUI
       value="easy"
