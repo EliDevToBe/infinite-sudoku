@@ -73,18 +73,7 @@
 
     <!--  default Parent as MainContent-->
     <div class="flex justify-center">
-      <!-- grid wrapper -->
-      <div
-        class="inline-block bg-dTheme-surfaceOther sm:p-2 p-1 shadow-dTheme-accent shadow-sm rounded-lg"
-      >
-        <BlockRowUI>
-          <BlockColUI>
-            <CellRowUI>
-              <CellColUI></CellColUI>
-            </CellRowUI>
-          </BlockColUI>
-        </BlockRowUI>
-      </div>
+      <SudokuGrid></SudokuGrid>
     </div>
   </MainWrapper>
 </template>
@@ -92,7 +81,7 @@
 <script setup lang="ts">
 import { usePresetToast } from "@/composables/toast";
 import { useUser } from "@/composables/useUser";
-import { BlockRowUI, BlockColUI, CellRowUI, CellColUI } from "@/components/ui";
+import { ref } from "vue";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -112,6 +101,18 @@ const showToast = () => {
     description: "This is a error toast",
   });
 };
+
+const testData = ref([
+  [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [2, 4, 3, 4, 9, 8, 3, 6, 5],
+  [8, 3, 4, 8, 3, 2, 6, 1, 6],
+  [2, 3, 3, 5, 4, 8, 1, 3, 5],
+  [5, 4, 9, 3, 6, 1, 8, 1, 4],
+  [7, 8, 4, 6, 5, 5, 7, 8, 2],
+  [1, 2, 6, 5, 6, 1, 4, 7, 3],
+  [4, 8, 9, 7, 1, 7, 8, 2, 1],
+  [3, 9, 6, 3, 4, 1, 6, 2, 5],
+]);
 </script>
 
 <style scoped lang=""></style>
