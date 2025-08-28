@@ -51,9 +51,9 @@ const ui = {
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
-    sm: "w-15 h-8 text-xs p-1 rounded-md ",
-    md: "w-20 h-10 text-md p-2 rounded-md",
-    lg: "w-24 h-12 text-lg p-2 rounded-md",
+    sm: "min-w-15 max-w-fit h-8 text-xs p-1 rounded-md ",
+    md: "min-w-20 max-w-fit h-10 text-md p-2 rounded-md",
+    lg: "min-w-24 max-w-fit h-12 text-lg p-2 rounded-md",
   },
   light: {
     primary: `

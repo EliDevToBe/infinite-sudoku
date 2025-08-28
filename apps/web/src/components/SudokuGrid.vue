@@ -43,7 +43,7 @@
 <script setup lang="ts">
 const ui = {
   wrapper: [
-    "inline-block sm:p-2 p-1",
+    "inline-block sm:p-2 p-1 m-t-2",
     "bg-dTheme-surfaceOther",
     "shadow-dTheme-accent shadow-sm rounded-lg",
   ],
@@ -51,10 +51,10 @@ const ui = {
   fullBlock: [
     "flex flex-col rounded-md overflow-hidden",
     "sm:m-0.25 max-sm:m-0.125",
-    "border-1 border-dTheme-accent",
   ],
   cellRow: "flex",
-  cellCol: "flex flex-col border-1 border-dTheme-surfaceOther",
+  cellCol:
+    "flex flex-col sm:border-1 max-sm:border-0.5 border-dTheme-surfaceOther",
   cell: "bg-gray-300 text-dTheme-surface w-8 h-8 sm:w-12 sm:h-12 transition-all duration-200",
 };
 </script>
