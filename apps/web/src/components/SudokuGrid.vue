@@ -29,6 +29,16 @@
             <!-- Actual Cell -->
             <div :class="ui.cell">
               <input
+                :disabled="
+                  !puzzle[(blockRow - 1) * 3 + (cellRow - 1)][
+                    (blockCol - 1) * 3 + (cellCol - 1)
+                  ].isEditable
+                "
+                :value="
+                  puzzle[(blockRow - 1) * 3 + (cellRow - 1)][
+                    (blockCol - 1) * 3 + (cellCol - 1)
+                  ].value
+                "
                 class="outline-none text-center text-lg w-full h-full"
                 type="text"
               />
@@ -41,6 +51,12 @@
 </template>
 
 <script setup lang="ts">
+import type { Cell } from "@/composables/useSudoku";
+
+const props = defineProps<{
+  puzzle: Cell[][];
+}>();
+
 const ui = {
   wrapper: [
     "inline-block sm:p-2 p-1 m-t-2",
