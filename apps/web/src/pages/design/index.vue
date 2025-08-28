@@ -70,15 +70,29 @@
         </ButtonUI>
       </div>
     </MainContent>
+
+    <!--  default Parent as MainContent-->
+    <div class="flex justify-center">
+      <!-- grid wrapper -->
+      <div
+        class="inline-block bg-red-200 sm:p-2 p-1 border-2 border-lTheme-accent rounded-lg"
+      >
+        <BlockRowUI>
+          <BlockColUI>
+            <CellRowUI>
+              <CellColUI></CellColUI>
+            </CellRowUI>
+          </BlockColUI>
+        </BlockRowUI>
+      </div>
+    </div>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
-import { ButtonUI, InputUI } from "@/components/ui";
 import { usePresetToast } from "@/composables/toast";
 import { useUser } from "@/composables/useUser";
-import { ref } from "vue";
+import { BlockRowUI, BlockColUI, CellRowUI, CellColUI } from "@/components/ui";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
