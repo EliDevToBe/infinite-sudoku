@@ -69,12 +69,13 @@
           Multi Toasting (x3)
         </ButtonUI>
       </div>
+
+      <div class="flex justify-center">
+        <SudokuGrid></SudokuGrid>
+      </div>
     </MainContent>
 
     <!--  default Parent as MainContent-->
-    <div class="flex justify-center">
-      <SudokuGrid></SudokuGrid>
-    </div>
   </MainWrapper>
 </template>
 
