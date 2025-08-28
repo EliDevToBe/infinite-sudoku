@@ -45,7 +45,7 @@ const inputClass = computed(() => {
     ui.size[props.size],
     errorClass.value,
     props.disabled ? ui.disabled : ui[theme.value][props.variant],
-  ].join(" ");
+  ];
 });
 
 const ui = {

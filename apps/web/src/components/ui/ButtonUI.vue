@@ -42,7 +42,7 @@ const buttonClass = computed(() => {
     ui.size[props.size],
     ui.base,
     props.disabled ? ui.disabled : ui[theme.value][props.variant],
-  ].join(" ");
+  ];
 });
 
 const ui = {
