@@ -7,7 +7,7 @@
     </template>
 
     <MainContent class="h-max gap-5 overflow-hidden p-5">
-      <h1 class="text-3xl font-bold sticky top-0">DESIGN VIEW</h1>
+      <h1 class="text-3xl font-bold sticky top-0">Design & Playground</h1>
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
           <ButtonUI size="icon" variant="danger">x</ButtonUI>
