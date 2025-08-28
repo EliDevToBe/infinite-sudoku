@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-const ui = { cellRow: "flex " };
+const ui = { cellRow: "flex" };
 </script>
 
 <style scoped lang=""></style>

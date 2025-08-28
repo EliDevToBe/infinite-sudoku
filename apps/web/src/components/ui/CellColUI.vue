@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
 const ui = {
-  cellCol: "flex flex-col border-1 border-green-500",
-  cell: "bg-blue-500 w-8 h-8 sm:w-12 sm:h-12 transition-all duration-200",
+  cellCol: "flex flex-col border-1 border-dTheme-surfaceOther",
+  cell: "bg-gray-300 text-dTheme-surface w-8 h-8 sm:w-12 sm:h-12 transition-all duration-200",
 };
 </script>
 

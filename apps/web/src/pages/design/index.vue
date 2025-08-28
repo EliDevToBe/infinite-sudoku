@@ -75,7 +75,7 @@
     <div class="flex justify-center">
       <!-- grid wrapper -->
       <div
-        class="inline-block bg-red-200 sm:p-2 p-1 border-2 border-lTheme-accent rounded-lg"
+        class="inline-block bg-dTheme-surfaceOther sm:p-2 p-1 shadow-dTheme-accent shadow-sm rounded-lg"
       >
         <BlockRowUI>
           <BlockColUI>
