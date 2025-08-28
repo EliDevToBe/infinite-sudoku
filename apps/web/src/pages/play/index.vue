@@ -5,7 +5,9 @@
         <OptionBar v-model="difficulty" />
       </div>
     </template>
-    <MainContent>GRID DISPLAY</MainContent>
+    <MainContent>
+      <SudokuGrid></SudokuGrid>
+    </MainContent>
   </MainWrapper>
 </template>
 
