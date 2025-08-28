@@ -2,7 +2,10 @@
   <div v-for="cellCol in 3" :key="`cell-col-${cellCol}`" :class="ui.cellCol">
     <!-- Actual CELL -->
     <div :class="ui.cell">
-      <input class="outline-none text-center text-lg" type="text" />
+      <input
+        class="outline-none text-center text-lg w-full h-full"
+        type="text"
+      />
     </div>
   </div>
 </template>
