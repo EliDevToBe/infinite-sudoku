@@ -1,7 +1,9 @@
-type Cell = {
+export type Cell = {
   x: number;
   y: number;
   value: number;
+  isEditable: boolean;
+  hypothesis: number[];
 };
 
 export const useSudoku = () => {
@@ -11,6 +13,8 @@ export const useSudoku = () => {
         x: colIndex,
         y: rowIndex,
         value: cell,
+        isEditable: cell === 0,
+        hypothesis: [],
       })),
     );
   };
