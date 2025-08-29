@@ -1,11 +1,59 @@
-import type { ApiEndpoint } from "@shared/endpoints";
+import type { ApiEndpoint, EndpointResponse } from "@shared/endpoints";
 import { throwFrontError } from "@/utils/error";
 import { useAuth } from "./useAuth";
 
 export const useApi = () => {
   const { getAccessToken, refreshToken } = useAuth();
 
-  const fetchApi = async (payload: ApiEndpoint) => {
+  const buildFetchOptions = (
+    endpoint: ApiEndpoint,
+    token: string | null,
+  ): RequestInit => {
+    const { method } = endpoint;
+    const body = "body" in endpoint ? endpoint.body : undefined;
+
+    const headers = new Headers({
+      "Content-Type": "application/json",
+    });
+
+    if (token) {
+      headers.append("access-token", token);
+    }
+
+    const options: RequestInit = {
+      method,
+      credentials: "include",
+      headers,
+    };
+
+    if (body && method !== "GET") {
+      options.body = JSON.stringify(body);
+    }
+
+    return options;
+  };
+
+  const buildUrl = (endpoint: ApiEndpoint, baseUrl: string): string => {
+    const { path } = endpoint;
+    const params = "params" in endpoint ? endpoint.params : undefined;
+
+    let finalPath = path as string;
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        finalPath = finalPath.replace(`:${key}`, value as string);
+      });
+    }
+
+    return `${baseUrl}${finalPath}`;
+  };
+
+  const fetchApi = async <T extends ApiEndpoint>(
+    payload: T,
+  ): Promise<{
+    data: EndpointResponse[T["path"]] | null;
+    error: Error | null;
+  }> => {
     const apiUrl = import.meta.env.VITE_API_URL;
     if (!apiUrl) {
       throwFrontError("API_URL is not defined", {
@@ -13,16 +61,11 @@ export const useApi = () => {
       });
     }
 
-    const { path, ...params } = payload;
+    const url = buildUrl(payload, apiUrl);
 
     const makeRequest = async (token: string | null) => {
-      return fetch(`${apiUrl}${path}`, {
-        ...params,
-        credentials: "include",
-        headers: {
-          ...(token && { "access-token": token }),
-        },
-      });
+      const options = buildFetchOptions(payload, token);
+      return fetch(url, options);
     };
 
     try {
@@ -47,7 +90,7 @@ export const useApi = () => {
 
       return { data, error: null };
     } catch (error) {
-      return { data: null, error: error };
+      return { data: null, error: error as Error };
     }
   };
 

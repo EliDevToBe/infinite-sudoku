@@ -1,3 +1,5 @@
+import type { Prisma } from "@prisma/client";
+
 type Endpoint = {
   path: `/${string}`;
   method: "GET" | "POST" | "PUT" | "DELETE";
@@ -15,5 +17,18 @@ export type ApiEndpoint = ValidateEndpoint<
   | {
       path: "/user/:id";
       method: "GET";
+      params: {
+        id: string;
+      };
+    }
+  | {
+      path: "/grid";
+      method: "GET";
     }
 >;
+
+export type EndpointResponse = {
+  "/user": Prisma.userGetPayload<true>[];
+  "/user/:id": Prisma.userGetPayload<true>;
+  "/grid": Prisma.gridGetPayload<true>[];
+};

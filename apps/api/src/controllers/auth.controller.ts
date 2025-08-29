@@ -181,7 +181,6 @@ export const AuthController = () => {
 
     reply.headers({
       "access-token": "",
-      "refresh-token": "",
     });
 
     return reply.status(200).send({ clientMessage: "Logged out" });

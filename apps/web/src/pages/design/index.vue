@@ -2,7 +2,7 @@
   <MainWrapper>
     <template #sub-header>
       <div class="flex items-center justify-center">
-        <OptionBar />
+        <OptionBar v-model="difficulty" />
       </div>
     </template>
 
@@ -82,7 +82,8 @@
 <script setup lang="ts">
 import { usePresetToast } from "@/composables/toast";
 import { useSudoku, useUser } from "@/composables";
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
+import { Logger } from "@/composables/useLogger";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -94,7 +95,9 @@ const ui = {
 
 const { currentUser } = useUser();
 const { toastInfo, toastSuccess, toastError } = usePresetToast();
-const { formatPuzzle } = useSudoku();
+const { formatPuzzle, getRandomPuzzle } = useSudoku();
+
+const difficulty = ref<string>("");
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });
@@ -102,6 +105,21 @@ const showToast = () => {
   toastError(new Error("This is a new error"), {
     description: "This is a error toast",
   });
+};
+
+watch(difficulty, async () => {
+  console.log(difficulty.value);
+  try {
+    await getData();
+    console.log(formattedPuzzle);
+  } catch (error) {
+    Logger.error(error);
+  }
+});
+
+const getData = async () => {
+  const data = await getRandomPuzzle();
+  formattedPuzzle = formatPuzzle(data.puzzle as number[][]);
 };
 
 const testData = ref([
@@ -116,7 +134,7 @@ const testData = ref([
   [3, 9, 6, 3, 4, 1, 6, 2, 5],
 ]);
 
-const formattedPuzzle = reactive(formatPuzzle(testData.value));
+let formattedPuzzle = reactive(formatPuzzle(testData.value));
 </script>
 
 <style scoped lang=""></style>
