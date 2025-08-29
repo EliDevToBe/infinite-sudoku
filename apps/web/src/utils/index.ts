@@ -4,6 +4,13 @@ import {
   verifyEmail,
   verifyPseudo,
 } from "./cleanString";
-import { validateInput } from "./sudoku";
+import { type Cell, validateInput } from "./sudoku";
 
-export { normalize, verifyEmail, verifyPseudo, hasProfanity, validateInput };
+export {
+  normalize,
+  verifyEmail,
+  verifyPseudo,
+  hasProfanity,
+  validateInput,
+  type Cell,
+};

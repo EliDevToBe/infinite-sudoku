@@ -5,3 +5,11 @@ export const validateInput = (input: string) => {
   if (POSSIBLE_VALUES.includes(Number.parseInt(input, 10))) return true;
   return false;
 };
+
+export type Cell = {
+  x: number;
+  y: number;
+  value: number;
+  isEditable: boolean;
+  hypothesis: number[];
+};

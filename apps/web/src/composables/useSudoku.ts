@@ -1,12 +1,5 @@
+import type { Cell } from "../utils";
 import { useApi } from "./useApi";
-
-export type Cell = {
-  x: number;
-  y: number;
-  value: number;
-  isEditable: boolean;
-  hypothesis: number[];
-};
 
 export const useSudoku = () => {
   const { fetchApi } = useApi();
