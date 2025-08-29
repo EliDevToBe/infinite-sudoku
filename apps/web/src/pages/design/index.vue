@@ -7,7 +7,7 @@
     </template>
 
     <MainContent class="h-max gap-5 overflow-hidden p-5">
-      <h1 class="text-3xl font-bold sticky top-0">DESIGN VIEW</h1>
+      <h1 class="text-3xl font-bold sticky top-0">Design & Playground</h1>
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
           <ButtonUI size="icon" variant="danger">x</ButtonUI>
@@ -69,16 +69,20 @@
           Multi Toasting (x3)
         </ButtonUI>
       </div>
+
+      <div class="flex justify-center">
+        <SudokuGrid v-model="formattedPuzzle"></SudokuGrid>
+      </div>
     </MainContent>
+
+    <!--  default Parent as MainContent-->
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { FormField, MainContent, MainWrapper, ToggleTheme } from "@/components";
-import { ButtonUI, InputUI } from "@/components/ui";
 import { usePresetToast } from "@/composables/toast";
-import { useUser } from "@/composables/useUser";
-import { ref } from "vue";
+import { useSudoku, useUser } from "@/composables";
+import { reactive, ref } from "vue";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -90,6 +94,7 @@ const ui = {
 
 const { currentUser } = useUser();
 const { toastInfo, toastSuccess, toastError } = usePresetToast();
+const { formatPuzzle } = useSudoku();
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });
@@ -98,6 +103,20 @@ const showToast = () => {
     description: "This is a error toast",
   });
 };
+
+const testData = ref([
+  [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [2, 4, 3, 4, 9, 8, 3, 6, 5],
+  [8, 3, 4, 8, 3, 2, 6, 1, 6],
+  [2, 3, 3, 5, 4, 8, 1, 3, 5],
+  [5, 4, 9, 3, 6, 1, 8, 1, 4],
+  [7, 8, 4, 6, 5, 5, 7, 8, 2],
+  [1, 2, 6, 5, 6, 1, 4, 7, 3],
+  [4, 8, 9, 7, 1, 7, 8, 2, 1],
+  [3, 9, 6, 3, 4, 1, 6, 2, 5],
+]);
+
+const formattedPuzzle = reactive(formatPuzzle(testData.value));
 </script>
 
 <style scoped lang=""></style>

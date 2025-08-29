@@ -168,6 +168,7 @@ export class SudokuV2 {
 
     if (this.config.logging) {
       process.stdout.write("\x1b[1A\x1b[2K");
+      process.stdout.write("\x1b[1A\x1b[2K");
       const hours = [
         "🕛",
         "🕐",
@@ -576,7 +577,7 @@ const options = { logging: true, generatorTimeoutSeconds: 1200 };
 const generator = new SudokuV2(61, patternPriority, options);
 const config = generator.getConfig();
 
-console.log("Starting generator with config:", config, "\n");
+console.log("Starting generator with config:", config, "\n\n\n");
 setTimeout(() => {
   generator.generate();
 

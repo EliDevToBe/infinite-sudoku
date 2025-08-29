@@ -4,5 +4,6 @@ import {
   verifyEmail,
   verifyPseudo,
 } from "./cleanString";
+import { validateInput } from "./sudoku";
 
-export { normalize, verifyEmail, verifyPseudo, hasProfanity };
+export { normalize, verifyEmail, verifyPseudo, hasProfanity, validateInput };

@@ -1,16 +1,18 @@
 <template>
   <MainWrapper>
     <template #sub-header v-if="isAdmin">
-      <ButtonUI
-        size="sm"
-        @click="
-          () => {
-            navigateTo('/design/');
-          }
-        "
-      >
-        DESIGN
-      </ButtonUI>
+      <div class="flex items-center justify-center">
+        <ButtonUI
+          size="sm"
+          @click="
+            () => {
+              navigateTo('/design/');
+            }
+          "
+        >
+          DESIGN
+        </ButtonUI>
+      </div>
     </template>
 
     <MainContent>

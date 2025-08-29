@@ -33,8 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineModel } from "vue";
-
 const difficulty = defineModel<string>();
 </script>
 
