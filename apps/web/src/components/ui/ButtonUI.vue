@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { withDefaults, defineProps, computed } from "vue";
+import { computed } from "vue";
 import { useTheme } from "@/composables";
 import { COLORS } from "@/utils/constants";
 
