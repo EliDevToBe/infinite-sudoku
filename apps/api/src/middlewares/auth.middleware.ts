@@ -9,7 +9,7 @@ export const authenticated = (
   done: () => void,
 ) => {
   const accessToken = request.headers["access-token"] as string;
-  const refreshToken = request.headers["refresh-token"] as string;
+  const refreshToken = request.cookies["refresh-token"] as string;
 
   if (!accessToken || !refreshToken) {
     reply.code(401).send({ code: 401, message: "Tokens missing" });
@@ -40,7 +40,6 @@ export const authenticated = (
     if (hasAccessExpired && hasRefreshExpired) {
       reply.headers({
         "access-token": "",
-        "refresh-token": "",
       });
 
       const now = Date.now();

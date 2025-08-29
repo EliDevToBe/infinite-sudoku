@@ -11,8 +11,14 @@ export default fp(
     server.register(cors, {
       origin: [process.env.FRONTEND_URL],
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],
-      exposedHeaders: ["access-token", "refresh-token"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "Origin",
+        "Accept",
+        "access-token",
+      ],
+      exposedHeaders: ["access-token"],
       credentials: true,
     });
 
