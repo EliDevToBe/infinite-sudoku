@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Cell } from "@/composables/useSudoku";
+import type { Cell } from "@/utils";
 
 const grid = defineModel<Cell[][]>({ required: true });
 

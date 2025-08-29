@@ -74,8 +74,6 @@
         <SudokuGrid v-model="formattedPuzzle"></SudokuGrid>
       </div>
     </MainContent>
-
-    <!--  default Parent as MainContent-->
   </MainWrapper>
 </template>
 
@@ -84,6 +82,7 @@ import { usePresetToast } from "@/composables/toast";
 import { useSudoku, useUser } from "@/composables";
 import { onMounted, reactive, ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
+import type { Cell } from "@/utils";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -111,7 +110,7 @@ watch(difficulty, async () => {
   console.log(difficulty.value);
   try {
     await getData();
-    console.log(formattedPuzzle);
+    console.log(formattedPuzzle.value);
   } catch (error) {
     Logger.error(error);
   }
@@ -119,7 +118,7 @@ watch(difficulty, async () => {
 
 const getData = async () => {
   const data = await getRandomPuzzle();
-  formattedPuzzle = formatPuzzle(data.puzzle as number[][]);
+  formattedPuzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
 const testData = ref([
@@ -134,7 +133,15 @@ const testData = ref([
   [3, 9, 6, 3, 4, 1, 6, 2, 5],
 ]);
 
-let formattedPuzzle = reactive(formatPuzzle(testData.value));
+const formattedPuzzle = ref<Cell[][]>(formatPuzzle(testData.value));
+
+watch(
+  formattedPuzzle,
+  (newValue) => {
+    console.log(newValue);
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped lang=""></style>
