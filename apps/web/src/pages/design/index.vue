@@ -71,7 +71,7 @@
       </div>
 
       <div class="flex justify-center">
-        <SudokuGrid :puzzle="formattedPuzzle"></SudokuGrid>
+        <SudokuGrid v-model="formattedPuzzle"></SudokuGrid>
       </div>
     </MainContent>
 
@@ -82,7 +82,7 @@
 <script setup lang="ts">
 import { usePresetToast } from "@/composables/toast";
 import { useSudoku, useUser } from "@/composables";
-import { ref } from "vue";
+import { reactive, ref, watch } from "vue";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -116,7 +116,7 @@ const testData = ref([
   [3, 9, 6, 3, 4, 1, 6, 2, 5],
 ]);
 
-const formattedPuzzle = formatPuzzle(testData.value);
+const formattedPuzzle = reactive(formatPuzzle(testData.value));
 </script>
 
 <style scoped lang=""></style>
