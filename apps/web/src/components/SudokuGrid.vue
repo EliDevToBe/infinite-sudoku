@@ -27,22 +27,26 @@
             :class="ui.cellCol"
           >
             <!-- Actual Cell -->
-            <div :class="ui.cell">
-              <input
-                :disabled="
-                  !puzzle[(blockRow - 1) * 3 + (cellRow - 1)][
-                    (blockCol - 1) * 3 + (cellCol - 1)
-                  ].isEditable
-                "
-                :value="
-                  puzzle[(blockRow - 1) * 3 + (cellRow - 1)][
-                    (blockCol - 1) * 3 + (cellCol - 1)
-                  ].value
-                "
-                class="outline-none text-center text-lg w-full h-full"
-                type="text"
-              />
-            </div>
+            <Cell
+              :currentCell="
+                grid[(blockRow - 1) * 3 + (cellRow - 1)][
+                  (blockCol - 1) * 3 + (cellCol - 1)
+                ]
+              "
+              v-model="
+                grid[(blockRow - 1) * 3 + (cellRow - 1)][
+                  (blockCol - 1) * 3 + (cellCol - 1)
+                ].value
+              "
+              @update:cell="
+                (value) => {
+                  handleCellUpdate(value, {
+                    x: (blockCol - 1) * 3 + (cellCol - 1),
+                    y: (blockRow - 1) * 3 + (cellRow - 1),
+                  });
+                }
+              "
+            />
           </div>
         </div>
       </div>
@@ -53,9 +57,7 @@
 <script setup lang="ts">
 import type { Cell } from "@/composables/useSudoku";
 
-const props = defineProps<{
-  puzzle: Cell[][];
-}>();
+const grid = defineModel<Cell[][]>({ required: true });
 
 const ui = {
   wrapper: [
@@ -72,6 +74,13 @@ const ui = {
   cellCol:
     "flex flex-col sm:border-1 max-sm:border-0.5 border-dTheme-surfaceOther",
   cell: "bg-gray-300 text-dTheme-surface w-8 h-8 sm:w-12 sm:h-12 transition-all duration-200",
+};
+
+const handleCellUpdate = (
+  value: number,
+  position: { x: number; y: number }
+) => {
+  grid.value[position.y][position.x].value = value;
 };
 </script>
 
