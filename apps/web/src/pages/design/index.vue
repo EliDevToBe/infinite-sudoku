@@ -82,7 +82,7 @@
 <script setup lang="ts">
 import { usePresetToast } from "@/composables/toast";
 import { useSudoku, useUser } from "@/composables";
-import { reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
