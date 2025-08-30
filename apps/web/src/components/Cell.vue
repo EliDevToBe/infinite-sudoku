@@ -2,7 +2,7 @@
   <div :class="ui.cell">
     <input
       :disabled="!currentCell.isEditable"
-      :class="ui.input"
+      :class="[ui.input, isLoading ? ui.blur : '']"
       type="text"
       :value="displayValue"
       @input="handleInput"
@@ -17,6 +17,7 @@ import { computed } from "vue";
 
 const props = defineProps<{
   currentCell: Cell;
+  isLoading: boolean;
 }>();
 
 type Emits = {
@@ -37,6 +38,7 @@ const ui = {
     "transition-all duration-200",
   ],
   input: ["outline-none text-center sm:text-2xl text-lg w-full h-full"],
+  blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
 };
 
 const handleInput = (event: Event) => {

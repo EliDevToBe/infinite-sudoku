@@ -29,7 +29,6 @@
             <!-- Actual Cell -->
 
             <Cell
-              :class="isLoading ? ui.blur : ''"
               :currentCell="
                 grid[(blockRow - 1) * 3 + (cellRow - 1)][
                   (blockCol - 1) * 3 + (cellCol - 1)
@@ -48,6 +47,7 @@
                   });
                 }
               "
+              :isLoading="isLoading"
             />
           </div>
         </div>
@@ -71,7 +71,6 @@ const ui = {
     "bg-dTheme-surfaceOther",
     "shadow-dTheme-accent shadow-sm rounded-lg",
   ],
-  blur: "transition-all duration-200 blur-[2px] pointer-events-none",
   blockRow: "flex",
   fullBlock: [
     "flex flex-col rounded-md overflow-hidden",
