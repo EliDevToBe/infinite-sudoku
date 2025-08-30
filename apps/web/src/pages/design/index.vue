@@ -6,7 +6,7 @@
       </div>
     </template>
 
-    <MainContent class="h-max gap-5 overflow-hidden p-5">
+    <MainContent class="h-max gap-6 overflow-hidden p-5">
       <h1 class="text-3xl font-bold sticky top-0">Design & Playground</h1>
       <div :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
@@ -73,6 +73,39 @@
       <div class="flex justify-center">
         <SudokuGrid v-model="formattedPuzzle" :is-loading="false"></SudokuGrid>
       </div>
+
+      <div>
+        <ButtonUI @click="isModalOpen = !isModalOpen">Open Modal</ButtonUI>
+        <ModalUI
+          title="Modal Title"
+          description="Modal Description"
+          v-model:show="isModalOpen"
+          @on-close="toastInfo({ description: 'Modal closed' })"
+        >
+          <template #body>Basic content</template>
+          <template #footer>
+            <div class="flex gap-5">
+              <ButtonUI
+                variant="secondary"
+                size="sm"
+                @click="
+                  toastInfo({ description: 'Modal cancelled' });
+                  isModalOpen = false;
+                "
+                >Cancel</ButtonUI
+              >
+              <ButtonUI
+                size="sm"
+                @click="
+                  toastSuccess({ description: 'Modal confirmed' });
+                  isModalOpen = false;
+                "
+                >Confirm</ButtonUI
+              >
+            </div>
+          </template>
+        </ModalUI>
+      </div>
     </MainContent>
   </MainWrapper>
 </template>
@@ -97,6 +130,7 @@ const { toastInfo, toastSuccess, toastError } = usePresetToast();
 const { formatPuzzle, getRandomPuzzle } = useSudoku();
 
 const difficulty = ref<DifficultyOptions>("medium");
+const isModalOpen = ref(false);
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });

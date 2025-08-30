@@ -46,7 +46,12 @@ const buttonClass = computed(() => {
 });
 
 const ui = {
-  base: "gap-1 flex items-center justify-center cursor-pointer text-center transition-all duration-150 ease-in-out",
+  base: [
+    "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
+    "transition-all duration-150 ease-in-out",
+    "shadow-xs shadow-black",
+    "md:hover:shadow-sm md:hover:shadow-dTheme-accent",
+  ],
   disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
@@ -58,37 +63,26 @@ const ui = {
   light: {
     primary: `
        bg-lTheme-light text-lTheme-font
-       shadow-xs shadow-black
-       md:hover:shadow-sm md:hover:shadow-lTheme-accent
         active:bg-lTheme-surfaceOther`,
     secondary: `
         bg-lTheme-surfaceOther text-lTheme-accent
         outline-[1px] outline-lTheme-light outline-lTheme-font
-      shadow-xs shadow-black
-      md:hover:shadow-sm md:hover:shadow-lTheme-accent
       active:bg-lTheme-light`,
     danger: `
       bg-lTheme-danger text-lTheme-surface
-      shadow-xs shadow-black
-      md:hover:shadow-sm md:hover:shadow-lTheme-accent
         active:bg-lTheme-dangerOther`,
     ghost: ``,
   },
   dark: {
     primary: `
       bg-dTheme-surfaceOther text-dTheme-font
-      shadow-xs shadow-black 
-      md:hover:shadow-sm md:hover:shadow-dTheme-accent
       active:bg-dTheme-surface active:text-dTheme-light`,
-    secondary: `
-      bg-dTheme-surfaceOther text-dTheme-font
-       shadow-xs shadow-black
-      md:hover:shadow-sm md:hover:shadow-dTheme-accent
-      active:bg-dTheme-surface active:text-dTheme-light`,
+    secondary: [
+      "text-dTheme-font active:text-dTheme-light",
+      "bg-dTheme-surface active:bg-dTheme-surfaceOther",
+    ],
     danger: `
       bg-dTheme-danger text-dTheme-font
-      shadow-xs shadow-black
-      md:hover:shadow-sm md:hover:shadow-dTheme-accent
       active:bg-dTheme-dangerOther active:text-dTheme-light`,
     ghost: `text-gray-500 outline-none outline-gray-600 md:hover:bg-gray-500 md:hover:bg-opacity-15 `,
   },
