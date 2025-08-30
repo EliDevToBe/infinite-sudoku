@@ -36,10 +36,10 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    title: string;
+    title?: string;
     description: string;
-    mainActionLabel: string;
-    secondaryActionLabel: string;
+    mainActionLabel?: string;
+    secondaryActionLabel?: string;
   }>(),
   {
     title: "Are you sure ?",
