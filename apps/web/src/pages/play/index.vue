@@ -2,7 +2,10 @@
   <MainWrapper>
     <template #sub-header>
       <div class="flex items-center justify-center">
-        <OptionBar v-model="difficulty" />
+        <OptionBar
+          v-model="currentDifficulty"
+          @on-select="handleDifficultySwitch"
+        />
       </div>
     </template>
     <MainContent>
@@ -11,12 +14,32 @@
         v-model="puzzle"
         :is-loading="isLoading"
       ></SudokuGrid>
+
+      <ConfirmModal
+        description="Confirm switching difficulties"
+        v-model:show="isModalOpen"
+        @on-secondary-action="handleCancel"
+        @on-main-action="handleConfirm"
+      >
+        <span class="inline-block">
+          Switching difficulty from
+          <span class="font-bold text-green-500 text-lg">{{
+            oldDifficulty
+          }}</span>
+          to
+          <span class="font-bold text-dTheme-accent text-lg">{{
+            currentDifficulty
+          }}</span>
+          will reset your current grid.
+        </span>
+        <span class="inline-block">You will lose your progress.</span>
+      </ConfirmModal>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { MainWrapper, OptionBar } from "@/components";
 import { type Cell, type DifficultyOptions } from "@/utils";
 import { useSudoku, usePresetToast } from "@/composables";
@@ -26,8 +49,10 @@ const { toastError } = usePresetToast();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
+const isModalOpen = ref(false);
 
-const difficulty = ref<DifficultyOptions>("medium");
+const oldDifficulty = ref<DifficultyOptions>("medium");
+const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>([]);
 
 onMounted(async () => {
@@ -47,19 +72,27 @@ const setPuzzle = async () => {
   puzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
-watch(difficulty, async () => {
+const handleDifficultySwitch = () => {
+  isModalOpen.value = true;
+};
+
+const handleConfirm = () => {
+  isModalOpen.value = false;
   isLoading.value = true;
 
-  if (isPuzzleFetched.value) {
-    console.log("POPUP MODAL TO CONFIRM");
-  }
+  setTimeout(async () => {
+    await setPuzzle();
+    isLoading.value = false;
+    oldDifficulty.value = currentDifficulty.value;
+  }, 300);
+};
 
-  // Delay to keep for visual effect
-  // setTimeout(async () => {
-  //   await setPuzzle();
-  //   isLoading.value = false;
-  // }, 200);
-});
+const handleCancel = () => {
+  setTimeout(() => {
+    isLoading.value = false;
+    currentDifficulty.value = oldDifficulty.value;
+  }, 100);
+};
 </script>
 
 <style scoped lang=""></style>
