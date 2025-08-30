@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { MainWrapper, OptionBar } from "@/components";
 import { type Cell, type DifficultyOptions } from "@/utils";
 import { useSudoku, usePresetToast } from "@/composables";
@@ -54,6 +54,12 @@ const isModalOpen = ref(false);
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>([]);
+
+const hasUserInput = computed(() => {
+  return puzzle.value.some((row) =>
+    row.some((cell) => cell.isEditable && cell.value !== 0)
+  );
+});
 
 onMounted(async () => {
   try {
@@ -73,7 +79,11 @@ const setPuzzle = async () => {
 };
 
 const handleDifficultySwitch = () => {
-  isModalOpen.value = true;
+  if (hasUserInput.value) {
+    isModalOpen.value = true;
+  } else {
+    handleConfirm();
+  }
 };
 
 const handleConfirm = () => {
