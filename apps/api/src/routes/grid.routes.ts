@@ -8,11 +8,7 @@ type GridInsert = Prisma.gridCreateInput;
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
-    server.get(
-      "/grid",
-      { preHandler: authenticated },
-      GridController().getGrids,
-    );
+    server.get("/grid", GridController().getGrids);
 
     server.get<{ Params: { id: string } }>(
       "/grid/:id",
