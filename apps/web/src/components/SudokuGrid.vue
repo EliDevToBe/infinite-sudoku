@@ -70,6 +70,9 @@ const ui = {
     "inline-block sm:p-2 p-1 m-t-2",
     "bg-dTheme-surfaceOther",
     "shadow-dTheme-accent shadow-sm rounded-lg",
+    "border-t-1 border-t-dTheme-light",
+    "border-l-1 border-l-dTheme-light/80 ",
+    "border-r-1 border-r-dTheme-light/80",
   ],
   blockRow: "flex",
   fullBlock: [
