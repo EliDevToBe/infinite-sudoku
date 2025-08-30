@@ -49,10 +49,16 @@ const setPuzzle = async () => {
 
 watch(difficulty, async () => {
   isLoading.value = true;
-  setTimeout(async () => {
-    await setPuzzle();
-    isLoading.value = false;
-  }, 200);
+
+  if (isPuzzleFetched.value) {
+    console.log("POPUP MODAL TO CONFIRM");
+  }
+
+  // Delay to keep for visual effect
+  // setTimeout(async () => {
+  //   await setPuzzle();
+  //   isLoading.value = false;
+  // }, 200);
 });
 </script>
 
