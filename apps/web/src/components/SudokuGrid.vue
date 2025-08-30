@@ -1,6 +1,6 @@
 <template>
   <!-- Main wrapper -->
-  <div :class="[ui.wrapper, isLoading ? ui.loading : '']">
+  <div :class="ui.wrapper">
     <!-- Block Row (3x3)-->
     <div
       v-for="blockRow in 3"
@@ -29,6 +29,7 @@
             <!-- Actual Cell -->
 
             <Cell
+              :class="isLoading ? ui.blur : ''"
               :currentCell="
                 grid[(blockRow - 1) * 3 + (cellRow - 1)][
                   (blockCol - 1) * 3 + (cellCol - 1)
@@ -70,7 +71,7 @@ const ui = {
     "bg-dTheme-surfaceOther",
     "shadow-dTheme-accent shadow-sm rounded-lg",
   ],
-  loading: "blur-[2px] pointer-events-none",
+  blur: "transition-all duration-200 blur-[2px] pointer-events-none",
   blockRow: "flex",
   fullBlock: [
     "flex flex-col rounded-md overflow-hidden",
