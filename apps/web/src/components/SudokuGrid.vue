@@ -1,6 +1,6 @@
 <template>
   <!-- Main wrapper -->
-  <div :class="ui.wrapper">
+  <div :class="[ui.wrapper, isLoading ? ui.loading : '']">
     <!-- Block Row (3x3)-->
     <div
       v-for="blockRow in 3"
@@ -27,6 +27,7 @@
             :class="ui.cellCol"
           >
             <!-- Actual Cell -->
+
             <Cell
               :currentCell="
                 grid[(blockRow - 1) * 3 + (cellRow - 1)][
@@ -57,6 +58,10 @@
 <script setup lang="ts">
 import type { Cell } from "@/utils";
 
+const props = defineProps<{
+  isLoading: boolean;
+}>();
+
 const grid = defineModel<Cell[][]>({ required: true });
 
 const ui = {
@@ -65,6 +70,7 @@ const ui = {
     "bg-dTheme-surfaceOther",
     "shadow-dTheme-accent shadow-sm rounded-lg",
   ],
+  loading: "blur-[2px] pointer-events-none",
   blockRow: "flex",
   fullBlock: [
     "flex flex-col rounded-md overflow-hidden",
