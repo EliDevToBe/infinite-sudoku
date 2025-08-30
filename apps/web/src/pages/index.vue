@@ -219,7 +219,7 @@ import { usePresetToast } from "@/composables/toast";
 const { isAdmin, currentUser } = useUser();
 const { logout, isAuthenticated, login, register } = useAuth();
 const { navigateTo } = useNavigation();
-const { toastSuccess, toastError } = usePresetToast();
+const { toastSuccess, toastError, toastInfo } = usePresetToast();
 
 const ui = {
   title: "text-3xl font-bold mb-8",
@@ -620,9 +620,19 @@ const registerFlow = async () => {
 const logoutFlow = async () => {
   isLogoutLoading.value = true;
   try {
-    await logout();
+    const success = await logout();
+    if (success) {
+      toastInfo({
+        title: "Logout successful",
+        description: "See you soon !",
+      });
+    }
   } catch (error) {
-    Logger.error(error);
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
   } finally {
     isLogoutLoading.value = false;
   }

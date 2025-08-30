@@ -4,16 +4,6 @@ export type SudokuGrid = number[][];
 export type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
 type Position = { row: number; col: number };
 
-const _commonDifficultyLevelsByMissingCells = {
-  WayTooEasy: [0, 40],
-  Easy: [41, 45],
-  Medium: [46, 49],
-  Advanced: [50, 53],
-  Hard: [54, 56],
-  VeryHard: [57, 59],
-  DiabolicExpert: [60, 64],
-};
-
 const logDisplayBoard = (board: SudokuGrid) => {
   process.stdout.write("\x1b[0;0H\x1b[2J");
   console.log("=====================");
@@ -131,7 +121,39 @@ export class SudokuV2 {
   }
 
   getStats() {
-    return this.stats;
+    const readableStats = {
+      ...this.stats,
+
+      generatorCreatedAt: new Intl.DateTimeFormat("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      }).format(new Date(this.stats.generatorCreatedAt)),
+
+      generatorFinishedAt: new Intl.DateTimeFormat("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone: "UTC",
+      }).format(new Date(this.stats.generatorFinishedAt)),
+
+      counter: {
+        ...this.stats.counter,
+
+        maxCellsRemovedAt: new Intl.DateTimeFormat("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZone: "UTC",
+        }).format(new Date(this.stats.counter.maxCellsRemovedAt)),
+      },
+    };
+
+    return readableStats;
   }
 
   getConfig() {
@@ -197,7 +219,7 @@ export class SudokuV2 {
     this.stats.generatorFinishedAt = Date.now();
 
     this.stats.counter.priorityRatio =
-      this.stats.counter.priorityAttempt / this.stats.counter.hardReset;
+      this.stats.counter.priorityAttempt / (this.stats.counter.hardReset ?? 1);
 
     this.stats.generatorTimeTaken = `${this.logProgress(
       this.stats.generatorCreatedAt,
@@ -306,6 +328,7 @@ export class SudokuV2 {
 
       // Get a new list of positions, prioritized for removal.
       const positions = this.priorityAlgorithm();
+      this.stats.counter.priorityAttempt++;
 
       if (this.backtrack(positions, 0, 0, cellCountToRemove)) {
         // Success case, puzzle found
