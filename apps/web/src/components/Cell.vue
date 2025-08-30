@@ -43,7 +43,7 @@ const ui = {
     "focus:bg-dTheme-light",
   ],
   blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
-  disabled: "font-600 text-dTheme-accentDarker",
+  disabled: "font-semibold text-dTheme-accentDarker",
 };
 
 const inputClass = computed(() => {
