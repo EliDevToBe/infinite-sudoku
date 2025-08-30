@@ -71,11 +71,12 @@
       </div>
 
       <div class="flex justify-center">
-        <SudokuGrid v-model="formattedPuzzle"></SudokuGrid>
+        <SudokuGrid v-model="formattedPuzzle" :is-loading="false"></SudokuGrid>
       </div>
     </MainContent>
   </MainWrapper>
 </template>
+r
 
 <script setup lang="ts">
 import { useSudoku, useUser, usePresetToast } from "@/composables";
