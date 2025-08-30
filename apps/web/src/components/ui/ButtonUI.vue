@@ -77,9 +77,10 @@ const ui = {
     primary: `
       bg-dTheme-surfaceOther text-dTheme-font
       active:bg-dTheme-surface active:text-dTheme-light`,
-    secondary: `
-      bg-dTheme-surfaceOther text-dTheme-font
-      active:bg-dTheme-surface active:text-dTheme-light`,
+    secondary: [
+      "text-dTheme-font active:text-dTheme-light",
+      "bg-dTheme-surface active:bg-dTheme-surfaceOther",
+    ],
     danger: `
       bg-dTheme-danger text-dTheme-font
       active:bg-dTheme-dangerOther active:text-dTheme-light`,
