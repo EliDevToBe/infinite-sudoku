@@ -8,7 +8,7 @@
 
     <MainContent class="h-max gap-6 overflow-hidden p-5">
       <h1 class="text-3xl font-bold sticky top-0">Design & Playground</h1>
-      <div :class="ui.buttonWrapper">
+      <section :class="ui.buttonWrapper">
         <div :class="ui.buttonContainer">
           <ButtonUI size="icon" variant="danger">x</ButtonUI>
           <ButtonUI size="sm" disabled>Disabled</ButtonUI>
@@ -26,7 +26,7 @@
             >Who am I ?</ButtonUI
           >
         </div>
-      </div>
+      </section>
 
       <FormField
         name="pseudo"
@@ -64,17 +64,17 @@
         </div>
       </form>
 
-      <div>
+      <section>
         <ButtonUI size="sm" variant="danger" @click="showToast">
           Multi Toasting (x3)
         </ButtonUI>
-      </div>
+      </section>
 
-      <div class="flex justify-center">
+      <section class="flex justify-center">
         <SudokuGrid v-model="formattedPuzzle" :is-loading="false"></SudokuGrid>
-      </div>
+      </section>
 
-      <div>
+      <section>
         <ButtonUI @click="isModalOpen = !isModalOpen">Open Modal</ButtonUI>
         <ModalUI
           title="Modal Title"
@@ -105,7 +105,30 @@
             </div>
           </template>
         </ModalUI>
-      </div>
+      </section>
+
+      <section>
+        <ButtonUI @click="isConfirmModalOpen = !isConfirmModalOpen"
+          >Confirm Modal</ButtonUI
+        >
+        <ConfirmModal
+          description="Confirm changing difficulty"
+          secondary-action-label="Return"
+          main-action-label="OK"
+          title="Are you sure ?"
+          v-model:show="isConfirmModalOpen"
+          @on-secondary-action="toastInfo({ description: 'Dismissed' })"
+          @on-main-action="
+            toastSuccess({ description: 'Confirmed the ConfirmModal' })
+          "
+        >
+          <span class="inline-block">
+            Changing difficulty to {{ difficulty }} will reset your current
+            grid.
+          </span>
+          <span class="inline-block">You will lose your progress.</span>
+        </ConfirmModal>
+      </section>
     </MainContent>
   </MainWrapper>
 </template>
@@ -131,6 +154,7 @@ const { formatPuzzle, getRandomPuzzle } = useSudoku();
 
 const difficulty = ref<DifficultyOptions>("medium");
 const isModalOpen = ref(false);
+const isConfirmModalOpen = ref(false);
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });

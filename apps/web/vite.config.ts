@@ -14,6 +14,20 @@ export default defineConfig({
     // vueDevTools(),
     ui({
       prefix: "Vue",
+      ui: {
+        modal: {
+          variants: {
+            transition: {
+              true: {
+                overlay:
+                  "data-[state=open]:animate-[fade-in_100ms_ease-out] data-[state=closed]:animate-[fade-out_100ms_ease-in]",
+                content:
+                  "data-[state=open]:animate-[scale-in_100ms_ease-out] data-[state=closed]:animate-[scale-out_100ms_ease-in]",
+              },
+            },
+          },
+        },
+      },
     }),
     UnoCSS({ configFile: "./uno.config.ts" }),
   ],

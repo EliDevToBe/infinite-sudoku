@@ -5,6 +5,7 @@
       radioGroup="difficulty"
       v-model="difficulty"
       label="Easy"
+      @update:modelValue="emit('onSelect')"
     />
 
     <RadioUI
@@ -12,6 +13,7 @@
       radioGroup="difficulty"
       v-model="difficulty"
       label="Medium"
+      @update:modelValue="emit('onSelect')"
     />
 
     <RadioUI
@@ -19,6 +21,7 @@
       radioGroup="difficulty"
       v-model="difficulty"
       label="Hard"
+      @update:modelValue="emit('onSelect')"
     />
 
     <RadioUI
@@ -26,6 +29,7 @@
       radioGroup="difficulty"
       v-model="difficulty"
       label="Hardcore"
+      @update:modelValue="emit('onSelect')"
     />
   </div>
 </template>
@@ -42,6 +46,10 @@ const ui = {
     "bg-dTheme-surfaceOther",
   ],
 };
+
+const emit = defineEmits<{
+  onSelect: [];
+}>();
 </script>
 
 <style scoped></style>

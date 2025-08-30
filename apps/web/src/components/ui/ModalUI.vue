@@ -26,12 +26,12 @@ const ui = {
     "border-l-1 border-l-dTheme-light/80 ",
     "border-r-1 border-r-dTheme-light/80",
   ],
-  title: "text-dTheme-font",
-  header: "flex items-center gap-1.5 p-4 sm:px-6 min-h-16",
+  title: "text-dTheme-font text-xl",
+  header: "flex items-center gap-1.5 p-2 px-4 sm:px-6 min-h-16",
   close: "rounded-lg hover:bg-red-800",
   body: "border-t-1 border-t-dTheme-light/80 p-4 sm:p-6",
   footer:
-    "border-t-1 border-t-dTheme-light/65 gap-1.5 p-4 sm:px-6  flex justify-end",
+    "border-t-1 border-t-dTheme-light/65 gap-1.5 p-2 px-4 sm:px-6  flex justify-end",
 };
 
 const emit = defineEmits<{
