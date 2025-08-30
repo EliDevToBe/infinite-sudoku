@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Cell } from "@/composables/useSudoku";
+import type { Cell } from "@/utils";
 import { validateInput } from "@/utils";
 import { computed } from "vue";
 
@@ -36,7 +36,7 @@ const ui = {
     "bg-gray-300 text-dTheme-surface",
     "transition-all duration-200",
   ],
-  input: ["outline-none text-center text-lg w-full h-full"],
+  input: ["outline-none text-center sm:text-2xl text-lg w-full h-full"],
 };
 
 const handleInput = (event: Event) => {
