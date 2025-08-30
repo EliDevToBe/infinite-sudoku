@@ -14,6 +14,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { MainWrapper, OptionBar } from "@/components";
+import { type DifficultyOptions } from "@/utils";
+
+const difficulty = ref<DifficultyOptions>("medium");
 
 const difficulty = ref<string>("medium");
 </script>
