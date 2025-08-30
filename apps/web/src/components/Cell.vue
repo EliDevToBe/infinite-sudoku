@@ -2,7 +2,7 @@
   <div :class="ui.cell">
     <input
       :disabled="!currentCell.isEditable"
-      :class="[ui.input, isLoading ? ui.blur : '']"
+      :class="inputClass"
       type="text"
       :value="displayValue"
       @input="handleInput"
@@ -39,7 +39,16 @@ const ui = {
   ],
   input: ["outline-none text-center sm:text-2xl text-lg w-full h-full"],
   blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
+  disabled: "font-600 text-dTheme-accentDarker",
 };
+
+const inputClass = computed(() => {
+  return [
+    ui.input,
+    props.isLoading ? ui.blur : "",
+    props.currentCell.isEditable ? "" : ui.disabled,
+  ];
+});
 
 const handleInput = (event: Event) => {
   const inputElement = event.target as HTMLInputElement;
