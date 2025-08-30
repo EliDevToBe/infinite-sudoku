@@ -3,7 +3,8 @@
     :title="title"
     :description="description"
     :ui="ui"
-    v-model:open="openModel"
+    v-model:open="showModel"
+    @update:open="(event) => emit('onClose')"
   >
     <template #body v-if="$slots.body">
       <slot name="body"></slot>
@@ -29,15 +30,20 @@ const ui = {
   header: "flex items-center gap-1.5 p-4 sm:px-6 min-h-16",
   close: "rounded-lg hover:bg-red-800",
   body: "border-t-1 border-t-dTheme-light/80 p-4 sm:p-6",
-  footer: "border-t-1 border-t-dTheme-light/65 gap-1.5 p-4 sm:px-6",
+  footer:
+    "border-t-1 border-t-dTheme-light/65 gap-1.5 p-4 sm:px-6  flex justify-end",
 };
+
+const emit = defineEmits<{
+  onClose: [];
+}>();
 
 const props = defineProps<{
   title: string;
   description: string;
 }>();
 
-const openModel = defineModel<boolean>("show");
+const showModel = defineModel<boolean>("show");
 </script>
 
 <style scoped lang=""></style>
