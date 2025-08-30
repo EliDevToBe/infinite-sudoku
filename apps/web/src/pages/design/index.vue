@@ -80,9 +80,30 @@
           title="Modal Title"
           description="Modal Description"
           v-model:show="isModalOpen"
+          @on-close="toastInfo({ description: 'Modal closed' })"
         >
           <template #body>Basic content</template>
-          <template #footer>Basic footer</template>
+          <template #footer>
+            <div class="flex gap-5">
+              <ButtonUI
+                variant="secondary"
+                size="sm"
+                @click="
+                  toastInfo({ description: 'Modal cancelled' });
+                  isModalOpen = false;
+                "
+                >Cancel</ButtonUI
+              >
+              <ButtonUI
+                size="sm"
+                @click="
+                  toastSuccess({ description: 'Modal confirmed' });
+                  isModalOpen = false;
+                "
+                >Confirm</ButtonUI
+              >
+            </div>
+          </template>
         </ModalUI>
       </div>
     </MainContent>
