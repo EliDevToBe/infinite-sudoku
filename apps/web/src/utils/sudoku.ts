@@ -1,3 +1,11 @@
+export type Cell = {
+  x: number;
+  y: number;
+  value: number;
+  isEditable: boolean;
+  hypothesis: number[];
+};
+
 const POSSIBLE_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const validateInput = (input: string) => {
@@ -6,10 +14,12 @@ export const validateInput = (input: string) => {
   return false;
 };
 
-export type Cell = {
-  x: number;
-  y: number;
-  value: number;
-  isEditable: boolean;
-  hypothesis: number[];
-};
+export const DIFFICLUTY_BY_MISSING_CELLS_RANGE = {
+  WayTooEasy: [0, 40],
+  Easy: [41, 45],
+  Medium: [46, 49],
+  Advanced: [50, 53],
+  Hard: [54, 56],
+  VeryHard: [57, 59],
+  DiabolicExpert: [60, 64],
+} as const;
