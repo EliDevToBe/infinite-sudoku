@@ -78,11 +78,10 @@
 </template>
 
 <script setup lang="ts">
-import { usePresetToast } from "@/composables/toast";
-import { useSudoku, useUser } from "@/composables";
-import { onMounted, reactive, ref, watch } from "vue";
+import { useSudoku, useUser, usePresetToast } from "@/composables";
+import { ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
-import type { Cell } from "@/utils";
+import type { Cell, DifficultyOptions } from "@/utils";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -96,7 +95,7 @@ const { currentUser } = useUser();
 const { toastInfo, toastSuccess, toastError } = usePresetToast();
 const { formatPuzzle, getRandomPuzzle } = useSudoku();
 
-const difficulty = ref<string>("");
+const difficulty = ref<DifficultyOptions>("medium");
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });
