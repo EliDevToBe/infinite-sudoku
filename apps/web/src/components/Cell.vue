@@ -2,7 +2,7 @@
   <div :class="ui.cell">
     <input
       :disabled="!currentCell.isEditable"
-      :class="ui.input"
+      :class="inputClass"
       type="text"
       :value="displayValue"
       @input="handleInput"
@@ -11,12 +11,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Cell } from "@/composables/useSudoku";
+import type { Cell } from "@/utils";
 import { validateInput } from "@/utils";
 import { computed } from "vue";
 
 const props = defineProps<{
   currentCell: Cell;
+  isLoading: boolean;
 }>();
 
 type Emits = {
@@ -36,8 +37,22 @@ const ui = {
     "bg-gray-300 text-dTheme-surface",
     "transition-all duration-200",
   ],
-  input: ["outline-none text-center text-lg w-full h-full"],
+  input: [
+    "cursor-default caret-transparent outline-none text-center w-full h-full",
+    "sm:text-2xl text-lg",
+    "focus:bg-dTheme-light",
+  ],
+  blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
+  disabled: "font-600 text-dTheme-accentDarker",
 };
+
+const inputClass = computed(() => {
+  return [
+    ui.input,
+    props.isLoading ? ui.blur : "",
+    props.currentCell.isEditable ? "" : ui.disabled,
+  ];
+});
 
 const handleInput = (event: Event) => {
   const inputElement = event.target as HTMLInputElement;

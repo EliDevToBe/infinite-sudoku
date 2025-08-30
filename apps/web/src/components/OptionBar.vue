@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex w-[95%] max-w-150 items-center justify-between bg-dTheme-surfaceOther rounded-md p-1 pl-2 pr-2"
-  >
+  <div :class="ui.wrapper">
     <RadioUI
       value="easy"
       radioGroup="difficulty"
@@ -33,7 +31,17 @@
 </template>
 
 <script setup lang="ts">
-const difficulty = defineModel<string>();
+import { type DifficultyOptions } from "@/utils";
+
+const difficulty = defineModel<DifficultyOptions>();
+
+const ui = {
+  wrapper: [
+    "flex items-center justify-between rounded-md ",
+    "w-[95%] max-w-150 p-1 pl-2 pr-2",
+    "bg-dTheme-surfaceOther",
+  ],
+};
 </script>
 
 <style scoped></style>

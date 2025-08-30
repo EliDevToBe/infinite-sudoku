@@ -27,6 +27,7 @@
             :class="ui.cellCol"
           >
             <!-- Actual Cell -->
+
             <Cell
               :currentCell="
                 grid[(blockRow - 1) * 3 + (cellRow - 1)][
@@ -46,6 +47,7 @@
                   });
                 }
               "
+              :isLoading="isLoading"
             />
           </div>
         </div>
@@ -56,6 +58,10 @@
 
 <script setup lang="ts">
 import type { Cell } from "@/utils";
+
+const props = defineProps<{
+  isLoading: boolean;
+}>();
 
 const grid = defineModel<Cell[][]>({ required: true });
 
