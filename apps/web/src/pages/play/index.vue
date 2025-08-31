@@ -39,7 +39,6 @@
         @on-undo="handleUndo"
         @on-eraser="eraseCell"
         @on-redo="handleRedo"
-        @click="console.log(getMoveStack())"
       ></ActionBar>
     </MainContent>
   </MainWrapper>
