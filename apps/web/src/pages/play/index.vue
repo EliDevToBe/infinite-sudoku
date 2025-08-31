@@ -52,7 +52,7 @@ import { useSudoku, usePresetToast, useMoveStack } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError } = usePresetToast();
-const { getMoveStack, pushMove, undoMove, redoMove } = useMoveStack();
+const { pushMove, undoMove, redoMove } = useMoveStack();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
