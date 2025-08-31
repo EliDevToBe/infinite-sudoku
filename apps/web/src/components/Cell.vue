@@ -1,5 +1,5 @@
 <template>
-  <div :class="cellClass">
+  <div :class="ui.cell">
     <input
       :disabled="!currentCell.isEditable"
       :class="inputClass"
@@ -51,7 +51,6 @@ const ui = {
     "cursor-default caret-transparent outline-none text-center w-full h-full",
     "sm:text-2xl text-lg",
   ],
-  cellSelected: "bg-dTheme-light",
   blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
   disabled: "font-semibold text-dTheme-accentDarker",
 };
@@ -61,13 +60,6 @@ const inputClass = computed(() => {
     ui.input,
     props.isLoading ? ui.blur : "",
     props.currentCell.isEditable ? "" : ui.disabled,
-  ];
-});
-
-const cellClass = computed(() => {
-  return [
-    ui.cell,
-    props.currentCell === getSelectedCell() ? ui.cellSelected : "",
   ];
 });
 
