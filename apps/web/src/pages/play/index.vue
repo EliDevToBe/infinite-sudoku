@@ -153,6 +153,7 @@ const setNumber = (number: number) => {
   pushMove(selectedCell, { ...selectedCell, value: number });
 
   puzzle.value[selectedCell.y][selectedCell.x].value = number;
+  setSelectedCell(puzzle.value[selectedCell.y][selectedCell.x]);
 };
 </script>
 
