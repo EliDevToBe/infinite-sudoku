@@ -8,8 +8,11 @@ on:
       - "apps/api/**"
 
 jobs:
-  Lint-Format:
+  Code-Quality:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/api
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,4 +28,7 @@ jobs:
           version: 2.0.0
   
       - name: Run Biome
-        run: biome ci ./apps/api
+        run: biome ci
+
+      - name: Type Check
+        run: npx tsc --noEmit
