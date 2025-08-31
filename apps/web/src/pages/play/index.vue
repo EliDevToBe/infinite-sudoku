@@ -15,7 +15,7 @@
         :is-loading="isLoading"
       ></SudokuGrid>
 
-      <ConfirmModal
+      <LazyConfirmModal
         description="Confirm switching difficulties"
         v-model:show="isModalOpen"
         @on-secondary-action="handleCancel"
@@ -33,7 +33,7 @@
           will reset your current grid.
         </span>
         <span class="inline-block">You will lose your progress.</span>
-      </ConfirmModal>
+      </LazyConfirmModal>
 
       <ActionBar
         @on-undo="handleUndo"
@@ -46,13 +46,19 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { MainWrapper, OptionBar } from "@/components";
+import { LazyConfirmModal } from "@/components";
 import { type Cell, type DifficultyOptions } from "@/utils";
-import { useSudoku, usePresetToast, useMoveStack } from "@/composables";
+import {
+  useSudoku,
+  usePresetToast,
+  useMoveStack,
+  useState,
+} from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError } = usePresetToast();
 const { pushMove, undoMove, redoMove } = useMoveStack();
+const { setSelectedCell } = useState();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -117,6 +123,7 @@ const eraseCell = (event: { x: number; y: number }) => {
     value: 0,
   });
   puzzle.value[event.y][event.x].value = 0;
+  setSelectedCell(null);
 };
 
 const handleUndo = () => {

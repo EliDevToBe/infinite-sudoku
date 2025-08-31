@@ -1,5 +1,5 @@
 <template>
-  <ModalUI
+  <LazyModalUI
     :title="title"
     :description="description"
     v-model:show="innerShow"
@@ -30,10 +30,12 @@
         >
       </div>
     </template>
-  </ModalUI>
+  </LazyModalUI>
 </template>
 
 <script setup lang="ts">
+import { LazyModalUI } from "@/components";
+
 const props = withDefaults(
   defineProps<{
     title?: string;
