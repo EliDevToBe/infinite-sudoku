@@ -1,7 +1,6 @@
 import cors from "@fastify/cors";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import { isProduction } from "../utils/isProduction.js";
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
@@ -10,7 +9,7 @@ export default fp(
     }
 
     server.register(cors, {
-      origin: [isProduction() ? process.env.FRONTEND_URL : "*"],
+      origin: [process.env.FRONTEND_URL],
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: [
         "Content-Type",

@@ -8,7 +8,7 @@
         />
       </div>
     </template>
-    <MainContent>
+    <MainContent class="gap-5">
       <SudokuGrid
         v-if="isPuzzleFetched"
         v-model="puzzle"
@@ -34,6 +34,13 @@
         </span>
         <span class="inline-block">You will lose your progress.</span>
       </ConfirmModal>
+
+      <ActionBar
+        @on-undo="handleUndo"
+        @on-eraser="eraseCell"
+        @on-redo="handleRedo"
+        @click="console.log(getMoveStack())"
+      ></ActionBar>
     </MainContent>
   </MainWrapper>
 </template>
@@ -42,10 +49,11 @@
 import { onMounted, ref, computed } from "vue";
 import { MainWrapper, OptionBar } from "@/components";
 import { type Cell, type DifficultyOptions } from "@/utils";
-import { useSudoku, usePresetToast } from "@/composables";
+import { useSudoku, usePresetToast, useMoveStack } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError } = usePresetToast();
+const { getMoveStack, pushMove, undoMove, redoMove } = useMoveStack();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -102,6 +110,28 @@ const handleCancel = () => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
   }, 100);
+};
+
+const eraseCell = (event: { x: number; y: number }) => {
+  pushMove(puzzle.value[event.y][event.x], {
+    ...puzzle.value[event.y][event.x],
+    value: 0,
+  });
+  puzzle.value[event.y][event.x].value = 0;
+};
+
+const handleUndo = () => {
+  const move = undoMove();
+  if (!move) return;
+
+  puzzle.value[move.y][move.x].value = move.value;
+};
+
+const handleRedo = () => {
+  const move = redoMove();
+  if (!move) return;
+
+  puzzle.value[move.y][move.x].value = move.value;
 };
 </script>
 

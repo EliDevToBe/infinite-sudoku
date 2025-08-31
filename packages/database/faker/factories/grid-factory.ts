@@ -1,6 +1,6 @@
 import type { Faker } from "@faker-js/faker";
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { sha256 } from "../../../shared/utils/sha256";
+import { sha256 } from "../../../shared/utils/sha256.js";
 
 type Grid = Prisma.gridCreateInput;
 
