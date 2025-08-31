@@ -8,7 +8,7 @@
         />
       </div>
     </template>
-    <MainContent class="gap-5">
+    <MainContent class="gap-3">
       <SudokuGrid
         v-if="isPuzzleFetched"
         v-model="puzzle"

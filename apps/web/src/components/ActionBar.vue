@@ -12,11 +12,7 @@
       </div>
     </TooltipUI>
 
-    <TooltipUI
-      :text="`Erase last selected cell (${getSelectedCell()?.x}, ${
-        getSelectedCell()?.y
-      })`"
-    >
+    <TooltipUI :text="`Erase last selected cell ${dataEraseTooltip}`">
       <div role="button" :class="ui.icon" @click="handleEraser">
         <VueIcon role="button" :class="ui.icon" name="lucide:eraser"></VueIcon>
       </div>
@@ -31,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useState } from "@/composables";
 
 const { getSelectedCell } = useState();
@@ -51,6 +48,12 @@ const emit = defineEmits<{
   onEraser: [{ x: number; y: number }];
   onNote: [];
 }>();
+
+const dataEraseTooltip = computed(() => {
+  const selectedCell = getSelectedCell();
+  if (!selectedCell) return "";
+  return `(${selectedCell?.x}, ${selectedCell?.y})`;
+});
 
 const handleEraser = () => {
   const selectedCell = getSelectedCell();

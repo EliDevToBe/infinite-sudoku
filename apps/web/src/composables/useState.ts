@@ -5,7 +5,7 @@ const selectedCell = ref<Cell | null>(null);
 
 export const useState = () => {
   const setSelectedCell = (cell: Cell | null) => {
-    selectedCell.value = { ...cell } as Cell;
+    selectedCell.value = cell ? { ...cell } : null;
   };
 
   const getSelectedCell = () => {
