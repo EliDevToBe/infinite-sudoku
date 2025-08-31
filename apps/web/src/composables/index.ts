@@ -2,6 +2,7 @@ import { usePresetToast } from "./toast";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 import { Logger } from "./useLogger";
+import { useMoveStack } from "./useMoveStack";
 import { useNavigation } from "./useNavigation";
 import { useState } from "./useState";
 import { useSudoku } from "./useSudoku";
@@ -14,6 +15,7 @@ export {
   useTheme,
   useUser,
   useState,
+  useMoveStack,
   useApi,
   Logger,
   useSudoku,
