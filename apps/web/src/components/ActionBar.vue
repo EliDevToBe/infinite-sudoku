@@ -42,7 +42,7 @@ const ui = {
     "w-[95%] w-50 sm:w-75 p-1 pl-2 pr-2",
     "bg-dTheme-surfaceOther",
   ],
-  icon: ["w-5 h-5 sm:w-7 sm:h-7 ", "sm:hover:bg-dTheme-light/20 rounded-md"],
+  icon: ["w-5 h-5 sm:w-7 sm:h-7 ", "sm:hover:bg-dTheme-light/10 rounded-md"],
 };
 
 const emit = defineEmits<{
