@@ -65,7 +65,7 @@ const inputClass = computed(() => {
 const cellBeforeUpdate = ref<Cell>();
 
 const handleBeforeInput = () => {
-  cellBeforeUpdate.value = props.currentCell;
+  cellBeforeUpdate.value = { ...props.currentCell };
 };
 
 const handleInput = (event: Event) => {
@@ -79,17 +79,24 @@ const handleInput = (event: Event) => {
     return;
   }
 
-  if (input === "") {
+  if (input === "" || !validateInput(input)) {
+    inputElement.value = "";
     inputValue.value = 0;
+
+    const newCell = { ...cellBeforeUpdate.value, value: 0 };
+    if (newCell.value !== cellBeforeUpdate.value.value) {
+      pushMove(cellBeforeUpdate.value, newCell);
+    }
+
     emit("update:cell", 0);
     return;
   }
 
-  if (!validateInput(input)) {
-    inputElement.value = "";
-    inputValue.value = 0;
-    return;
-  }
+  // if (!validateInput(input)) {
+  //   inputElement.value = "";
+  //   inputValue.value = 0;
+  //   return;
+  // }
 
   const newCell = { ...cellBeforeUpdate.value, value: Number(input) };
   if (newCell.value !== cellBeforeUpdate.value.value) {
