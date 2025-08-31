@@ -8,7 +8,7 @@
         />
       </div>
     </template>
-    <MainContent>
+    <MainContent class="gap-5">
       <SudokuGrid
         v-if="isPuzzleFetched"
         v-model="puzzle"
@@ -34,6 +34,8 @@
         </span>
         <span class="inline-block">You will lose your progress.</span>
       </ConfirmModal>
+
+      <ActionBar @on-eraser="eraseCell"></ActionBar>
     </MainContent>
   </MainWrapper>
 </template>
@@ -102,6 +104,10 @@ const handleCancel = () => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
   }, 100);
+};
+
+const eraseCell = (event: { x: number; y: number }) => {
+  puzzle.value[event.y][event.x].value = 0;
 };
 </script>
 
