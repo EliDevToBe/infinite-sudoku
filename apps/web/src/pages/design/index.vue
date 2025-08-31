@@ -65,9 +65,14 @@
       </form>
 
       <section>
-        <ButtonUI size="sm" variant="danger" @click="showToast">
-          Multi Toasting (x3)
-        </ButtonUI>
+        <TooltipUI
+          text="Generate each toast variant"
+          :options="{ align: 'start', side: 'top', sideOffset: 10 }"
+        >
+          <ButtonUI size="sm" variant="danger" @click="showToast">
+            Multi Toasting (x3)
+          </ButtonUI>
+        </TooltipUI>
       </section>
 
       <section class="flex justify-center">

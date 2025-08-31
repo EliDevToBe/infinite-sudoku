@@ -1,24 +1,33 @@
 <template>
   <div :class="ui.wrapper">
-    <div role="button" :class="ui.icon" @click="emit('onUndo')">
-      <VueIcon role="button" :class="ui.icon" name="lucide:undo"></VueIcon>
-    </div>
+    <TooltipUI text="Undo last move">
+      <div role="button" :class="ui.icon" @click="emit('onUndo')">
+        <VueIcon role="button" :class="ui.icon" name="lucide:undo"></VueIcon>
+      </div>
+    </TooltipUI>
 
-    <div role="button" :class="ui.icon" @click="emit('onRedo')">
-      <VueIcon role="button" :class="ui.icon" name="lucide:redo"></VueIcon>
-    </div>
+    <TooltipUI text="Redo last move">
+      <div role="button" :class="ui.icon" @click="emit('onRedo')">
+        <VueIcon role="button" :class="ui.icon" name="lucide:redo"></VueIcon>
+      </div>
+    </TooltipUI>
 
-    <div role="button" :class="ui.icon" @click="handleEraser">
-      <VueIcon role="button" :class="ui.icon" name="lucide:eraser"></VueIcon>
-    </div>
+    <TooltipUI :text="`Erase last selected cell ${dataEraseTooltip}`">
+      <div role="button" :class="ui.icon" @click="handleEraser">
+        <VueIcon role="button" :class="ui.icon" name="lucide:eraser"></VueIcon>
+      </div>
+    </TooltipUI>
 
-    <div role="button" :class="ui.icon" @click="emit('onNote')">
-      <VueIcon role="button" :class="ui.icon" name="lucide:pencil"></VueIcon>
-    </div>
+    <TooltipUI text="Toggle Note mode">
+      <div role="button" :class="ui.icon" @click="emit('onNote')">
+        <VueIcon role="button" :class="ui.icon" name="lucide:pencil"></VueIcon>
+      </div>
+    </TooltipUI>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useState } from "@/composables";
 
 const { getSelectedCell } = useState();
@@ -30,7 +39,7 @@ const ui = {
     "w-[95%] w-50 sm:w-75 p-1 pl-2 pr-2",
     "bg-dTheme-surfaceOther",
   ],
-  icon: ["w-5 h-5 sm:w-7 sm:h-7 ", "sm:hover:bg-dTheme-light/20 rounded-md"],
+  icon: ["w-5 h-5 sm:w-7 sm:h-7 ", "sm:hover:bg-dTheme-light/10 rounded-md"],
 };
 
 const emit = defineEmits<{
@@ -39,6 +48,12 @@ const emit = defineEmits<{
   onEraser: [{ x: number; y: number }];
   onNote: [];
 }>();
+
+const dataEraseTooltip = computed(() => {
+  const selectedCell = getSelectedCell();
+  if (!selectedCell) return "";
+  return `(${selectedCell?.x}, ${selectedCell?.y})`;
+});
 
 const handleEraser = () => {
   const selectedCell = getSelectedCell();

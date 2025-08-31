@@ -8,7 +8,7 @@
         />
       </div>
     </template>
-    <MainContent class="gap-5">
+    <MainContent class="gap-3">
       <SudokuGrid
         v-if="isPuzzleFetched"
         v-model="puzzle"
@@ -39,7 +39,6 @@
         @on-undo="handleUndo"
         @on-eraser="eraseCell"
         @on-redo="handleRedo"
-        @click="console.log(getMoveStack())"
       ></ActionBar>
     </MainContent>
   </MainWrapper>
@@ -53,7 +52,7 @@ import { useSudoku, usePresetToast, useMoveStack } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError } = usePresetToast();
-const { getMoveStack, pushMove, undoMove, redoMove } = useMoveStack();
+const { pushMove, undoMove, redoMove } = useMoveStack();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
