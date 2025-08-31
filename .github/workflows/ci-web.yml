@@ -28,4 +28,4 @@ jobs:
         run: biome ci ./apps/web
 
       - name: Vue Type Check
-        run: npm run type-check
+        run: npx tsc-vue --build
