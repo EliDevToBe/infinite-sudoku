@@ -44,7 +44,7 @@
           class="rounded-b-none"
         ></ActionBar>
 
-        <NumberBar @on-select="console.log"></NumberBar>
+        <NumberBar @on-select="setNumber"></NumberBar>
       </div>
     </MainContent>
   </MainWrapper>
@@ -64,7 +64,7 @@ import {
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError, toastInfo } = usePresetToast();
 const { pushMove, undoMove, redoMove } = useMoveStack();
-const { setSelectedCell } = useState();
+const { setSelectedCell, getSelectedCell } = useState();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -144,6 +144,15 @@ const handleRedo = () => {
   if (!move) return;
 
   puzzle.value[move.y][move.x].value = move.value;
+};
+
+const setNumber = (number: number) => {
+  const selectedCell = getSelectedCell();
+  if (!selectedCell) return;
+
+  pushMove(selectedCell, { ...selectedCell, value: number });
+
+  puzzle.value[selectedCell.y][selectedCell.x].value = number;
 };
 </script>
 
