@@ -48,6 +48,13 @@
                 }
               "
               :isLoading="isLoading"
+              :isSelected="
+                isSelected(
+                  grid[(blockRow - 1) * 3 + (cellRow - 1)][
+                    (blockCol - 1) * 3 + (cellCol - 1)
+                  ]
+                )
+              "
             />
           </div>
         </div>
@@ -58,10 +65,14 @@
 
 <script setup lang="ts">
 import type { Cell } from "@/utils";
+import { useState } from "@/composables";
+import { computed } from "vue";
 
 const props = defineProps<{
   isLoading: boolean;
 }>();
+
+const { getSelectedCell } = useState();
 
 const grid = defineModel<Cell[][]>({ required: true });
 
@@ -90,6 +101,17 @@ const handleCellUpdate = (
   position: { x: number; y: number }
 ) => {
   grid.value[position.y][position.x].value = value;
+};
+
+const isSelected = (currentCell: Cell) => {
+  const selectedCell = getSelectedCell();
+  if (!selectedCell) return false;
+
+  return (
+    selectedCell &&
+    selectedCell.x === currentCell.x &&
+    selectedCell.y === currentCell.y
+  );
 };
 </script>
 
