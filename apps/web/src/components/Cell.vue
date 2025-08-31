@@ -93,7 +93,10 @@ const handleInput = (event: Event) => {
   }
 
   if (!validateInput(input)) {
-    inputElement.value = cellBeforeUpdate.value.value.toString();
+    inputElement.value = cellBeforeUpdate.value.value
+      ? cellBeforeUpdate.value.value.toString()
+      : "";
+    inputValue.value = cellBeforeUpdate.value.value;
     return;
   }
 
