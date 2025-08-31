@@ -8,8 +8,11 @@ on:
       - "packages/shared/**"
 
 jobs:
-  Lint-Format:
+  Code-Quality:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/shared
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,4 +28,4 @@ jobs:
           version: 2.0.0
 
       - name: Run Biome
-        run: biome ci ./packages/shared
+        run: biome ci

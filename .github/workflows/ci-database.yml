@@ -8,8 +8,11 @@ on:
       - "packages/database/**"
 
 jobs:
-  Lint-Format:
+  Code-Quality:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/database
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,4 +28,4 @@ jobs:
           version: 2.0.0
     
       - name: Run Biome
-        run: biome ci ./packages/database
+        run: biome ci
