@@ -6,7 +6,8 @@
       type="text"
       :value="displayValue"
       @input="handleInput"
-      @focus="setSelectedCell({ x: currentCell.x, y: currentCell.y })"
+      @focus="setSelectedCell(currentCell)"
+      @beforeinput="handleBeforeInput"
     />
   </div>
 </template>
@@ -14,10 +15,13 @@
 <script setup lang="ts">
 import type { Cell } from "@/utils";
 import { validateInput } from "@/utils";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useState } from "@/composables";
+import { useMoveStack } from "@/composables";
+import { throwFrontError } from "@/utils/error";
 
 const { setSelectedCell } = useState();
+const { pushMove } = useMoveStack();
 
 const props = defineProps<{
   currentCell: Cell;
@@ -58,9 +62,22 @@ const inputClass = computed(() => {
   ];
 });
 
+const cellBeforeUpdate = ref<Cell>();
+
+const handleBeforeInput = () => {
+  cellBeforeUpdate.value = props.currentCell;
+};
+
 const handleInput = (event: Event) => {
   const inputElement = event.target as HTMLInputElement;
   let input = inputElement.value.slice(-1);
+
+  if (!cellBeforeUpdate.value) {
+    throwFrontError("Cell before update is not set", {
+      cellBeforeUpdate: cellBeforeUpdate.value,
+    });
+    return;
+  }
 
   if (input === "") {
     inputValue.value = 0;
@@ -72,6 +89,11 @@ const handleInput = (event: Event) => {
     inputElement.value = "";
     inputValue.value = 0;
     return;
+  }
+
+  const newCell = { ...cellBeforeUpdate.value, value: Number(input) };
+  if (newCell.value !== cellBeforeUpdate.value.value) {
+    pushMove({ ...cellBeforeUpdate.value }, newCell);
   }
 
   inputElement.value = input;
