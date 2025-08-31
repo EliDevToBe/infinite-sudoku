@@ -63,7 +63,7 @@ import {
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError, toastInfo } = usePresetToast();
-const { pushMove, undoMove, redoMove } = useMoveStack();
+const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
 
 const isLoading = ref(false);
@@ -108,6 +108,7 @@ const handleDifficultySwitch = () => {
 const handleConfirm = () => {
   isModalOpen.value = false;
   isLoading.value = true;
+  resetMoveStacks();
 
   setTimeout(async () => {
     await setPuzzle();
