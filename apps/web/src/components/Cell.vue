@@ -8,6 +8,7 @@
       @input="handleInput"
       @focus="setSelectedCell(currentCell)"
       @beforeinput="handleBeforeInput"
+      v-bind:class="{ 'bg-dTheme-light': isSelected }"
     />
   </div>
 </template>
@@ -20,12 +21,13 @@ import { useState } from "@/composables";
 import { useMoveStack } from "@/composables";
 import { throwFrontError } from "@/utils/error";
 
-const { setSelectedCell } = useState();
+const { setSelectedCell, getSelectedCell } = useState();
 const { pushMove } = useMoveStack();
 
 const props = defineProps<{
   currentCell: Cell;
   isLoading: boolean;
+  isSelected: boolean;
 }>();
 
 type Emits = {
@@ -48,7 +50,6 @@ const ui = {
   input: [
     "cursor-default caret-transparent outline-none text-center w-full h-full",
     "sm:text-2xl text-lg",
-    "focus:bg-dTheme-light",
   ],
   blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
   disabled: "font-semibold text-dTheme-accentDarker",

@@ -134,6 +134,10 @@
           <span class="inline-block">You will lose your progress.</span>
         </ConfirmModal>
       </section>
+
+      <section>
+        <NumberBar></NumberBar>
+      </section>
     </MainContent>
   </MainWrapper>
 </template>

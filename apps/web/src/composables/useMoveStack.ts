@@ -74,11 +74,14 @@ export const useMoveStack = () => {
     if (!move) return;
     const { prev, next } = move;
 
-    console.log(prev);
-
     previousMoveStack.value.push(prev);
     return next;
   };
 
-  return { pushMove, getMoveStack, undoMove, redoMove };
+  const resetMoveStacks = () => {
+    historyMoveStack.value = [];
+    previousMoveStack.value = [];
+  };
+
+  return { pushMove, getMoveStack, undoMove, redoMove, resetMoveStacks };
 };
