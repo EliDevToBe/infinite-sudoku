@@ -26,3 +26,6 @@ jobs:
   
       - name: Run Biome
         run: biome ci ./apps/web
+
+      - name: Vue Type Check
+        run: npm run type-check
