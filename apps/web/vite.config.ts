@@ -27,6 +27,17 @@ export default defineConfig({
             },
           },
         },
+        tooltip: {
+          slots: {
+            content: [
+              "bg-dTheme-surface rounded-sm p-2 text-dTheme-font",
+              "border-t-1 border-t-dTheme-light",
+              "border-l-1 border-l-dTheme-light/80 ",
+              "border-r-1 border-r-dTheme-light/80",
+              "shadow-xs shadow-dTheme-accent",
+            ],
+          },
+        },
       },
     }),
     UnoCSS({ configFile: "./uno.config.ts" }),
