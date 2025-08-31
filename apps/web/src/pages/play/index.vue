@@ -35,11 +35,17 @@
         <span class="inline-block">You will lose your progress.</span>
       </LazyConfirmModal>
 
-      <ActionBar
-        @on-undo="handleUndo"
-        @on-eraser="eraseCell"
-        @on-redo="handleRedo"
-      ></ActionBar>
+      <div class="flex flex-col items-center">
+        <ActionBar
+          @on-undo="handleUndo"
+          @on-eraser="eraseCell"
+          @on-redo="handleRedo"
+          @on-note="toastInfo({ description: 'Note mode coming soon 🥳' })"
+          class="rounded-b-none"
+        ></ActionBar>
+
+        <NumberBar @on-select="console.log"></NumberBar>
+      </div>
     </MainContent>
   </MainWrapper>
 </template>
@@ -56,7 +62,7 @@ import {
 } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
-const { toastError } = usePresetToast();
+const { toastError, toastInfo } = usePresetToast();
 const { pushMove, undoMove, redoMove } = useMoveStack();
 const { setSelectedCell } = useState();
 
