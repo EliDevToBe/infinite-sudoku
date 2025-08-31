@@ -1,20 +1,32 @@
 <template>
   <div :class="ui.wrapper">
-    <div role="button" :class="ui.icon" @click="emit('onUndo')">
-      <VueIcon role="button" :class="ui.icon" name="lucide:undo"></VueIcon>
-    </div>
+    <TooltipUI text="Undo last move">
+      <div role="button" :class="ui.icon" @click="emit('onUndo')">
+        <VueIcon role="button" :class="ui.icon" name="lucide:undo"></VueIcon>
+      </div>
+    </TooltipUI>
 
-    <div role="button" :class="ui.icon" @click="emit('onRedo')">
-      <VueIcon role="button" :class="ui.icon" name="lucide:redo"></VueIcon>
-    </div>
+    <TooltipUI text="Redo last move">
+      <div role="button" :class="ui.icon" @click="emit('onRedo')">
+        <VueIcon role="button" :class="ui.icon" name="lucide:redo"></VueIcon>
+      </div>
+    </TooltipUI>
 
-    <div role="button" :class="ui.icon" @click="handleEraser">
-      <VueIcon role="button" :class="ui.icon" name="lucide:eraser"></VueIcon>
-    </div>
+    <TooltipUI
+      :text="`Erase last selected cell (${getSelectedCell()?.x}, ${
+        getSelectedCell()?.y
+      })`"
+    >
+      <div role="button" :class="ui.icon" @click="handleEraser">
+        <VueIcon role="button" :class="ui.icon" name="lucide:eraser"></VueIcon>
+      </div>
+    </TooltipUI>
 
-    <div role="button" :class="ui.icon" @click="emit('onNote')">
-      <VueIcon role="button" :class="ui.icon" name="lucide:pencil"></VueIcon>
-    </div>
+    <TooltipUI text="Toggle Note mode">
+      <div role="button" :class="ui.icon" @click="emit('onNote')">
+        <VueIcon role="button" :class="ui.icon" name="lucide:pencil"></VueIcon>
+      </div>
+    </TooltipUI>
   </div>
 </template>
 
