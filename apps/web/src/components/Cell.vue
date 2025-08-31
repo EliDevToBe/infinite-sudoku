@@ -93,7 +93,7 @@ const handleInput = (event: Event) => {
 
   const newCell = { ...cellBeforeUpdate.value, value: Number(input) };
   if (newCell.value !== cellBeforeUpdate.value.value) {
-    pushMove({ ...cellBeforeUpdate.value }, newCell);
+    pushMove(cellBeforeUpdate.value, newCell);
   }
 
   inputElement.value = input;

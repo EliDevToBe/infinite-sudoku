@@ -107,6 +107,10 @@ const handleCancel = () => {
 };
 
 const eraseCell = (event: { x: number; y: number }) => {
+  pushMove(puzzle.value[event.y][event.x], {
+    ...puzzle.value[event.y][event.x],
+    value: 0,
+  });
   puzzle.value[event.y][event.x].value = 0;
 };
 </script>

@@ -11,7 +11,7 @@ export const useMoveStack = () => {
   };
 
   const pushMove = (prev: Cell, next: Cell) => {
-    moveStack.value.push({ prev, next });
+    moveStack.value.push({ prev: { ...prev }, next: { ...next } });
   };
 
   const popMove = () => {
