@@ -16,7 +16,7 @@ export const validateInput = (input: string) => {
   return false;
 };
 
-export const DIFFICLUTY_BY_MISSING_CELLS_RANGE = {
+export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
   WayTooEasy: [0, 40],
   Easy: [41, 45],
   Medium: [46, 49],
