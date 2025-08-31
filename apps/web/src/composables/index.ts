@@ -3,6 +3,7 @@ import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 import { Logger } from "./useLogger";
 import { useNavigation } from "./useNavigation";
+import { useState } from "./useState";
 import { useSudoku } from "./useSudoku";
 import { useTheme } from "./useTheme";
 import { useUser } from "./useUser";
@@ -12,6 +13,7 @@ export {
   useNavigation,
   useTheme,
   useUser,
+  useState,
   useApi,
   Logger,
   useSudoku,

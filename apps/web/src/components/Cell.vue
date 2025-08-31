@@ -6,6 +6,7 @@
       type="text"
       :value="displayValue"
       @input="handleInput"
+      @focus="setSelectedCell({ x: currentCell.x, y: currentCell.y })"
     />
   </div>
 </template>
@@ -14,6 +15,9 @@
 import type { Cell } from "@/utils";
 import { validateInput } from "@/utils";
 import { computed } from "vue";
+import { useState } from "@/composables";
+
+const { setSelectedCell } = useState();
 
 const props = defineProps<{
   currentCell: Cell;
