@@ -1,39 +1,17 @@
 <template>
   <div :class="ui.wrapper">
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-1"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-2"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-3"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-4"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-5"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-6"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-7"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-8"></VueIcon>
-    </div>
-
-    <div role="button" :class="ui.icon">
-      <VueIcon role="button" :class="ui.icon" name="mdi:number-9"></VueIcon>
+    <div
+      role="button"
+      :class="ui.icon"
+      v-for="number in 9"
+      :key="`Key-number-${number}`"
+      @click="emit('onSelect', number)"
+    >
+      <VueIcon
+        role="button"
+        :class="ui.icon"
+        :name="`mdi:number-${number}`"
+      ></VueIcon>
     </div>
   </div>
 </template>
@@ -48,6 +26,10 @@ const ui = {
   ],
   icon: ["w-7 h-7 sm:w-9 sm:h-9 ", "sm:hover:bg-dTheme-light/10 rounded-md"],
 };
+
+const emit = defineEmits<{
+  onSelect: [value: number];
+}>();
 </script>
 
 <style scoped></style>
