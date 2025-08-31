@@ -48,6 +48,12 @@
                 }
               "
               :isLoading="isLoading"
+              @keydown.delete="
+                handleCellUpdate(0, {
+                  x: (blockCol - 1) * 3 + (cellCol - 1),
+                  y: (blockRow - 1) * 3 + (cellRow - 1),
+                })
+              "
             />
           </div>
         </div>
