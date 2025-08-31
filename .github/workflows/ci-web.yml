@@ -28,4 +28,4 @@ jobs:
         run: biome ci ./apps/web
 
       - name: Vue Type Check
-        run: npx vue-tsc --build
+        run: npx vue-tsc --noEmit -p ./apps/web
