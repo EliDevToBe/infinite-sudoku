@@ -79,7 +79,7 @@ const handleInput = (event: Event) => {
     return;
   }
 
-  if (input === "" || !validateInput(input)) {
+  if (input === "") {
     inputElement.value = "";
     inputValue.value = 0;
 
@@ -92,11 +92,10 @@ const handleInput = (event: Event) => {
     return;
   }
 
-  // if (!validateInput(input)) {
-  //   inputElement.value = "";
-  //   inputValue.value = 0;
-  //   return;
-  // }
+  if (!validateInput(input)) {
+    inputElement.value = cellBeforeUpdate.value.value.toString();
+    return;
+  }
 
   const newCell = { ...cellBeforeUpdate.value, value: Number(input) };
   if (newCell.value !== cellBeforeUpdate.value.value) {
