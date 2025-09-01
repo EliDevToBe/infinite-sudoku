@@ -61,12 +61,12 @@ const ui = {
     primary: `bg-lTheme-light text-lTheme-font `,
     secondary: `bg-dTheme-light text-lTheme-accent 
         outline-[1px] outline-lTheme-light outline-lTheme-font 
-      md:hover:shadow-sm md:hover:shadow-lTheme-accent`,
+      sm:hover:shadow-sm sm:hover:shadow-lTheme-accent`,
   },
   dark: {
     primary: `bg-dTheme-surfaceOther text-dTheme-font `,
     secondary: `bg-dTheme-surfaceOther text-dTheme-font 
-      md:hover:shadow-sm md:hover:shadow-dTheme-accent`,
+      sm:hover:shadow-sm sm:hover:shadow-dTheme-accent`,
   },
   hasError: "box-shadow: inset 1px -1px 5px var(--colors-lTheme-danger)",
 };

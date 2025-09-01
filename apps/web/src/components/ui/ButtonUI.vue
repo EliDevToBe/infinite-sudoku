@@ -59,7 +59,7 @@ const ui = {
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
     "shadow-xs shadow-black",
-    "md:hover:shadow-sm md:hover:shadow-dTheme-accent",
+    "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
   ],
   disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
@@ -93,7 +93,7 @@ const ui = {
     danger: `
       bg-dTheme-danger text-dTheme-font
       active:bg-dTheme-dangerOther active:text-dTheme-light`,
-    ghost: `text-gray-500 outline-none outline-gray-600 md:hover:bg-gray-500 md:hover:bg-opacity-15 `,
+    ghost: `text-gray-500 outline-none sm:hover:bg-gray-500 sm:hover:bg-opacity-15 `,
   },
   icon: {
     "icon-xs": "8",
