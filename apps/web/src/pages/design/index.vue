@@ -12,7 +12,7 @@
         <div :class="ui.buttonContainer">
           <ButtonUI size="icon" variant="danger">x</ButtonUI>
           <ButtonUI size="sm" disabled>Disabled</ButtonUI>
-          <ButtonUI size="md">Button 3</ButtonUI>
+          <ButtonUI size="md" leadingIcon="mdi:apple">Button 3</ButtonUI>
           <ButtonUI size="lg">Button 4</ButtonUI>
         </div>
         <div :class="ui.buttonContainer">
@@ -138,6 +138,10 @@
       <section>
         <NumberBar></NumberBar>
       </section>
+
+      <section>
+        <FeatureArea></FeatureArea>
+      </section>
     </MainContent>
   </MainWrapper>
 </template>
@@ -147,6 +151,7 @@ import { useSudoku, useUser, usePresetToast } from "@/composables";
 import { ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
 import type { Cell, DifficultyOptions } from "@/utils";
+import { LazyTooltipUI } from "@/components";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {

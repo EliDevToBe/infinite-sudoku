@@ -1,5 +1,10 @@
 <template>
-  <VueTooltip :text="text" :delay-duration="500" :content="options">
+  <VueTooltip
+    :text="text"
+    :delay-duration="500"
+    :content="options"
+    :disabled="disabled"
+  >
     <slot></slot>
   </VueTooltip>
 </template>
@@ -12,5 +17,6 @@ defineProps<{
     side?: "top" | "bottom" | "left" | "right";
     sideOffset?: number;
   };
+  disabled?: boolean;
 }>();
 </script>

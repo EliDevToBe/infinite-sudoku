@@ -20,9 +20,12 @@ import BaseLayout from "./components/BaseLayout.vue";
 import MainTitle from "./components/MainTitle.vue";
 import MainWrapper from "./components/MainWrapper.vue";
 import type { ToasterProps } from "@nuxt/ui";
+import { useWindowSize } from "@vueuse/core";
+
+const { width } = useWindowSize();
 
 const toastConfig: ToasterProps = {
-  position: window.innerWidth < 768 ? "top-center" : "top-right",
+  position: width.value < 768 ? "top-center" : "top-right",
   ui: {
     base: "bg-[linear-gradient(to_bottom,rgba(50,71,83,1)_0%,rgba(32,47,55,1)_100%)]",
     viewport: "max-w-[300px] w-[75%]",

@@ -15,7 +15,7 @@
       </div>
     </template>
 
-    <MainContent>
+    <MainContent class="justify-center">
       <div :class="ui.menuWrapper">
         <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
 
@@ -352,17 +352,6 @@ watch(showRegister, resetForm);
 const hasAnyError = computed(() => {
   return Object.values(hasError.value).some((error) => error);
 });
-
-// onMounted(async () => {
-//   if (!isAuthenticated.value) {
-//     await initializeAuth();
-//     if (currentUser.value) {
-//       toastInfo({
-//         description: `Welcome back ${currentUser.value.pseudo} !`,
-//       });
-//     }
-//   }
-// });
 
 const mainActions = async () => {
   if (!isMenuOpen.value) {
