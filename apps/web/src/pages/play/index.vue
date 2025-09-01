@@ -19,8 +19,8 @@
         title="Are you sure ?"
         description="Confirm switching difficulties"
         v-model:show="isModalOpen"
-        @on-secondary-action="handleCancel"
-        @on-main-action="handleConfirm"
+        @on-secondary-action="cancelDifficultySwitch"
+        @on-main-action="switchDifficulty"
       >
         <span class="inline-block">
           Switching difficulty from
@@ -110,11 +110,11 @@ const handleDifficultySwitch = () => {
   if (hasUserInput.value) {
     isModalOpen.value = true;
   } else {
-    handleConfirm();
+    switchDifficulty();
   }
 };
 
-const handleConfirm = () => {
+const switchDifficulty = () => {
   isModalOpen.value = false;
   isLoading.value = true;
   resetMoveStacks();
@@ -126,7 +126,7 @@ const handleConfirm = () => {
   }, 300);
 };
 
-const handleCancel = () => {
+const cancelDifficultySwitch = () => {
   setTimeout(() => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
