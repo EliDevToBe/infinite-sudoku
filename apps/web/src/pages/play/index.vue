@@ -18,7 +18,7 @@
       <LazyActionModal
         title="Are you sure ?"
         description="Confirm switching difficulties"
-        v-model:show="isModalOpen"
+        v-model:show="showPreventDifficultyModal"
         @on-secondary-action="cancelDifficultySwitch"
         @on-main-action="switchDifficulty"
       >
@@ -50,11 +50,21 @@
 
       <FeatureArea
         class="mt-1"
-        @on-leaderboard="
-          toastInfo({ description: 'Leaderboard coming soon 🥳' })
-        "
-        @on-save="toastInfo({ description: 'Save progress coming soon 🥳' })"
+        @on-leaderboard="handleLeaderboard"
+        @on-save="handleSave"
       ></FeatureArea>
+
+      <LazyActionModal
+        title="Unlock full potential !"
+        description="🚀 Register to unlock exclusive features"
+        v-model:show="showSubscribeModal"
+        main-action-label="Register"
+        @on-main-action="showSubscribeModal = false"
+        secondary-action-label="Cancel"
+        @on-secondary-action="showSubscribeModal = false"
+      >
+        <div>BODY</div>
+      </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
@@ -68,16 +78,19 @@ import {
   usePresetToast,
   useMoveStack,
   useState,
+  useAuth,
 } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError, toastInfo } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
+const { isAuthenticated } = useAuth();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
-const isModalOpen = ref(false);
+const showPreventDifficultyModal = ref(false);
+const showSubscribeModal = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
@@ -108,14 +121,14 @@ const setPuzzle = async () => {
 
 const handleDifficultySwitch = () => {
   if (hasUserInput.value) {
-    isModalOpen.value = true;
+    showPreventDifficultyModal.value = true;
   } else {
     switchDifficulty();
   }
 };
 
 const switchDifficulty = () => {
-  isModalOpen.value = false;
+  showPreventDifficultyModal.value = false;
   isLoading.value = true;
   resetMoveStacks();
 
@@ -164,6 +177,24 @@ const setNumber = (number: number) => {
 
   puzzle.value[selectedCell.y][selectedCell.x].value = number;
   setSelectedCell(puzzle.value[selectedCell.y][selectedCell.x]);
+};
+
+const handleLeaderboard = () => {
+  if (!isAuthenticated.value) {
+    showSubscribeModal.value = true;
+    return;
+  }
+
+  console.log("SHOW LEADERBOARD");
+};
+
+const handleSave = () => {
+  if (!isAuthenticated.value) {
+    showSubscribeModal.value = true;
+    return;
+  }
+
+  console.log("SAVE ACTION");
 };
 </script>
 
