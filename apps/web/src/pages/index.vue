@@ -353,17 +353,6 @@ const hasAnyError = computed(() => {
   return Object.values(hasError.value).some((error) => error);
 });
 
-// onMounted(async () => {
-//   if (!isAuthenticated.value) {
-//     await initializeAuth();
-//     if (currentUser.value) {
-//       toastInfo({
-//         description: `Welcome back ${currentUser.value.pseudo} !`,
-//       });
-//     }
-//   }
-// });
-
 const mainActions = async () => {
   if (!isMenuOpen.value) {
     showForm.value = !showForm.value;
