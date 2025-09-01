@@ -116,7 +116,7 @@
         <ButtonUI @click="isConfirmModalOpen = !isConfirmModalOpen"
           >Confirm Modal</ButtonUI
         >
-        <ConfirmModal
+        <ActionModal
           description="Confirm changing difficulty"
           secondary-action-label="Return"
           main-action-label="OK"
@@ -132,7 +132,7 @@
             grid.
           </span>
           <span class="inline-block">You will lose your progress.</span>
-        </ConfirmModal>
+        </ActionModal>
       </section>
 
       <section>

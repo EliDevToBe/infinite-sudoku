@@ -15,7 +15,7 @@
         :is-loading="isLoading"
       ></SudokuGrid>
 
-      <LazyConfirmModal
+      <LazyActionModal
         description="Confirm switching difficulties"
         v-model:show="isModalOpen"
         @on-secondary-action="handleCancel"
@@ -33,7 +33,7 @@
           will reset your current grid.
         </span>
         <span class="inline-block">You will lose your progress.</span>
-      </LazyConfirmModal>
+      </LazyActionModal>
 
       <div class="flex flex-col items-center min-h-17 sm:min-h-21">
         <ActionBar
@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { LazyConfirmModal } from "@/components";
+import { LazyActionModal } from "@/components";
 import { type Cell, type DifficultyOptions } from "@/utils";
 import {
   useSudoku,

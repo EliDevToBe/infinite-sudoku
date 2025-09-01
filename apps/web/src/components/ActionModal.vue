@@ -8,9 +8,10 @@
     <template #body>
       <slot></slot>
     </template>
-    <template #footer>
+    <template #footer v-if="mainActionLabel || secondaryActionLabel">
       <div class="flex gap-5">
         <ButtonUI
+          v-if="secondaryActionLabel"
           size="sm"
           variant="secondary"
           @click="
@@ -20,6 +21,7 @@
           >{{ secondaryActionLabel }}</ButtonUI
         >
         <ButtonUI
+          v-if="mainActionLabel"
           size="sm"
           variant="primary"
           @click="
@@ -45,8 +47,6 @@ const props = withDefaults(
   }>(),
   {
     title: "Are you sure ?",
-    mainActionLabel: "Confirm",
-    secondaryActionLabel: "Cancel",
   }
 );
 
