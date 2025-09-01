@@ -22,18 +22,10 @@
         @on-secondary-action="cancelDifficultySwitch"
         @on-main-action="switchDifficulty"
       >
-        <span class="inline-block">
-          Switching difficulty from
-          <span class="font-bold text-green-500 text-lg">{{
-            oldDifficulty
-          }}</span>
-          to
-          <span class="font-bold text-dTheme-accent text-lg">{{
-            currentDifficulty
-          }}</span>
-          will reset your current grid.
-        </span>
-        <span class="inline-block">You will lose your progress.</span>
+        <DifficultyModalBody
+          :old-difficulty="oldDifficulty"
+          :current-difficulty="currentDifficulty"
+        />
       </LazyActionModal>
 
       <div class="flex flex-col items-center min-h-17 sm:min-h-21">
