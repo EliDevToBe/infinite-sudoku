@@ -46,6 +46,8 @@
 
         <NumberBar @on-select="setNumber"></NumberBar>
       </div>
+
+      <FeatureArea class="mt-1"></FeatureArea>
     </MainContent>
   </MainWrapper>
 </template>
