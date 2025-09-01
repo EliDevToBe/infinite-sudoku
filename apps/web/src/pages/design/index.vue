@@ -138,6 +138,10 @@
       <section>
         <NumberBar></NumberBar>
       </section>
+
+      <section>
+        <FeatureArea></FeatureArea>
+      </section>
     </MainContent>
   </MainWrapper>
 </template>
