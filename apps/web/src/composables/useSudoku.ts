@@ -18,8 +18,9 @@ export const useSudoku = () => {
 
   const getRandomPuzzle = async () => {
     const { data, error } = await fetchApi({
-      path: "/grid",
+      path: "/grid/:id",
       method: "GET",
+      params: { id: "f4a4b284-84a4-409f-b59e-5836787f7834	" },
     });
 
     if (error) {
@@ -30,7 +31,8 @@ export const useSudoku = () => {
       throw new Error("No data");
     }
 
-    return data[Math.floor(Math.random() * data.length)];
+    // return data[Math.floor(Math.random() * data.length)];
+    return data;
   };
 
   return { formatPuzzle, getRandomPuzzle };

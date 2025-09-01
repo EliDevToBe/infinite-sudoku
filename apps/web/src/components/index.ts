@@ -11,6 +11,7 @@ const LazyModalUI = defineAsyncComponent(() => import("./ui/ModalUI.vue"));
 const LazyConfirmModal = defineAsyncComponent(
   () => import("./ConfirmModal.vue"),
 );
+const LazyTooltipUI = defineAsyncComponent(() => import("./ui/TooltipUI.vue"));
 
 export {
   BaseLayout,
@@ -22,4 +23,5 @@ export {
   FormField,
   LazyModalUI,
   LazyConfirmModal,
+  LazyTooltipUI,
 };

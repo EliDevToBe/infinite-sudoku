@@ -35,7 +35,7 @@
         <span class="inline-block">You will lose your progress.</span>
       </LazyConfirmModal>
 
-      <div class="flex flex-col items-center">
+      <div class="flex flex-col items-center min-h-17 sm:min-h-21">
         <ActionBar
           @on-undo="handleUndo"
           @on-eraser="eraseCell"

@@ -65,7 +65,7 @@
       </form>
 
       <section>
-        <TooltipUI
+        <LazyTooltipUi
           text="Generate each toast variant"
           :options="{ align: 'start', side: 'top', sideOffset: 10 }"
         >
