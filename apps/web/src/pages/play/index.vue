@@ -16,6 +16,7 @@
       ></SudokuGrid>
 
       <LazyActionModal
+        title="Are you sure ?"
         description="Confirm switching difficulties"
         v-model:show="isModalOpen"
         @on-secondary-action="handleCancel"

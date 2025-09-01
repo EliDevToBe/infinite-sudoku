@@ -38,17 +38,12 @@
 <script setup lang="ts">
 import { LazyModalUI } from "@/components";
 
-const props = withDefaults(
-  defineProps<{
-    title?: string;
-    description: string;
-    mainActionLabel?: string;
-    secondaryActionLabel?: string;
-  }>(),
-  {
-    title: "Are you sure ?",
-  }
-);
+const props = defineProps<{
+  title: string;
+  description: string;
+  mainActionLabel?: string;
+  secondaryActionLabel?: string;
+}>();
 
 const emit = defineEmits<{
   onMainAction: [];
