@@ -6,6 +6,7 @@
         :size="size"
         :leadingIcon="leaderboardIcon"
         :variant="isAuthenticated ? 'primary' : 'ghost'"
+        @click="emit('onLeaderboard')"
         >Leaderboard</ButtonUI
       >
     </LazyTooltipUI>
@@ -16,6 +17,7 @@
         :size="size"
         :leadingIcon="saveIcon"
         :variant="isAuthenticated ? 'primary' : 'ghost'"
+        @click="emit('onSave')"
         >Save progress</ButtonUI
       >
     </LazyTooltipUI>
@@ -32,6 +34,11 @@ import { LazyTooltipUI } from "@/components";
 const ui = {
   wrapper: ["flex items-center justify-between", "w-68 sm:w-100 p-1 px-0"],
 };
+
+const emit = defineEmits<{
+  onLeaderboard: [];
+  onSave: [];
+}>();
 
 const { isAuthenticated } = useAuth();
 const { width } = useWindowSize();

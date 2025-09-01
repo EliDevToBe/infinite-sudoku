@@ -47,7 +47,13 @@
         <NumberBar @on-select="setNumber"></NumberBar>
       </div>
 
-      <FeatureArea class="mt-1"></FeatureArea>
+      <FeatureArea
+        class="mt-1"
+        @on-leaderboard="
+          toastInfo({ description: 'Leaderboard coming soon 🥳' })
+        "
+        @on-save="toastInfo({ description: 'Save progress coming soon 🥳' })"
+      ></FeatureArea>
     </MainContent>
   </MainWrapper>
 </template>
