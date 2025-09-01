@@ -1,17 +1,21 @@
 <template>
   <div :class="ui.wrapper">
-    <LazyTooltipUI v-if="!isAuthenticated" text="Login to unlock">
+    <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
       <ButtonUI
         ref="leaderboardButton"
         :size="size"
         :leadingIcon="leaderboardIcon"
-        variant="ghost"
+        :variant="isAuthenticated ? 'primary' : 'ghost'"
         >Leaderboard</ButtonUI
       >
     </LazyTooltipUI>
 
-    <LazyTooltipUI v-if="!isAuthenticated" text="Login to unlock">
-      <ButtonUI ref="saveButton" :size="size" :leadingIcon="saveIcon"
+    <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
+      <ButtonUI
+        ref="saveButton"
+        :size="size"
+        :leadingIcon="saveIcon"
+        :variant="isAuthenticated ? 'primary' : 'ghost'"
         >Save progress</ButtonUI
       >
     </LazyTooltipUI>
