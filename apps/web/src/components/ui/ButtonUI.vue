@@ -58,8 +58,6 @@ const ui = {
   base: [
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
-    "shadow-xs shadow-black",
-    "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
   ],
   disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
@@ -70,30 +68,50 @@ const ui = {
     lg: "min-w-24 max-w-fit h-12 text-lg p-2 rounded-md",
   },
   light: {
-    primary: `
-       bg-lTheme-light text-lTheme-font
-        active:bg-lTheme-surfaceOther`,
-    secondary: `
-        bg-lTheme-surfaceOther text-lTheme-accent
-        outline-[1px] outline-lTheme-light outline-lTheme-font
-      active:bg-lTheme-light`,
-    danger: `
-      bg-lTheme-danger text-lTheme-surface
-        active:bg-lTheme-dangerOther`,
+    primary: [
+      "bg-lTheme-light text-lTheme-font",
+      "active:bg-lTheme-surfaceOther",
+      "shadow-xs shadow-black",
+      "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
+    ],
+    secondary: [
+      "bg-lTheme-surfaceOther text-lTheme-accent ",
+      "active:bg-lTheme-light",
+      "outline-[1px] outline-lTheme-light outline-lTheme-font",
+      "shadow-xs shadow-black",
+      "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
+    ],
+    danger: [
+      "bg-lTheme-danger text-lTheme-surface",
+      "active:bg-lTheme-dangerOther",
+      "shadow-xs shadow-black",
+      "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
+    ],
     ghost: ``,
   },
   dark: {
-    primary: `
-      bg-dTheme-surfaceOther text-dTheme-font
-      active:bg-dTheme-surface active:text-dTheme-light`,
+    primary: [
+      "bg-dTheme-surfaceOther text-dTheme-font",
+      "active:bg-dTheme-surface active:text-dTheme-light",
+      "shadow-xs shadow-black",
+      "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
+    ],
     secondary: [
       "text-dTheme-font active:text-dTheme-light",
       "bg-dTheme-surface active:bg-dTheme-surfaceOther",
+      "shadow-xs shadow-black",
+      "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
-    danger: `
-      bg-dTheme-danger text-dTheme-font
-      active:bg-dTheme-dangerOther active:text-dTheme-light`,
-    ghost: `text-gray-500 outline-none sm:hover:bg-gray-500 sm:hover:bg-opacity-15 `,
+    danger: [
+      "bg-dTheme-danger text-dTheme-font",
+      "active:bg-dTheme-dangerOther active:text-dTheme-light",
+      "shadow-xs shadow-black",
+      "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
+    ],
+    ghost: [
+      "bg-gray-500 text-gray-700 outline-none shadow-none",
+      " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
+    ],
   },
   icon: {
     "icon-xs": "8",
