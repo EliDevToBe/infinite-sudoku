@@ -1,14 +1,20 @@
 <template>
   <div :class="ui.wrapper">
-    <ButtonUI
-      ref="leaderboardButton"
-      :size="size"
-      :leadingIcon="leaderboardIcon"
-      >Leaderboard</ButtonUI
-    >
-    <ButtonUI ref="saveButton" :size="size" :leadingIcon="saveIcon"
-      >Save progress</ButtonUI
-    >
+    <LazyTooltipUI v-if="!isAuthenticated" text="Login to unlock">
+      <ButtonUI
+        ref="leaderboardButton"
+        :size="size"
+        :leadingIcon="leaderboardIcon"
+        variant="ghost"
+        >Leaderboard</ButtonUI
+      >
+    </LazyTooltipUI>
+
+    <LazyTooltipUI v-if="!isAuthenticated" text="Login to unlock">
+      <ButtonUI ref="saveButton" :size="size" :leadingIcon="saveIcon"
+        >Save progress</ButtonUI
+      >
+    </LazyTooltipUI>
   </div>
 </template>
 
@@ -17,6 +23,7 @@ import { computed, useTemplateRef } from "vue";
 import { useAuth } from "@/composables/";
 import { useElementHover } from "@vueuse/core";
 import { useWindowSize } from "@vueuse/core";
+import { LazyTooltipUI } from "@/components";
 
 const ui = {
   wrapper: ["flex items-center justify-between", "w-68 sm:w-100 p-1 px-0"],
