@@ -15,7 +15,7 @@
       </div>
     </template>
 
-    <MainContent>
+    <MainContent class="justify-center">
       <div :class="ui.menuWrapper">
         <ButtonUI size="lg" @click="navigateTo('/play/')">PLAY</ButtonUI>
 
