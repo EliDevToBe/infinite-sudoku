@@ -147,6 +147,7 @@ import { useSudoku, useUser, usePresetToast } from "@/composables";
 import { ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
 import type { Cell, DifficultyOptions } from "@/utils";
+import { LazyTooltipUI } from "@/components";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
