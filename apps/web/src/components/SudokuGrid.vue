@@ -78,7 +78,7 @@ const grid = defineModel<Cell[][]>({ required: true });
 
 const ui = {
   wrapper: [
-    "inline-block sm:p-2 p-1 m-t-2",
+    "inline-block sm:p-2 p-1",
     "bg-dTheme-surfaceOther",
     "shadow-dTheme-accent shadow-sm rounded-lg",
     "border-t-1 border-t-dTheme-light",
