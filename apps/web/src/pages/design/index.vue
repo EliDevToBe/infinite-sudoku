@@ -65,14 +65,14 @@
       </form>
 
       <section>
-        <LazyTooltipUi
+        <LazyTooltipUI
           text="Generate each toast variant"
           :options="{ align: 'start', side: 'top', sideOffset: 10 }"
         >
           <ButtonUI size="sm" variant="danger" @click="showToast">
             Multi Toasting (x3)
           </ButtonUI>
-        </TooltipUI>
+        </LazyTooltipUI>
       </section>
 
       <section class="flex justify-center">
@@ -141,7 +141,6 @@
     </MainContent>
   </MainWrapper>
 </template>
-r
 
 <script setup lang="ts">
 import { useSudoku, useUser, usePresetToast } from "@/composables";
