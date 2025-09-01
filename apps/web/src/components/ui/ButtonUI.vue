@@ -1,5 +1,11 @@
 <template>
   <button :class="buttonClass" :disabled="disabled || isLoading">
+    <VueIcon
+      v-if="leadingIcon"
+      :name="leadingIcon"
+      :width="ui.icon[size]"
+      :height="ui.icon[size]"
+    />
     <slot></slot>
     <Transition
       enter-active-class="transition-all duration-150 ease-in-out"
@@ -13,6 +19,8 @@
         v-if="isLoading"
         name="svg-spinners:ring-resize"
         :color="COLORS.lTheme.accent"
+        :width="ui.icon[size]"
+        :height="ui.icon[size]"
       />
     </Transition>
   </button>
@@ -30,6 +38,7 @@ type Props = {
   size?: "icon-xs" | "icon" | "sm" | "md" | "lg";
   isLoading?: boolean;
   disabled?: boolean;
+  leadingIcon?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -85,6 +94,13 @@ const ui = {
       bg-dTheme-danger text-dTheme-font
       active:bg-dTheme-dangerOther active:text-dTheme-light`,
     ghost: `text-gray-500 outline-none outline-gray-600 md:hover:bg-gray-500 md:hover:bg-opacity-15 `,
+  },
+  icon: {
+    "icon-xs": "8",
+    icon: "16",
+    sm: "16",
+    md: "20",
+    lg: "24",
   },
 };
 </script>
