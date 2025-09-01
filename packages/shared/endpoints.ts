@@ -25,10 +25,18 @@ export type ApiEndpoint = ValidateEndpoint<
       path: "/grid";
       method: "GET";
     }
+  | {
+      path: "/grid/:id";
+      method: "GET";
+      params: {
+        id: string;
+      };
+    }
 >;
 
 export type EndpointResponse = {
   "/user": Prisma.userGetPayload<true>[];
   "/user/:id": Prisma.userGetPayload<true>;
   "/grid": Prisma.gridGetPayload<true>[];
+  "/grid/:id": Prisma.gridGetPayload<true>;
 };

@@ -12,7 +12,7 @@ export default fp(
 
     server.get<{ Params: { id: string } }>(
       "/grid/:id",
-      { preHandler: authenticated },
+      // { preHandler: authenticated },
       GridController().getGrid,
     );
 

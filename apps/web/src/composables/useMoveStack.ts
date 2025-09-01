@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { Cell } from "@/utils";
 
 type Move = { prev: Cell; next: Cell };
@@ -18,6 +18,14 @@ const previousMoveStack = ref<Cell[]>([]);
  *
  */
 export const useMoveStack = () => {
+  const canUndo = computed(() => {
+    return previousMoveStack.value.length > 0;
+  });
+
+  const canRedo = computed(() => {
+    return historyMoveStack.value.length > previousMoveStack.value.length;
+  });
+
   const getMoveStack = () => {
     return {
       previousMoveStack: previousMoveStack.value,
@@ -83,5 +91,13 @@ export const useMoveStack = () => {
     previousMoveStack.value = [];
   };
 
-  return { pushMove, getMoveStack, undoMove, redoMove, resetMoveStacks };
+  return {
+    pushMove,
+    getMoveStack,
+    undoMove,
+    redoMove,
+    resetMoveStacks,
+    canUndo,
+    canRedo,
+  };
 };
