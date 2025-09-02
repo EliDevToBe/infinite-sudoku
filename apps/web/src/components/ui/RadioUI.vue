@@ -2,6 +2,7 @@
   <div
     :class="[radioClass, model !== value ? 'inset' : '']"
     @click="model = value"
+    tabindex="0"
   >
     <input
       type="radio"
