@@ -19,6 +19,8 @@
         title="Are you sure ?"
         description="Confirm switching difficulties"
         v-model:show="showPreventDifficultyModal"
+        secondary-action-label="Cancel"
+        main-action-label="Got it"
         @on-secondary-action="cancelDifficultySwitch"
         @on-main-action="switchDifficulty"
       >
@@ -47,15 +49,15 @@
       ></FeatureArea>
 
       <LazyActionModal
-        title="Unlock full potential !"
-        description="🚀 Register to unlock exclusive features"
+        title="✨ Unlock all features ! ✨"
+        description="Register to unlock exclusive features"
         v-model:show="showSubscribeModal"
         main-action-label="Register"
         @on-main-action="showSubscribeModal = false"
         secondary-action-label="Cancel"
         @on-secondary-action="showSubscribeModal = false"
       >
-        <div>BODY</div>
+        <SubscribeModalBody :context="subscribeModalContext" />
       </LazyActionModal>
     </MainContent>
   </MainWrapper>
