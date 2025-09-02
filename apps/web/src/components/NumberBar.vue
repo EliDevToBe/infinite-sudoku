@@ -1,7 +1,6 @@
 <template>
   <div :class="ui.wrapper">
     <button
-      tabindex="0"
       :class="ui.icon"
       v-for="number in 9"
       :key="`Key-number-${number}`"

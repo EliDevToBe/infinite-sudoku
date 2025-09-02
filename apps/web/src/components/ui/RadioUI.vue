@@ -3,6 +3,10 @@
     :class="[radioClass, model !== value ? 'inset' : '']"
     @click="model = value"
     tabindex="0"
+    role="radio"
+    :aria-labelledby="`${value}-label`"
+    :aria-checked="model === value"
+    @keydown="handleKeydown"
   >
     <input
       type="radio"
@@ -12,8 +16,11 @@
       v-model="model"
       :checked="model === value"
       :id="value"
+      tabindex="-1"
     />
-    <label class="cursor-pointer" :for="value">{{ label }}</label>
+    <label class="cursor-pointer" :for="value" :id="`${value}-label`">{{
+      label
+    }}</label>
   </div>
 </template>
 
@@ -37,6 +44,13 @@ const ui = {
 const radioClass = computed(() => {
   return [ui.base, model.value === props.value ? ui.active : ""];
 });
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    model.value = props.value;
+  }
+};
 </script>
 
 <style scoped lang="css">

@@ -2,15 +2,14 @@
   <div :class="ui.wrapper">
     <LazyTooltipUI text="Undo last move">
       <button
-        tabindex="0"
         :class="undoClass"
         @click="() => canUndo && emit('onUndo')"
         :aria-label="`Undo last move`"
+        :disabled="!canUndo"
       >
         <VueIcon
           :class="undoClass"
           name="lucide:undo"
-          alt="Undo action icon"
           aria-hidden="true"
         ></VueIcon>
       </button>
@@ -19,16 +18,14 @@
 
     <LazyTooltipUI text="Redo last move">
       <button
-        tabindex="0"
         :class="redoClass"
         @click="() => canRedo && emit('onRedo')"
-        aria-labelledby="redo"
-        id="redo-button"
+        aria-label="Redo last move"
+        :disabled="!canRedo"
       >
         <VueIcon
           :class="redoClass"
           name="lucide:redo"
-          alt="Redo action icon"
           aria-hidden="true"
         ></VueIcon>
       </button>
@@ -37,7 +34,6 @@
 
     <LazyTooltipUI :text="`Erase selected cell ${dataEraseTooltip}`">
       <button
-        tabindex="0"
         :class="eraseClass"
         @click="handleEraser"
         :aria-label="`Erase selected cell ${dataEraseTooltip}`"
@@ -45,7 +41,6 @@
         <VueIcon
           :class="eraseClass"
           name="lucide:eraser"
-          alt="Eraser icon"
           aria-hidden="true"
         ></VueIcon>
       </button>
@@ -54,7 +49,6 @@
 
     <LazyTooltipUI text="Toggle Note mode">
       <button
-        tabindex="0"
         :class="noteClass"
         @click="toggleNote"
         :aria-label="`Note mode ${isNoteMode ? 'enabled' : 'disabled'}`"
@@ -63,7 +57,6 @@
         <VueIcon
           :class="noteClass"
           name="lucide:pencil"
-          alt="Note mode icon"
           aria-hidden="true"
         ></VueIcon>
       </button>
