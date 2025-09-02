@@ -9,7 +9,9 @@
       }}</span>
       will reset your current grid.
     </span>
-    <span class="inline-block">You will lose your progress.</span>
+    <span class="inline-block"
+      >You will <span class="text-red-500">lose</span> your progress.</span
+    >
   </div>
 </template>
 
