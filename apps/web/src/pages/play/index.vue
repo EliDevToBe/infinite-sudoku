@@ -56,6 +56,7 @@
         @on-main-action="showSubscribeModal = false"
         secondary-action-label="Cancel"
         @on-secondary-action="showSubscribeModal = false"
+        special-main-action
       >
         <SubscribeModalBody :context="subscribeModalContext" />
       </LazyActionModal>
@@ -89,6 +90,7 @@ const showSubscribeModal = ref(false);
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>([]);
+const subscribeModalContext = ref<"leaderboard" | "save">();
 
 const hasUserInput = computed(() => {
   return puzzle.value.some((row) =>
@@ -125,6 +127,7 @@ const switchDifficulty = () => {
   showPreventDifficultyModal.value = false;
   isLoading.value = true;
   resetMoveStacks();
+  setSelectedCell(null);
 
   setTimeout(async () => {
     await setPuzzle();
@@ -175,6 +178,7 @@ const setNumber = (number: number) => {
 
 const handleLeaderboard = () => {
   if (!isAuthenticated.value) {
+    subscribeModalContext.value = "leaderboard";
     showSubscribeModal.value = true;
     return;
   }
@@ -184,6 +188,7 @@ const handleLeaderboard = () => {
 
 const handleSave = () => {
   if (!isAuthenticated.value) {
+    subscribeModalContext.value = "save";
     showSubscribeModal.value = true;
     return;
   }
