@@ -1,5 +1,5 @@
 <template>
-  <Switch
+  <!-- <Switch
     v-model="checked"
     class="flex h-6 w-11 rounded-full pl-[0.125rem] shadow-xs shadow-lTheme-font hover:shadow-sm hover:shadow-lTheme-accent"
     :class="{
@@ -20,11 +20,11 @@
         <slot></slot>
       </span>
     </div>
-  </Switch>
+  </Switch> -->
 </template>
 
 <script setup lang="ts">
-import { Switch } from "@headlessui/vue";
+// import { Switch } from "@headlessui/vue";
 
 const checked = defineModel<boolean>({
   default: false,
