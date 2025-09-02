@@ -108,9 +108,14 @@ const ui = {
       "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
+    // ghost: [
+    //   "bg-gray-500 text-gray-700 outline-none shadow-none",
+    //   " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
+    // ],
     ghost: [
-      "bg-gray-500 text-gray-700 outline-none shadow-none",
-      " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
+      "bg-transparent text-dTheme-font border border-dTheme-surfaceOther outline-none shadow-none",
+      "sm:hover:bg-dTheme-light/10 sm:hover:border-dTheme-accent sm:hover:text-dTheme-font",
+      "disabled:bg-transparent disabled:text-dTheme-light disabled:border-dTheme-light/50 disabled:cursor-not-allowed",
     ],
   },
   icon: {
