@@ -35,12 +35,11 @@ const ui = {
     "border-l-1 border-l-dTheme-light/80 ",
     "border-r-1 border-r-dTheme-light/80",
   ],
-  title: "text-dTheme-font text-2xl",
+  title: "text-dTheme-font sm:text-3xl text-2xl",
   header: "flex items-center gap-1.5 p-2 px-4 sm:px-6 min-h-16",
   close: "rounded-lg hover:bg-red-800",
   body: "border-t-1 border-t-dTheme-light/80 p-4 sm:p-6",
-  footer:
-    "border-t-1 border-t-dTheme-light/65 gap-1.5 p-2 px-4 sm:px-6 flex justify-end",
+  footer: "border-t-1 border-t-dTheme-light/65 gap-1.5 p-2 px-4 sm:px-6 flex",
 };
 
 const showModel = defineModel<boolean>("show");
