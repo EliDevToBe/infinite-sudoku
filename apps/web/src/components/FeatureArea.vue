@@ -7,8 +7,10 @@
         :leadingIcon="leaderboardIcon"
         :variant="isAuthenticated ? 'primary' : 'ghost'"
         @click="emit('onLeaderboard')"
-        >Leaderboard</ButtonUI
+        id="leaderboard-button"
       >
+        <label for="leaderboard-button">Leaderboard</label>
+      </ButtonUI>
     </LazyTooltipUI>
 
     <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
@@ -18,17 +20,18 @@
         :leadingIcon="saveIcon"
         :variant="isAuthenticated ? 'primary' : 'ghost'"
         @click="emit('onSave')"
-        >Save progress</ButtonUI
+        id="save-button"
       >
+        <label for="save-button">Save progress</label>
+      </ButtonUI>
     </LazyTooltipUI>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from "vue";
+import { computed, useTemplateRef, shallowRef, onMounted } from "vue";
 import { useAuth } from "@/composables/";
-import { useElementHover } from "@vueuse/core";
-import { useWindowSize } from "@vueuse/core";
+import { useElementHover, useWindowSize, useFocus } from "@vueuse/core";
 import { LazyTooltipUI } from "@/components";
 
 const ui = {
@@ -43,23 +46,29 @@ const emit = defineEmits<{
 const { isAuthenticated } = useAuth();
 const { width } = useWindowSize();
 
-const leaderboardButton =
+const leaderboardButtonElement =
   useTemplateRef<HTMLButtonElement>("leaderboardButton");
-const isLeaderboardBtnHovered = useElementHover(leaderboardButton);
+const isLeaderboardBtnHovered = useElementHover(leaderboardButtonElement);
+const isLeaderboardBtnFocused = useFocus(leaderboardButtonElement).focused;
 
-const saveButton = useTemplateRef<HTMLButtonElement>("saveButton");
-const isSaveBtnHovered = useElementHover(saveButton);
+const saveButtonElement = useTemplateRef<HTMLButtonElement>("saveButton");
+const isSaveBtnHovered = useElementHover(saveButtonElement);
+const isSaveBtnFocused = useFocus(saveButtonElement).focused;
 
 const leaderboardIcon = computed(() => {
   if (!isAuthenticated.value) {
-    return isLeaderboardBtnHovered.value ? "lucide:unlock" : "lucide:lock";
+    return isLeaderboardBtnHovered.value || isLeaderboardBtnFocused.value
+      ? "lucide:unlock"
+      : "lucide:lock";
   }
   return "lucide:crown";
 });
 
 const saveIcon = computed(() => {
   if (!isAuthenticated.value) {
-    return isSaveBtnHovered.value ? "lucide:unlock" : "lucide:lock";
+    return isSaveBtnHovered.value || isSaveBtnFocused.value
+      ? "lucide:unlock"
+      : "lucide:lock";
   }
   return "lucide:save";
 });
