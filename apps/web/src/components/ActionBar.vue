@@ -1,43 +1,73 @@
 <template>
   <div :class="ui.wrapper">
     <LazyTooltipUI text="Undo last move">
-      <div
-        role="button"
+      <button
+        tabindex="0"
         :class="undoClass"
         @click="() => canUndo && emit('onUndo')"
+        :aria-label="`Undo last move`"
       >
-        <VueIcon role="button" :class="undoClass" name="lucide:undo"></VueIcon>
-      </div>
+        <VueIcon
+          :class="undoClass"
+          name="lucide:undo"
+          alt="Undo action icon"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="undo-button" class="sr-only">Undo action</label>
     </LazyTooltipUI>
 
     <LazyTooltipUI text="Redo last move">
-      <div
-        role="button"
+      <button
+        tabindex="0"
         :class="redoClass"
         @click="() => canRedo && emit('onRedo')"
+        aria-labelledby="redo"
+        id="redo-button"
       >
-        <VueIcon role="button" :class="redoClass" name="lucide:redo"></VueIcon>
-      </div>
+        <VueIcon
+          :class="redoClass"
+          name="lucide:redo"
+          alt="Redo action icon"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="redo-button" class="sr-only">Redo action</label>
     </LazyTooltipUI>
 
     <LazyTooltipUI :text="`Erase selected cell ${dataEraseTooltip}`">
-      <div role="button" :class="eraseClass" @click="handleEraser">
+      <button
+        tabindex="0"
+        :class="eraseClass"
+        @click="handleEraser"
+        :aria-label="`Erase selected cell ${dataEraseTooltip}`"
+      >
         <VueIcon
-          role="button"
           :class="eraseClass"
           name="lucide:eraser"
+          alt="Eraser icon"
+          aria-hidden="true"
         ></VueIcon>
-      </div>
+      </button>
+      <label for="erase-button" class="sr-only">Erase action</label>
     </LazyTooltipUI>
 
     <LazyTooltipUI text="Toggle Note mode">
-      <div role="button" :class="noteClass" @click="toggleNote">
+      <button
+        tabindex="0"
+        :class="noteClass"
+        @click="toggleNote"
+        :aria-label="`Note mode ${isNoteMode ? 'enabled' : 'disabled'}`"
+        :aria-pressed="isNoteMode"
+      >
         <VueIcon
-          role="button"
           :class="noteClass"
           name="lucide:pencil"
+          alt="Note mode icon"
+          aria-hidden="true"
         ></VueIcon>
-      </div>
+      </button>
+      <label for="note-button" class="sr-only">Note mode</label>
     </LazyTooltipUI>
   </div>
 </template>
