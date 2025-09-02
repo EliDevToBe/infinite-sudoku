@@ -28,7 +28,7 @@
           variant="primary"
           :class="
             specialMainAction
-              ? 'animate-rotating-border shadow-dTheme-accent'
+              ? 'animate-rotating-border shadow-dTheme-accent!'
               : ''
           "
           @click="
