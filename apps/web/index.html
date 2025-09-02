@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.svg" />
 
+    <link
+      media="print"
+      rel="preload"
+      href="/src/assets/main.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript><link rel="stylesheet" href="/src/assets/main.css" /></noscript>
+
+    <link rel="preconnect" href="__VITE_API_URL__" />
+
     <link rel="modulepreload" href="/src/main.ts" />
     <link rel="modulepreload" href="/src/App.vue" />
 
