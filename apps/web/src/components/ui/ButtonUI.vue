@@ -71,20 +71,20 @@ const ui = {
     primary: [
       "bg-lTheme-light text-lTheme-font",
       "active:bg-lTheme-surfaceOther",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     secondary: [
       "bg-lTheme-surfaceOther text-lTheme-accent ",
       "active:bg-lTheme-light",
       "outline-[1px] outline-lTheme-light outline-lTheme-font",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     danger: [
       "bg-lTheme-danger text-lTheme-surface",
       "active:bg-lTheme-dangerOther",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     ghost: ``,
@@ -93,19 +93,19 @@ const ui = {
     primary: [
       "bg-dTheme-surfaceOther text-dTheme-font",
       "active:bg-dTheme-surface active:text-dTheme-light",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     secondary: [
       "text-dTheme-font active:text-dTheme-light",
       "bg-dTheme-surface active:bg-dTheme-surfaceOther",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     danger: [
       "bg-dTheme-danger text-dTheme-font",
       "active:bg-dTheme-dangerOther active:text-dTheme-light",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     ghost: [
