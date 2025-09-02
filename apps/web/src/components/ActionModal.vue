@@ -9,7 +9,9 @@
       <slot></slot>
     </template>
     <template #footer v-if="mainActionLabel || secondaryActionLabel">
-      <div class="flex gap-5">
+      <div
+        class="flex items-center gap-5 w-full max-sm:justify-between justify-end"
+      >
         <ButtonUI
           v-if="secondaryActionLabel"
           size="sm"
@@ -22,7 +24,7 @@
         >
         <ButtonUI
           v-if="mainActionLabel"
-          size="sm"
+          size="md"
           variant="primary"
           @click="
             emit('onMainAction');
