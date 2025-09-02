@@ -9,14 +9,14 @@
     </div>
     <div>
       <div class="text-center">
-        <span class="text-lg">Register</span>
-        or
         <span
           class="text-lg sm:hover:text-dTheme-accent underline cursor-pointer"
           role="link"
         >
           {{ "Login" }}
         </span>
+        or
+        <span class="text-lg">Register</span>
         and enjoy :
       </div>
     </div>
@@ -84,8 +84,8 @@ const props = defineProps<{
 
 const displayContext = computed(() => {
   return props.context === "save"
-    ? "Save your progress"
-    : "Check the leaderboard";
+    ? "save your progress"
+    : "check the leaderboard";
 });
 </script>
 
