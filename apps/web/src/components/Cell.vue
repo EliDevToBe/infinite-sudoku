@@ -1,6 +1,7 @@
 <template>
   <div :class="ui.cell">
     <input
+      :id="`cell-${currentCell.x}x-${currentCell.y}y`"
       :disabled="!currentCell.isEditable"
       :class="inputClass"
       type="text"
@@ -10,6 +11,9 @@
       @beforeinput="handleBeforeInput"
       v-bind:class="{ 'bg-dTheme-light': isSelected }"
     />
+    <label :for="`cell-${currentCell.x}x-${currentCell.y}y`" class="sr-only"
+      >number {{ currentCell.value }}</label
+    >
   </div>
 </template>
 
