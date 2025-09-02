@@ -6,6 +6,7 @@
         @click="() => canUndo && emit('onUndo')"
         :aria-label="`Undo last move`"
         :disabled="!canUndo"
+        id="undo-button"
       >
         <VueIcon
           :class="undoClass"
@@ -22,6 +23,7 @@
         @click="() => canRedo && emit('onRedo')"
         aria-label="Redo last move"
         :disabled="!canRedo"
+        id="redo-button"
       >
         <VueIcon
           :class="redoClass"
@@ -37,6 +39,7 @@
         :class="eraseClass"
         @click="handleEraser"
         :aria-label="`Erase selected cell ${dataEraseTooltip}`"
+        id="erase-button"
       >
         <VueIcon
           :class="eraseClass"
@@ -53,6 +56,7 @@
         @click="toggleNote"
         :aria-label="`Note mode ${isNoteMode ? 'enabled' : 'disabled'}`"
         :aria-pressed="isNoteMode"
+        id="note-button"
       >
         <VueIcon
           :class="noteClass"
