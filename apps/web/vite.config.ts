@@ -61,6 +61,23 @@ export default defineConfig({
       ),
     },
   },
+
+  // ssr: {},
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "sudoku-game": [
+            "./src/components/SudokuGrid.vue",
+            "./src/components/Cell.vue",
+          ],
+          vendor: ["vue", "@nuxt/ui"],
+        },
+      },
+    },
+  },
+
   server: {
     port: 4000,
   },
