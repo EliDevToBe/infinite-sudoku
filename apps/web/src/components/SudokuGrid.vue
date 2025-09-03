@@ -1,60 +1,40 @@
 <template>
   <!-- Main wrapper -->
+
   <div :class="ui.wrapper">
     <!-- Block Row (3x3)-->
     <div
-      v-for="blockRow in 3"
-      :key="`block-row-${blockRow}`"
+      v-for="blockRow in blockStructure"
+      :key="blockRow.key"
       :class="ui.blockRow"
     >
       <!-- Block Col (3x3)-->
-      <!-- At this step, the full block is created -->
       <div
-        v-for="blockCol in 3"
-        :key="`block-col-${blockCol}`"
+        v-for="block in blockRow.blocks"
+        :key="block.key"
         :class="ui.fullBlock"
       >
         <!-- 3 rows in each block -->
         <div
-          v-for="cellRow in 3"
-          :key="`cell-row-${cellRow}`"
+          v-for="cellRow in block.rows"
+          :key="cellRow.key"
           :class="ui.cellRow"
         >
           <!-- and 3 cols in each row (cell isolated)-->
           <div
-            v-for="cellCol in 3"
-            :key="`cell-col-${cellCol}`"
+            v-for="cellData in cellRow.cells"
+            :key="cellData.key"
             :class="ui.cellCol"
           >
             <!-- Actual Cell -->
-
             <Cell
-              :currentCell="
-                grid[(blockRow - 1) * 3 + (cellRow - 1)][
-                  (blockCol - 1) * 3 + (cellCol - 1)
-                ]
-              "
-              v-model="
-                grid[(blockRow - 1) * 3 + (cellRow - 1)][
-                  (blockCol - 1) * 3 + (cellCol - 1)
-                ].value
-              "
+              :current-cell="cellData.cell"
+              v-model="cellData.cell.value"
               @update:cell="
-                (value) => {
-                  handleCellUpdate(value, {
-                    x: (blockCol - 1) * 3 + (cellCol - 1),
-                    y: (blockRow - 1) * 3 + (cellRow - 1),
-                  });
-                }
+                (value) => handleCellUpdate(value, cellData.position)
               "
-              :isLoading="isLoading"
-              :isSelected="
-                isSelected(
-                  grid[(blockRow - 1) * 3 + (cellRow - 1)][
-                    (blockCol - 1) * 3 + (cellCol - 1)
-                  ]
-                )
-              "
+              :is-loading="isLoading"
+              :is-selected="cellData.isSelected"
             />
           </div>
         </div>
@@ -64,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Cell } from "@/utils";
+import type { Block, BlockRow, Cell, CellData, CellRow } from "@/utils";
 import { useState } from "@/composables";
 import { computed } from "vue";
 
@@ -96,22 +76,62 @@ const ui = {
   cell: "bg-gray-300 text-dTheme-surface w-8 h-8 sm:w-12 sm:h-12 transition-all duration-200",
 };
 
+// v2 - Pre-computed grid structure instead of template re-rendering
+const blockStructure = computed((): BlockRow[] => {
+  const selectedCell = getSelectedCell();
+  const selectedKey = selectedCell
+    ? `${selectedCell.x}-${selectedCell.y}`
+    : null;
+
+  const structure: BlockRow[] = [];
+
+  for (let blockRowIndex = 0; blockRowIndex < 3; blockRowIndex++) {
+    const blockRow: BlockRow = {
+      key: `block-row-${blockRowIndex}`,
+      blocks: [],
+    };
+
+    for (let blockColIndex = 0; blockColIndex < 3; blockColIndex++) {
+      const block: Block = {
+        key: `block-${blockRowIndex}-${blockColIndex}`,
+        rows: [],
+      };
+
+      for (let cellRowIndex = 0; cellRowIndex < 3; cellRowIndex++) {
+        const cellRow: CellRow = {
+          key: `row-${blockRowIndex}-${blockColIndex}-${cellRowIndex}`,
+          cells: [],
+        };
+
+        for (let cellColIndex = 0; cellColIndex < 3; cellColIndex++) {
+          const x = blockColIndex * 3 + cellColIndex;
+          const y = blockRowIndex * 3 + cellRowIndex;
+          const cellKey = `${x}-${y}`;
+
+          const cellData: CellData = {
+            key: `cell-${cellKey}`,
+            cell: grid.value[y][x],
+            position: { x, y },
+            isSelected: selectedKey === cellKey,
+          };
+
+          cellRow.cells.push(cellData);
+        }
+        block.rows.push(cellRow);
+      }
+      blockRow.blocks.push(block);
+    }
+    structure.push(blockRow);
+  }
+
+  return structure;
+});
+
 const handleCellUpdate = (
   value: number,
   position: { x: number; y: number }
 ) => {
   grid.value[position.y][position.x].value = value;
-};
-
-const isSelected = (currentCell: Cell) => {
-  const selectedCell = getSelectedCell();
-  if (!selectedCell) return false;
-
-  return (
-    selectedCell &&
-    selectedCell.x === currentCell.x &&
-    selectedCell.y === currentCell.y
-  );
 };
 </script>
 
