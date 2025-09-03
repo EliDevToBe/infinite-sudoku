@@ -16,10 +16,7 @@
           v-if="secondaryActionLabel"
           size="sm"
           variant="secondary"
-          @click="
-            emit('onSecondaryAction');
-            innerShow = false;
-          "
+          @click="emit('onSecondaryAction')"
           >{{ secondaryActionLabel }}</ButtonUI
         >
         <ButtonUI
@@ -31,10 +28,7 @@
               ? 'animate-rotating-border shadow-dTheme-accent!'
               : ''
           "
-          @click="
-            emit('onMainAction');
-            innerShow = false;
-          "
+          @click="emit('onMainAction')"
           >{{ mainActionLabel }}</ButtonUI
         >
       </div>
