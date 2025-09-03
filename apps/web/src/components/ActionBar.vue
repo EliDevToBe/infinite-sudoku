@@ -1,41 +1,76 @@
 <template>
   <div :class="ui.wrapper">
     <LazyTooltipUI text="Undo last move">
-      <div
-        role="button"
+      <button
         :class="undoClass"
         @click="() => canUndo && emit('onUndo')"
+        :aria-label="`Undo last move`"
+        :disabled="!canUndo"
+        id="undo-button"
       >
-        <VueIcon role="button" :class="undoClass" name="lucide:undo"></VueIcon>
-      </div>
+        <VueIcon
+          :class="undoClass"
+          name="lucide:undo"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="undo-button" class="sr-only">Undo action</label>
     </LazyTooltipUI>
 
     <LazyTooltipUI text="Redo last move">
-      <div
-        role="button"
+      <button
         :class="redoClass"
         @click="() => canRedo && emit('onRedo')"
+        aria-label="Redo last move"
+        :disabled="!canRedo"
+        id="redo-button"
       >
-        <VueIcon role="button" :class="redoClass" name="lucide:redo"></VueIcon>
-      </div>
+        <VueIcon
+          :class="redoClass"
+          name="lucide:redo"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="redo-button" class="sr-only">Redo action</label>
     </LazyTooltipUI>
 
     <LazyTooltipUI :text="`Erase selected cell ${dataEraseTooltip}`">
-      <div role="button" :class="ui.icon" @click="handleEraser">
-        <VueIcon role="button" :class="ui.icon" name="lucide:eraser"></VueIcon>
-      </div>
+      <button
+        :class="eraseClass"
+        @click="handleEraser"
+        :aria-label="`Erase selected cell ${dataEraseTooltip}`"
+        id="erase-button"
+      >
+        <VueIcon
+          :class="eraseClass"
+          name="lucide:eraser"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="erase-button" class="sr-only">Erase action</label>
     </LazyTooltipUI>
 
     <LazyTooltipUI text="Toggle Note mode">
-      <div role="button" :class="ui.icon" @click="emit('onNote')">
-        <VueIcon role="button" :class="ui.icon" name="lucide:pencil"></VueIcon>
-      </div>
+      <button
+        :class="noteClass"
+        @click="toggleNote"
+        :aria-label="`Note mode ${isNoteMode ? 'enabled' : 'disabled'}`"
+        :aria-pressed="isNoteMode"
+        id="note-button"
+      >
+        <VueIcon
+          :class="noteClass"
+          name="lucide:pencil"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="note-button" class="sr-only">Note mode</label>
     </LazyTooltipUI>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useState } from "@/composables";
 import { useMoveStack } from "@/composables";
 import { LazyTooltipUI } from "@/components";
@@ -51,6 +86,8 @@ const ui = {
     "bg-dTheme-surfaceOther",
   ],
   icon: ["w-5 h-5 sm:w-7 sm:h-7 rounded-md"],
+  active: "active:text-dTheme-accent",
+  toggle: "text-green-500",
   noMove: "text-gray-500",
   hasMove: "sm:hover:bg-dTheme-light/10",
 };
@@ -59,14 +96,22 @@ const emit = defineEmits<{
   onUndo: [];
   onRedo: [];
   onEraser: [{ x: number; y: number }];
-  onNote: [];
+  onNote: [boolean];
 }>();
 
+const isNoteMode = ref<boolean>(false);
+
 const undoClass = computed(() => {
-  return [ui.icon, canUndo.value ? ui.hasMove : ui.noMove];
+  return [ui.icon, ui.active, canUndo.value ? ui.hasMove : ui.noMove];
 });
 const redoClass = computed(() => {
-  return [ui.icon, canRedo.value ? ui.hasMove : ui.noMove];
+  return [ui.icon, ui.active, canRedo.value ? ui.hasMove : ui.noMove];
+});
+const eraseClass = computed(() => {
+  return [ui.icon, ui.active];
+});
+const noteClass = computed(() => {
+  return [ui.icon, ui.active, isNoteMode.value ? ui.toggle : ""];
 });
 
 const dataEraseTooltip = computed(() => {
@@ -79,6 +124,11 @@ const handleEraser = () => {
   const selectedCell = getSelectedCell();
   if (!selectedCell) return;
   emit("onEraser", selectedCell);
+};
+
+const toggleNote = () => {
+  // isNoteMode.value = !isNoteMode.value;
+  emit("onNote", isNoteMode.value);
 };
 </script>
 

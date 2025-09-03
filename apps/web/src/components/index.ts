@@ -8,9 +8,7 @@ import OptionBar from "./OptionBar.vue";
 import ToggleTheme from "./ToggleTheme.vue";
 
 const LazyModalUI = defineAsyncComponent(() => import("./ui/ModalUI.vue"));
-const LazyConfirmModal = defineAsyncComponent(
-  () => import("./ConfirmModal.vue"),
-);
+const LazyActionModal = defineAsyncComponent(() => import("./ActionModal.vue"));
 const LazyTooltipUI = defineAsyncComponent(() => import("./ui/TooltipUI.vue"));
 
 export {
@@ -22,6 +20,6 @@ export {
   ToggleTheme,
   FormField,
   LazyModalUI,
-  LazyConfirmModal,
+  LazyActionModal,
   LazyTooltipUI,
 };

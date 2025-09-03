@@ -116,7 +116,7 @@
         <ButtonUI @click="isConfirmModalOpen = !isConfirmModalOpen"
           >Confirm Modal</ButtonUI
         >
-        <ConfirmModal
+        <ActionModal
           description="Confirm changing difficulty"
           secondary-action-label="Return"
           main-action-label="OK"
@@ -132,7 +132,7 @@
             grid.
           </span>
           <span class="inline-block">You will lose your progress.</span>
-        </ConfirmModal>
+        </ActionModal>
       </section>
 
       <section>
@@ -141,6 +141,26 @@
 
       <section>
         <FeatureArea></FeatureArea>
+      </section>
+
+      <section class="flex">
+        <ButtonUI
+          size="sm"
+          @click="isSubscribeModalOpen = !isSubscribeModalOpen"
+        >
+          sub
+        </ButtonUI>
+        <LazyActionModal
+          title="Unlock full potential !"
+          description="🚀 Register to unlock exclusive features"
+          v-model:show="isSubscribeModalOpen"
+          main-action-label="Register"
+          @on-main-action="isSubscribeModalOpen = false"
+          secondary-action-label="Cancel"
+          @on-secondary-action="isSubscribeModalOpen = false"
+        >
+          <div>BODY</div>
+        </LazyActionModal>
       </section>
     </MainContent>
   </MainWrapper>
@@ -152,6 +172,7 @@ import { ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
 import type { Cell, DifficultyOptions } from "@/utils";
 import { LazyTooltipUI } from "@/components";
+import { LazyActionModal } from "@/components";
 // definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
@@ -168,6 +189,7 @@ const { formatPuzzle, getRandomPuzzle } = useSudoku();
 const difficulty = ref<DifficultyOptions>("medium");
 const isModalOpen = ref(false);
 const isConfirmModalOpen = ref(false);
+const isSubscribeModalOpen = ref(false);
 
 const showToast = () => {
   toastInfo({ description: "This is a info toast" });

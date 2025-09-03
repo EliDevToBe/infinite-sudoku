@@ -71,20 +71,20 @@ const ui = {
     primary: [
       "bg-lTheme-light text-lTheme-font",
       "active:bg-lTheme-surfaceOther",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     secondary: [
       "bg-lTheme-surfaceOther text-lTheme-accent ",
       "active:bg-lTheme-light",
       "outline-[1px] outline-lTheme-light outline-lTheme-font",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     danger: [
       "bg-lTheme-danger text-lTheme-surface",
       "active:bg-lTheme-dangerOther",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     ghost: ``,
@@ -93,24 +93,29 @@ const ui = {
     primary: [
       "bg-dTheme-surfaceOther text-dTheme-font",
       "active:bg-dTheme-surface active:text-dTheme-light",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     secondary: [
       "text-dTheme-font active:text-dTheme-light",
       "bg-dTheme-surface active:bg-dTheme-surfaceOther",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
     danger: [
       "bg-dTheme-danger text-dTheme-font",
       "active:bg-dTheme-dangerOther active:text-dTheme-light",
-      "shadow-xs shadow-black",
+      "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
     ],
+    // ghost: [
+    //   "bg-gray-500 text-gray-700 outline-none shadow-none",
+    //   " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
+    // ],
     ghost: [
-      "bg-gray-500 text-gray-700 outline-none shadow-none",
-      " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
+      "bg-transparent text-dTheme-font border border-dTheme-surfaceOther outline-none shadow-none",
+      "sm:hover:bg-dTheme-light/10 sm:hover:border-dTheme-accent sm:hover:text-dTheme-font",
+      "disabled:bg-transparent disabled:text-dTheme-light disabled:border-dTheme-light/50 disabled:cursor-not-allowed",
     ],
   },
   icon: {

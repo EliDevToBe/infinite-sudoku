@@ -4,7 +4,15 @@ import {
   verifyEmail,
   verifyPseudo,
 } from "./cleanString";
-import { type Cell, type DifficultyOptions, validateInput } from "./sudoku";
+import {
+  type Block,
+  type BlockRow,
+  type Cell,
+  type CellData,
+  type CellRow,
+  type DifficultyOptions,
+  validateInput,
+} from "./sudoku";
 
 export {
   normalize,
@@ -12,6 +20,10 @@ export {
   verifyPseudo,
   hasProfanity,
   validateInput,
+  type Block,
+  type BlockRow,
   type Cell,
+  type CellData,
+  type CellRow,
   type DifficultyOptions,
 };

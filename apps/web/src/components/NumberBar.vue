@@ -1,18 +1,18 @@
 <template>
   <div :class="ui.wrapper">
-    <div
-      role="button"
+    <button
       :class="ui.icon"
       v-for="number in 9"
       :key="`Key-number-${number}`"
       @click="emit('onSelect', number)"
+      :aria-label="`Select number ${number}`"
     >
       <VueIcon
-        role="button"
+        aria-hidden="true"
         :class="ui.icon"
         :name="`tabler:number-${number}-small`"
       ></VueIcon>
-    </div>
+    </button>
   </div>
 </template>
 

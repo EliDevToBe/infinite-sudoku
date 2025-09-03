@@ -10,32 +10,26 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
-        v-if="isPuzzleFetched"
         v-model="puzzle"
-        :is-loading="isLoading"
+        :is-loading="isLoading || !isPuzzleFetched"
       ></SudokuGrid>
 
-      <LazyConfirmModal
+      <LazyActionModal
+        title="Are you sure ?"
         description="Confirm switching difficulties"
-        v-model:show="isModalOpen"
-        @on-secondary-action="handleCancel"
-        @on-main-action="handleConfirm"
+        v-model:show="showPreventDifficultyModal"
+        secondary-action-label="Cancel"
+        main-action-label="Got it"
+        @on-secondary-action="cancelDifficultySwitch"
+        @on-main-action="switchDifficulty"
       >
-        <span class="inline-block">
-          Switching difficulty from
-          <span class="font-bold text-green-500 text-lg">{{
-            oldDifficulty
-          }}</span>
-          to
-          <span class="font-bold text-dTheme-accent text-lg">{{
-            currentDifficulty
-          }}</span>
-          will reset your current grid.
-        </span>
-        <span class="inline-block">You will lose your progress.</span>
-      </LazyConfirmModal>
+        <DifficultyModalBody
+          :old-difficulty="oldDifficulty"
+          :current-difficulty="currentDifficulty"
+        />
+      </LazyActionModal>
 
-      <div class="flex flex-col items-center min-h-17 sm:min-h-21">
+      <div class="flex flex-col items-center h-17 sm:h-21">
         <ActionBar
           @on-undo="handleUndo"
           @on-eraser="eraseCell"
@@ -49,38 +43,54 @@
 
       <FeatureArea
         class="mt-1"
-        @on-leaderboard="
-          toastInfo({ description: 'Leaderboard coming soon 🥳' })
-        "
-        @on-save="toastInfo({ description: 'Save progress coming soon 🥳' })"
+        @on-leaderboard="handleLeaderboard"
+        @on-save="handleSave"
       ></FeatureArea>
+
+      <LazyActionModal
+        title="✨ Unlock all features ! ✨"
+        description="Register to unlock exclusive features"
+        v-model:show="showSubscribeModal"
+        main-action-label="Register"
+        @on-main-action="showSubscribeModal = false"
+        secondary-action-label="Cancel"
+        @on-secondary-action="showSubscribeModal = false"
+        special-main-action
+      >
+        <SubscribeModalBody :context="subscribeModalContext" />
+      </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
-import { LazyConfirmModal } from "@/components";
+import { LazyActionModal } from "@/components";
 import { type Cell, type DifficultyOptions } from "@/utils";
 import {
   useSudoku,
   usePresetToast,
   useMoveStack,
   useState,
+  useAuth,
 } from "@/composables";
 
-const { getRandomPuzzle, formatPuzzle } = useSudoku();
+const { getRandomPuzzle, formatPuzzle, generatePlaceholderPuzzle } =
+  useSudoku();
 const { toastError, toastInfo } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
+const { isAuthenticated } = useAuth();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
-const isModalOpen = ref(false);
+const showPreventDifficultyModal = ref(false);
+const showSubscribeModal = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-const puzzle = ref<Cell[][]>([]);
+const puzzle = ref<Cell[][]>(generatePlaceholderPuzzle());
+const subscribeModalContext = ref<"leaderboard" | "save">();
 
 const hasUserInput = computed(() => {
   return puzzle.value.some((row) =>
@@ -107,16 +117,17 @@ const setPuzzle = async () => {
 
 const handleDifficultySwitch = () => {
   if (hasUserInput.value) {
-    isModalOpen.value = true;
+    showPreventDifficultyModal.value = true;
   } else {
-    handleConfirm();
+    switchDifficulty();
   }
 };
 
-const handleConfirm = () => {
-  isModalOpen.value = false;
+const switchDifficulty = () => {
+  showPreventDifficultyModal.value = false;
   isLoading.value = true;
   resetMoveStacks();
+  setSelectedCell(null);
 
   setTimeout(async () => {
     await setPuzzle();
@@ -125,7 +136,7 @@ const handleConfirm = () => {
   }, 300);
 };
 
-const handleCancel = () => {
+const cancelDifficultySwitch = () => {
   setTimeout(() => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
@@ -163,6 +174,26 @@ const setNumber = (number: number) => {
 
   puzzle.value[selectedCell.y][selectedCell.x].value = number;
   setSelectedCell(puzzle.value[selectedCell.y][selectedCell.x]);
+};
+
+const handleLeaderboard = () => {
+  if (!isAuthenticated.value) {
+    subscribeModalContext.value = "leaderboard";
+    showSubscribeModal.value = true;
+    return;
+  }
+
+  console.log("SHOW LEADERBOARD");
+};
+
+const handleSave = () => {
+  if (!isAuthenticated.value) {
+    subscribeModalContext.value = "save";
+    showSubscribeModal.value = true;
+    return;
+  }
+
+  console.log("SAVE ACTION");
 };
 </script>
 

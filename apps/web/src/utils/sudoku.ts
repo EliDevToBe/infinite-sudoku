@@ -6,6 +6,28 @@ export type Cell = {
   hypothesis: number[];
 };
 
+export type CellData = {
+  key: string;
+  cell: Cell;
+  position: { x: number; y: number };
+  isSelected: boolean;
+};
+
+export type CellRow = {
+  key: string;
+  cells: CellData[];
+};
+
+export type Block = {
+  key: string;
+  rows: CellRow[];
+};
+
+export type BlockRow = {
+  key: string;
+  blocks: Block[];
+};
+
 export type DifficultyOptions = "easy" | "medium" | "hard" | "hardcore";
 
 const POSSIBLE_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
