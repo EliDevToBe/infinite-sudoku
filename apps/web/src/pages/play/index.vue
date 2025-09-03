@@ -10,8 +10,9 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
+        v-if="isPuzzleFetched"
         v-model="puzzle"
-        :is-loading="isLoading || !isPuzzleFetched"
+        :is-loading="isLoading"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -89,7 +90,8 @@ const showSubscribeModal = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-const puzzle = ref<Cell[][]>(generatePlaceholderPuzzle());
+// const puzzle = ref<Cell[][]>(generatePlaceholderPuzzle());
+const puzzle = ref<Cell[][]>([]);
 const subscribeModalContext = ref<"leaderboard" | "save">();
 
 const hasUserInput = computed(() => {
