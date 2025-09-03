@@ -10,9 +10,8 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
-        v-if="isPuzzleFetched"
         v-model="puzzle"
-        :is-loading="isLoading"
+        :is-loading="isLoading || !isPuzzleFetched"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -30,7 +29,7 @@
         />
       </LazyActionModal>
 
-      <div class="flex flex-col items-center min-h-17 sm:min-h-21">
+      <div class="flex flex-col items-center h-17 sm:h-21">
         <ActionBar
           @on-undo="handleUndo"
           @on-eraser="eraseCell"
@@ -76,7 +75,8 @@ import {
   useAuth,
 } from "@/composables";
 
-const { getRandomPuzzle, formatPuzzle } = useSudoku();
+const { getRandomPuzzle, formatPuzzle, generatePlaceholderPuzzle } =
+  useSudoku();
 const { toastError, toastInfo } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
@@ -89,7 +89,7 @@ const showSubscribeModal = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-const puzzle = ref<Cell[][]>([]);
+const puzzle = ref<Cell[][]>(generatePlaceholderPuzzle());
 const subscribeModalContext = ref<"leaderboard" | "save">();
 
 const hasUserInput = computed(() => {
