@@ -10,6 +10,7 @@
       @focus="setSelectedCell(currentCell)"
       @beforeinput="handleBeforeInput"
       v-bind:class="{ 'bg-dTheme-light': isSelected }"
+      autocomplete="off"
     />
     <label :for="`cell-${currentCell.x}x-${currentCell.y}y`" class="sr-only"
       >number {{ currentCell.value }}</label
