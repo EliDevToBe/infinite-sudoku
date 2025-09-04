@@ -76,8 +76,7 @@ import {
   useAuth,
 } from "@/composables";
 
-const { getRandomPuzzle, formatPuzzle, generatePlaceholderPuzzle } =
-  useSudoku();
+const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError, toastInfo } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
@@ -90,7 +89,6 @@ const showSubscribeModal = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-// const puzzle = ref<Cell[][]>(generatePlaceholderPuzzle());
 const puzzle = ref<Cell[][]>([]);
 const subscribeModalContext = ref<"leaderboard" | "save">();
 

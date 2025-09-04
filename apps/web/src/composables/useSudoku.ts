@@ -16,14 +16,6 @@ export const useSudoku = () => {
     );
   };
 
-  const generatePlaceholderPuzzle = () => {
-    return formatPuzzle(
-      Array.from({ length: 9 }, () =>
-        Array.from({ length: 9 }, () => Math.floor(Math.random() * 9) + 1),
-      ),
-    );
-  };
-
   const getRandomPuzzle = async () => {
     const { data, error } = await fetchApi({
       path: "/grid/:id",
@@ -43,5 +35,5 @@ export const useSudoku = () => {
     return data;
   };
 
-  return { formatPuzzle, getRandomPuzzle, generatePlaceholderPuzzle };
+  return { formatPuzzle, getRandomPuzzle };
 };
