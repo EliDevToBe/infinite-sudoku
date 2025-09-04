@@ -12,6 +12,7 @@
         <span
           class="text-lg sm:hover:text-dTheme-accent underline cursor-pointer"
           role="link"
+          @click="emit('onClickLogin')"
         >
           {{ "Login" }}
         </span>
@@ -77,6 +78,10 @@ import { computed } from "vue";
 const ui = {
   context: "text-green font-semibold",
 };
+
+const emit = defineEmits<{
+  onClickLogin: [];
+}>();
 
 const props = defineProps<{
   context: "leaderboard" | "save" | undefined;
