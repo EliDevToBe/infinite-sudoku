@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col gap-2">
-    <div class="text-lg text-center">
+  <div :class="ui.wrapper">
+    <div :class="ui.header">
       You wish you were able to
       <span :class="ui.context">
         {{ displayContext }}
@@ -9,11 +9,7 @@
     </div>
     <div>
       <div class="text-center">
-        <span
-          class="text-lg sm:hover:text-dTheme-accent underline cursor-pointer"
-          role="link"
-          @click="emit('onClickLogin')"
-        >
+        <span :class="ui.loginText" role="link" @click="emit('onClickLogin')">
           {{ "Login" }}
         </span>
         or
@@ -24,33 +20,31 @@
     <ul>
       <li>
         <VueIcon
-          width="20"
-          height="20"
-          class="inline text-dTheme-accent"
+          :width="ui.iconSize"
+          :height="ui.iconSize"
+          :class="ui.icon"
           name="lucide:save"
         ></VueIcon>
-        <span class="text-amber-400 animate-pulse animate-duration-4333">
-          Saving</span
-        >
+        <span :class="[ui.goldenText, 'animate-duration-4333']"> Saving</span>
         your progress
       </li>
       <li class="ml-8">
         <VueIcon
-          width="20"
-          height="20"
-          class="inline text-dTheme-accent"
+          :width="ui.iconSize"
+          :height="ui.iconSize"
+          :class="ui.icon"
           name="lucide:crown"
         ></VueIcon>
         Checking the
-        <span class="text-amber-400 animate-pulse animate-duration-4666"
+        <span :class="[ui.goldenText, 'animate-duration-4666']"
           >leaderboard</span
         >
       </li>
       <li class="ml-20">
         <VueIcon
-          width="20"
-          height="20"
-          class="inline text-dTheme-accent"
+          :width="ui.iconSize"
+          :height="ui.iconSize"
+          :class="ui.icon"
           name="lucide:sparkles"
         ></VueIcon>
         Smart grid highlighting
@@ -58,15 +52,13 @@
       </li>
       <li class="ml-36">
         <VueIcon
-          width="20"
-          height="20"
-          class="inline text-dTheme-accent"
+          :width="ui.iconSize"
+          :height="ui.iconSize"
+          :class="ui.icon"
           name="lucide:plus"
         ></VueIcon>
         And
-        <span class="text-amber-400 animate-pulse animate-duration-4999"
-          >more...</span
-        >
+        <span :class="[ui.goldenText, 'animate-duration-4999']">more...</span>
       </li>
     </ul>
   </div>
@@ -76,7 +68,13 @@
 import { computed } from "vue";
 
 const ui = {
+  wrapper: "flex flex-col gap-2",
+  header: "text-lg text-center",
   context: "text-green font-semibold",
+  loginText: "text-lg sm:hover:text-dTheme-accent underline cursor-pointer",
+  icon: "inline text-dTheme-accent",
+  iconSize: "20",
+  goldenText: "text-amber-400 animate-pulse",
 };
 
 const emit = defineEmits<{
