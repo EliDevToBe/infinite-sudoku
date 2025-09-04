@@ -49,16 +49,22 @@
       ></FeatureArea>
 
       <LazyActionModal
-        title="✨ Unlock all features ! ✨"
-        description="Register to unlock exclusive features"
-        v-model:show="showSubscribeModal"
-        main-action-label="Register"
-        @on-main-action="showSubscribeModal = false"
-        secondary-action-label="Cancel"
-        @on-secondary-action="showSubscribeModal = false"
+        :title="actionModalProps.title"
+        :description="actionModalProps.description"
+        v-model:show="showUnauthenticatedModal"
+        :main-action-label="actionModalProps.mainActionLabel"
+        @on-main-action="actionModalProps.mainFunction"
+        :secondary-action-label="actionModalProps.secondaryActionLabel"
+        @on-secondary-action="actionModalProps.secondaryFunction"
         special-main-action
       >
-        <SubscribeModalBody :context="subscribeModalContext" />
+        <UnlockFeatureModalBody
+          v-if="!showSubscribeModalBody"
+          :context="subscribeModalContext"
+          @on-click-login="console.log('CHANGE MODEL BODY INTO A LOGIN')"
+        />
+
+        <SubscribeModalBody v-else />
       </LazyActionModal>
     </MainContent>
   </MainWrapper>
@@ -85,7 +91,8 @@ const { isAuthenticated } = useAuth();
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
-const showSubscribeModal = ref(false);
+const showUnauthenticatedModal = ref(false);
+const showSubscribeModalBody = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
@@ -96,6 +103,36 @@ const hasUserInput = computed(() => {
   return puzzle.value.some((row) =>
     row.some((cell) => cell.isEditable && cell.value !== 0)
   );
+});
+
+const actionModalProps = computed(() => {
+  const normal = !showSubscribeModalBody.value;
+
+  if (normal) {
+    // Normal modal props
+    return {
+      title: "✨ Unlock all features ! ✨",
+      description: "Register to unlock exclusive features",
+      mainActionLabel: "I want it !",
+      secondaryActionLabel: "Cancel",
+      mainFunction: () => {
+        showSubscribeModalBody.value = true;
+      },
+      secondaryFunction: closeUnauthenticatedModal,
+    };
+  }
+
+  // Subscribe modal props
+  return {
+    title: "✨ Subscribe ✨",
+    description: "and ",
+    mainActionLabel: "Register",
+    secondaryActionLabel: "Cancel",
+    mainFunction: () => {
+      showSubscribeModalBody.value = false;
+    },
+    secondaryFunction: closeUnauthenticatedModal,
+  };
 });
 
 onMounted(async () => {
@@ -179,7 +216,7 @@ const setNumber = (number: number) => {
 const handleLeaderboard = () => {
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "leaderboard";
-    showSubscribeModal.value = true;
+    showUnauthenticatedModal.value = true;
     return;
   }
 
@@ -189,11 +226,20 @@ const handleLeaderboard = () => {
 const handleSave = () => {
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "save";
-    showSubscribeModal.value = true;
+    showUnauthenticatedModal.value = true;
     return;
   }
 
   console.log("SAVE ACTION");
+};
+
+const closeUnauthenticatedModal = () => {
+  showUnauthenticatedModal.value = false;
+
+  // Due to the modal animation
+  setTimeout(() => {
+    showSubscribeModalBody.value = false;
+  }, 300);
 };
 </script>
 
