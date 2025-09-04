@@ -89,7 +89,7 @@
                     size="sm"
                     label="Pseudo"
                     v-model="form.pseudo"
-                    :hasError="hasError.pseudo"
+                    :hasError="fieldsError.pseudo"
                     @input="validatePseudo(form.pseudo)"
                     :disabled="isMainActionLoading"
                     required
@@ -103,14 +103,9 @@
                   size="sm"
                   label="Email"
                   v-model="form.email"
-                  :hasError="hasError.email"
+                  :hasError="fieldsError.email"
                   v-bind="{ required: showRegister }"
-                  @input="
-                    validateEmail(
-                      form.email,
-                      showRegister ? 'register' : 'login'
-                    )
-                  "
+                  @input="handleEmailInput"
                   :disabled="isMainActionLoading"
                 />
 
@@ -123,13 +118,8 @@
                       size="sm"
                       label="Password"
                       v-model="form.password"
-                      :hasError="hasError.password"
-                      @input="
-                        validatePassword(
-                          form.password,
-                          showRegister ? 'register' : 'login'
-                        )
-                      "
+                      :hasError="fieldsError.password"
+                      @input="handlePasswordInput"
                       :disabled="isMainActionLoading"
                       v-bind="{ required: showRegister }"
                     />
@@ -156,8 +146,10 @@
                       size="sm"
                       label="Confirm Password"
                       v-model="form.confirmPassword"
-                      :hasError="hasError.confirmPassword"
-                      @input="confirmPasswords"
+                      :hasError="fieldsError.confirmPassword"
+                      @input="
+                        confirmPasswords(form.password, form.confirmPassword)
+                      "
                       :disabled="isMainActionLoading"
                       required
                     />
@@ -209,17 +201,29 @@
 <script setup lang="ts">
 import { FormField, MainContent, MainWrapper } from "@/components";
 import { useAuth, useNavigation, useUser } from "@/composables";
-import { ref, watch, Transition, computed } from "vue";
+import { ref, watch, Transition } from "vue";
 import { ButtonUI } from "@/components/ui";
-import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
+import { normalize } from "@/utils";
 import { throwFrontError, isFrontError } from "@/utils/error";
 import { Logger } from "@/composables/useLogger";
 import { usePresetToast } from "@/composables/toast";
+import { useForm } from "@/composables/";
 
 const { isAdmin, currentUser } = useUser();
 const { logout, isAuthenticated, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 const { toastSuccess, toastError, toastInfo } = usePresetToast();
+const {
+  validatePseudo,
+  validateEmail,
+  validatePassword,
+  confirmPasswords,
+  sortedErrors,
+  errors,
+  resetErrors,
+  fieldsError,
+  hasAnyError,
+} = useForm();
 
 const ui = {
   title: "text-3xl font-bold mb-8",
@@ -274,60 +278,9 @@ watch(showForm, () => {
 // When menu is closed, reset state
 watch(isMenuOpen, () => {
   if (!isMenuOpen.value) {
-    form.value.email = "";
-    form.value.password = "";
-    form.value.pseudo = "";
-
     resetForm();
-
-    emailErrors.value = "";
-    passwordErrors.value = "";
-    pseudoErrors.value = "";
   }
 });
-
-const errorFields = ["pseudo", "email", "password", "confirmPassword"] as const;
-type ErrorField = (typeof errorFields)[number];
-type ErrorType =
-  | "invalid"
-  | "profanity"
-  | "length"
-  | "uppercase"
-  | "required"
-  | "special"
-  | "number"
-  | "mismatch";
-type FormError = {
-  field: ErrorField;
-  type: ErrorType;
-  message: string;
-};
-
-const errors = ref<FormError[]>([]);
-
-const sortedErrors = computed(() => {
-  return errors.value
-    .sort((a, b) => {
-      const fieldSorting =
-        errorFields.indexOf(a.field) - errorFields.indexOf(b.field);
-      if (fieldSorting) return fieldSorting;
-
-      // Sort by message length: longest first
-      return b.message.length - a.message.length;
-    })
-    .slice(0, 2);
-});
-
-const hasError = ref({
-  email: false,
-  password: false,
-  pseudo: false,
-  confirmPassword: false,
-});
-
-const pseudoErrors = ref();
-const emailErrors = ref();
-const passwordErrors = ref();
 
 const form = ref({
   email: "",
@@ -337,21 +290,16 @@ const form = ref({
 });
 
 const resetForm = () => {
-  form.value.email = "";
-  form.value.password = "";
-  form.value.pseudo = "";
-  form.value.confirmPassword = "";
+  form.value = {
+    email: "",
+    password: "",
+    pseudo: "",
+    confirmPassword: "",
+  };
 
-  hasError.value.email = false;
-  hasError.value.password = false;
-  hasError.value.pseudo = false;
-  errors.value = [];
+  resetErrors();
 };
 watch(showRegister, resetForm);
-
-const hasAnyError = computed(() => {
-  return Object.values(hasError.value).some((error) => error);
-});
 
 const mainActions = async () => {
   if (!isMenuOpen.value) {
@@ -378,169 +326,33 @@ const secondaryActions = () => {
   }
 };
 
-const clearErrorText = (field: ErrorField, type: ErrorType) => {
-  errors.value = errors.value.filter(
-    (error) => error.field !== field || error.type !== type
-  );
-};
-
-const validatePassword = (
-  password: string,
-  context: "login" | "loginAction" | "register"
-): boolean => {
-  hasError.value.password = false;
-
-  clearErrorText("password", "required");
-  if (!password) {
-    hasError.value.password = true;
-    errors.value.push({
-      field: "password",
-      type: "required",
-      message: "Password is required",
-    });
-    return false;
-  }
-
-  if (context === "register" || context === "loginAction") {
-    clearErrorText("password", "length");
-    if (password.length < 8 || password.length > 32) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "length",
-        message: "Password must be 8-32 chars long",
+const handlePasswordInput = () => {
+  try {
+    if (showRegister.value) {
+      validatePassword(form.value.password);
+    } else {
+      validatePassword(form.value.password, {
+        required: true,
       });
     }
-  }
-
-  if (context === "register") {
-    clearErrorText("password", "uppercase");
-    if (!/[A-Z]/.test(password)) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "uppercase",
-        message: "Password requires at least 1 uppercase",
-      });
-    }
-
-    clearErrorText("password", "special");
-    if (!/[^A-Za-z0-9\s]/.test(password)) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "special",
-        message: "Password must have 1 special character",
-      });
-    }
-
-    clearErrorText("password", "number");
-    if (!/[0-9]/.test(password)) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "number",
-        message: "Password requires at least 1 number",
-      });
-    }
-  }
-
-  if (hasError.value.password) return false;
-
-  return true;
-};
-
-const confirmPasswords = () => {
-  hasError.value.confirmPassword = false;
-
-  clearErrorText("confirmPassword", "mismatch");
-  if (form.value.password !== form.value.confirmPassword) {
-    hasError.value.confirmPassword = true;
-    errors.value.push({
-      field: "confirmPassword",
-      type: "mismatch",
-      message: "Passwords do not match",
+  } catch (error) {
+    throwFrontError("Error validating password", {
+      password: form.value.password,
+      error,
     });
   }
 };
 
-const validateEmail = (email: string, context?: "login" | "register") => {
-  if (context === "login") return;
-
-  hasError.value.email = false;
-
+const handleEmailInput = () => {
   try {
-    clearErrorText("email", "required");
-    if (!email) {
-      hasError.value.email = true;
-      errors.value.push({
-        field: "email",
-        type: "required",
-        message: "Email is required",
-      });
-      return;
-    }
-
-    clearErrorText("email", "invalid");
-    if (!verifyEmail(email)) {
-      hasError.value.email = true;
-      errors.value.push({
-        field: "email",
-        type: "invalid",
-        message: "Invalid email format",
-      });
+    if (showRegister.value) {
+      validateEmail(form.value.email);
     }
   } catch (error) {
-    throwFrontError("Error validating email", { email, error });
-  }
-};
-
-const validatePseudo = (pseudo: string) => {
-  try {
-    hasError.value.pseudo = false;
-
-    clearErrorText("pseudo", "required");
-    if (!pseudo) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "required",
-        message: "Pseudo is required",
-      });
-      return;
-    }
-
-    clearErrorText("pseudo", "invalid");
-    if (!verifyPseudo(pseudo)) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "invalid",
-        message: "Invalid pseudo",
-      });
-    }
-
-    clearErrorText("pseudo", "profanity");
-    if (hasProfanity(pseudo)) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "profanity",
-        message: "Pseudo contains profanity",
-      });
-    }
-
-    clearErrorText("pseudo", "length");
-    if (pseudo.length < 3 || pseudo.length > 16) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "length",
-        message: "Pseudo must be 3-16 chars long",
-      });
-    }
-  } catch (error) {
-    throwFrontError("Error validating pseudo", { pseudo, error });
+    throwFrontError("Error validating email", {
+      email: form.value.email,
+      error,
+    });
   }
 };
 
@@ -552,7 +364,9 @@ const loginFlow = async () => {
 
   try {
     validateEmail(email);
-    validatePassword(password, "loginAction");
+    validatePassword(password, {
+      required: true,
+    });
 
     if (hasAnyError.value) {
       return;
@@ -587,8 +401,8 @@ const registerFlow = async () => {
   try {
     validatePseudo(pseudo);
     validateEmail(email);
-    validatePassword(password, "register");
-    confirmPasswords();
+    validatePassword(password);
+    confirmPasswords(form.value.password, form.value.confirmPassword);
 
     if (hasAnyError.value) {
       return;
