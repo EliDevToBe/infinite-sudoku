@@ -39,9 +39,13 @@ export const validateInput = (input: string) => {
 };
 
 export const calculateCompletionRate = (puzzle: Cell[][]) => {
-  const totalCells = 81;
-  const filledCells = puzzle.flat().filter((cell) => cell.value !== 0).length;
-  return (filledCells / totalCells) * 100;
+  const filledCells = puzzle
+    .flat()
+    .filter((cell) => cell.value !== 0 && cell.isEditable).length;
+
+  const fillableCells = puzzle.flat().filter((cell) => cell.isEditable).length;
+
+  return Math.floor((filledCells / fillableCells) * 100);
 };
 
 export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
