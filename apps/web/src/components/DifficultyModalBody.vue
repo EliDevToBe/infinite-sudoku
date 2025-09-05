@@ -7,7 +7,7 @@
       <span class="font-bold text-dTheme-accent text-lg">{{
         currentDifficulty
       }}</span>
-      will reset your current grid.
+      will reset your current sudoku.
     </span>
     <span class="inline-block"
       >You will <span class="text-red-500">lose</span> your progress.</span
