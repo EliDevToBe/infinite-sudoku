@@ -75,6 +75,7 @@
             leave-to-class="opacity-0 transform -translate-y-2 scale-95"
           >
             <LoginRegisterForm
+              ref="LoginRegisterFormRef"
               v-if="showForm"
               v-model:form="form"
               v-model:modeRegister="showRegister"
@@ -89,31 +90,19 @@
 </template>
 
 <script setup lang="ts">
-import { FormField, MainContent, MainWrapper } from "@/components";
+import { MainContent, MainWrapper } from "@/components";
 import { useAuth, useNavigation, useUser } from "@/composables";
-import { ref, watch, Transition } from "vue";
+import { ref, watch, Transition, useTemplateRef } from "vue";
 import { ButtonUI } from "@/components/ui";
 import { normalize } from "@/utils";
-import { throwFrontError, isFrontError } from "@/utils/error";
-import { Logger } from "@/composables/useLogger";
+import { isFrontError } from "@/utils/error";
 import { usePresetToast } from "@/composables/toast";
-import { useForm } from "@/composables/";
+import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 
 const { isAdmin, currentUser } = useUser();
 const { logout, isAuthenticated, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 const { toastSuccess, toastError, toastInfo } = usePresetToast();
-const {
-  //   validatePseudo,
-  validateEmail,
-  validatePassword,
-  //   confirmPasswords,
-  //   sortedErrors,
-  //   errors,
-  resetErrors,
-  //   fieldsError,
-  //   hasAnyError,
-} = useForm();
 
 const ui = {
   title: "text-3xl font-bold mb-8",
@@ -135,6 +124,9 @@ const isMainActionLoading = ref(false);
 const isLogoutLoading = ref(false);
 
 const hasError = ref(false);
+const loginRegisterFormRef = useTemplateRef<
+  InstanceType<typeof LoginRegisterForm>
+>("LoginRegisterFormRef");
 
 // Handles animations
 watch(showForm, () => {
@@ -170,7 +162,12 @@ watch(showForm, () => {
 // When menu is closed, reset state
 watch(isMenuOpen, () => {
   if (!isMenuOpen.value) {
-    resetForm();
+    form.value = {
+      email: "",
+      password: "",
+      pseudo: "",
+      confirmPassword: "",
+    };
   }
 });
 
@@ -180,18 +177,6 @@ const form = ref({
   pseudo: "",
   confirmPassword: "",
 });
-
-const resetForm = () => {
-  form.value = {
-    email: "",
-    password: "",
-    pseudo: "",
-    confirmPassword: "",
-  };
-
-  resetErrors();
-};
-watch(showRegister, resetForm);
 
 const mainActions = async () => {
   if (!isMenuOpen.value) {
@@ -225,10 +210,7 @@ const loginFlow = async () => {
   const password = form.value.password.trim();
 
   try {
-    validateEmail(email);
-    validatePassword(password, {
-      required: true,
-    });
+    loginRegisterFormRef.value?.validateForm();
 
     if (hasError.value) {
       return;
@@ -261,10 +243,7 @@ const registerFlow = async () => {
   const pseudo = form.value.pseudo.trim();
 
   try {
-    validatePseudo(pseudo);
-    validateEmail(email);
-    validatePassword(password);
-    confirmPasswords(form.value.password, form.value.confirmPassword);
+    loginRegisterFormRef.value?.validateForm();
 
     if (hasError.value) {
       return;
@@ -276,7 +255,11 @@ const registerFlow = async () => {
       navigateTo("/play/");
     }
   } catch (error) {
-    Logger.error(error);
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
   } finally {
     isMainActionLoading.value = false;
   }
