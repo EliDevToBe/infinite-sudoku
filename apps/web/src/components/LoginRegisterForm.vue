@@ -2,8 +2,8 @@
   <form :class="ui.formWrapper">
     <div :class="ui.formContent">
       <Transition
-        enter-active-class="transition-all duration-800 ease-out"
-        enter-from-class="opacity-0 transform -translate-y-2 scale-95"
+        enter-active-class="transition-all duration-600 ease-out"
+        enter-from-class="opacity-0 transform translate-y-3 translate-x-2 scale-95"
         enter-to-class="opacity-100 transform translate-y-0 scale-100"
       >
         <FormField
@@ -52,14 +52,15 @@
             :horizontal="isHorizontal"
           />
           <Transition
-            enter-active-class="transition-all duration-800 ease-out"
-            enter-from-class="opacity-0 transform -translate-y-2 scale-95"
+            :appear="true"
+            enter-active-class="transition-all duration-1500 ease-out"
+            enter-from-class="opacity-25 transform -translate-y-4 scale-90"
             enter-to-class="opacity-100 transform translate-y-0 scale-100"
           >
             <div
               v-if="!modeRegister"
               role="link"
-              class="text-[8px] text-lTheme-font sm:place-self-start place-self-center hover:underline hover:cursor-pointer"
+              :class="[ui.forgotPasswordClass]"
               @click="
                 console.warn('Forgotten password flow not yet implemented')
               "
@@ -70,8 +71,8 @@
         </div>
 
         <Transition
-          enter-active-class="transition-all duration-800 ease-out"
-          enter-from-class="opacity-0 transform -translate-y-2 scale-95"
+          enter-active-class="transition-all duration-600 ease-out"
+          enter-from-class="opacity-50 transform -translate-y-3 translate-x-2 scale-95"
           enter-to-class="opacity-100 transform translate-y-0 scale-100"
         >
           <div v-if="modeRegister">
@@ -88,7 +89,7 @@
               :horizontal="isHorizontal"
               required
             />
-            <div class="text-[8px] text-lTheme-font">
+            <div :class="[ui.fontSize, 'text-lTheme-font']">
               <span class="text-lTheme-danger">*</span>Required
             </div>
           </div>
@@ -98,7 +99,7 @@
       <div
         v-if="!modeRegister"
         role="link"
-        class="text-[9px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
+        :class="[ui.fontSize, ui.linkClass]"
         @click="modeRegister = true"
       >
         Don't have an account? Register
@@ -111,14 +112,14 @@
         v-for="(error, index) in sortedErrors"
         :key="error.field + error.type"
         :style="{ opacity: (100 - 30 * index) / 100 }"
-        class="text-lTheme-danger text-[9px] text-center"
+        :class="ui.errorTextClass"
         >{{ error.message }}</span
       >
 
       <span
         v-if="errors.length > 2"
         style="opacity: 40%"
-        class="text-lTheme-danger text-[9px] text-center"
+        :class="ui.errorTextClass"
       >
         {{ `+${errors.length - 1} more` }}</span
       >
@@ -157,19 +158,31 @@ const {
 } = useForm();
 const { width } = useWindowSize();
 
-const ui = {
+const modeRegister = defineModel<boolean>("modeRegister", { required: true });
+
+const ui = computed(() => ({
   wrapper: "flex flex-col gap-2",
   formWrapper: [
     "flex flex-col absolute z-1 items-center rounded-sm",
-    "w-45 sm:w-80",
+    "w-45 sm:w-90",
   ],
   formContent: [
     "flex flex-col w-full p-2 sm:p-3 gap-2 sm:gap-4 items-center",
     " bg-dTheme-light rounded-sm",
+    // modeRegister.value ? "sm:h-80 h-70" : "sm:h-45 h-50",
   ],
-};
+  fontSize: "text-[8px] sm:text-[10px]",
+  linkClass:
+    "text-lTheme-font place-self-center hover:underline hover:cursor-pointer",
+  errorTextClass: "text-lTheme-danger text-[9px] text-center",
+  forgotPasswordClass: [
+    "text-[8px] sm:text-[10px]",
+    "text-lTheme-font place-self-center",
+    "hover:underline hover:cursor-pointer",
+    "sm:place-self-start place-self-center",
+  ],
+}));
 
-const modeRegister = defineModel<boolean>("modeRegister", { required: true });
 const hasError = defineModel<boolean>("hasError", {
   default: false,
 });
