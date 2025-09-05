@@ -161,14 +161,14 @@ const { width } = useWindowSize();
 const modeRegister = defineModel<boolean>("modeRegister", { required: true });
 
 const ui = computed(() => ({
-  wrapper: "flex flex-col gap-2",
   formWrapper: [
-    "flex flex-col absolute z-1 items-center rounded-sm",
-    "w-45 sm:w-90",
+    "flex flex-col z-1 items-center",
+    // "w-45 sm:w-90",
+    "w-full",
   ],
   formContent: [
     "flex flex-col w-full p-2 sm:p-3 gap-2 sm:gap-4 items-center",
-    " bg-dTheme-light rounded-sm",
+    " bg-dTheme-light rounded-xl",
     // modeRegister.value ? "sm:h-80 h-70" : "sm:h-45 h-50",
   ],
   fontSize: "text-[8px] sm:text-[10px]",

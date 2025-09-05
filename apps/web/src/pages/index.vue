@@ -75,6 +75,7 @@
             leave-to-class="opacity-0 transform -translate-y-2 scale-95"
           >
             <LoginRegisterForm
+              class="absolute max-sm:w-45 sm:w-90"
               ref="LoginRegisterFormRef"
               v-if="showForm"
               v-model:form="form"
