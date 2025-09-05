@@ -1,5 +1,10 @@
 import { profanity } from "./profanity";
 
+/**
+ * Normalize with:
+ * - trim
+ * - lowercase
+ */
 export const normalize = (str: string) => {
   return str.trim().toLowerCase();
 };
