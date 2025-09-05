@@ -38,6 +38,12 @@ export const validateInput = (input: string) => {
   return false;
 };
 
+export const calculateCompletionRate = (puzzle: Cell[][]) => {
+  const totalCells = 81;
+  const filledCells = puzzle.flat().filter((cell) => cell.value !== 0).length;
+  return (filledCells / totalCells) * 100;
+};
+
 export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
   WayTooEasy: [0, 40],
   Easy: [41, 45],

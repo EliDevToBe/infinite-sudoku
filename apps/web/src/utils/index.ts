@@ -10,6 +10,7 @@ import {
   type Cell,
   type CellData,
   type CellRow,
+  calculateCompletionRate,
   type DifficultyOptions,
   validateInput,
 } from "./sudoku";
@@ -20,6 +21,7 @@ export {
   verifyPseudo,
   hasProfanity,
   validateInput,
+  calculateCompletionRate,
   type Block,
   type BlockRow,
   type Cell,
