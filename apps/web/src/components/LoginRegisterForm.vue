@@ -84,7 +84,7 @@
               label="Confirm password"
               v-model="form.confirmPassword"
               :hasError="fieldsError.confirmPassword"
-              @input="confirmPasswords"
+              @input="confirmPasswords(form.password, form.confirmPassword)"
               :disabled="isFormLocked"
               :horizontal="isHorizontal"
               required
@@ -219,9 +219,11 @@ const validatePasswordInput = () => {
   try {
     if (modeRegister.value) {
       validatePassword(form.value.password);
+      confirmPasswords(form.value.password, form.value.confirmPassword);
     } else {
       validatePassword(form.value.password, {
         required: true,
+        length: true,
       });
     }
   } catch (error) {
@@ -277,8 +279,8 @@ const validateForm = () => {
       confirmPasswords(password, confirmPassword);
     } else {
       // Login validation less annoying, more UX friendly
-      validateEmail(email, { required: true });
-      validatePassword(password, { required: true });
+      validateEmail(email, { required: true, invalid: true });
+      validatePassword(password, { required: true, length: true });
     }
 
     if (!hasAnyError.value) {
