@@ -10,7 +10,7 @@
     </template>
     <template #footer v-if="mainActionLabel || secondaryActionLabel">
       <div
-        class="flex items-center gap-5 w-full max-sm:justify-between justify-end"
+        class="flex items-center gap-5 w-full max-sm:justify-around justify-end"
       >
         <ButtonUI
           v-if="secondaryActionLabel"
