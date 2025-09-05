@@ -74,123 +74,13 @@
             leave-from-class="opacity-100 transform translate-y-0 scale-100"
             leave-to-class="opacity-0 transform -translate-y-2 scale-95"
           >
-            <form v-if="isFormAppearing" :class="ui.formWrapper">
-              <div :class="ui.formContent">
-                <Transition
-                  enter-active-class="transition-all translate-y--5 duration-300 ease-in-out"
-                  enter-from-class="opacity-50 transform scale-95"
-                  enter-to-class="opacity-100 transform translate-y-0 scale-100"
-                >
-                  <FormField
-                    v-if="showRegister"
-                    name="pseudo"
-                    type="text"
-                    placeholder="Pseudo"
-                    size="sm"
-                    label="Pseudo"
-                    v-model="form.pseudo"
-                    :hasError="fieldsError.pseudo"
-                    @input="validatePseudo(form.pseudo)"
-                    :disabled="isMainActionLoading"
-                    required
-                  />
-                </Transition>
-
-                <FormField
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  size="sm"
-                  label="Email"
-                  v-model="form.email"
-                  :hasError="fieldsError.email"
-                  v-bind="{ required: showRegister }"
-                  @input="handleEmailInput"
-                  :disabled="isMainActionLoading"
-                />
-
-                <div class="flex flex-col gap-2">
-                  <div>
-                    <FormField
-                      name="password"
-                      type="password"
-                      placeholder="Password"
-                      size="sm"
-                      label="Password"
-                      v-model="form.password"
-                      :hasError="fieldsError.password"
-                      @input="handlePasswordInput"
-                      :disabled="isMainActionLoading"
-                      v-bind="{ required: showRegister }"
-                    />
-                    <div
-                      v-if="!showRegister"
-                      role="link"
-                      class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
-                      @click="
-                        console.warn(
-                          'Forgotten password flow not yet implemented'
-                        )
-                      "
-                    >
-                      Forgot password?
-                    </div>
-                  </div>
-
-                  <div>
-                    <FormField
-                      v-if="showRegister"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Confirm Password"
-                      size="sm"
-                      label="Confirm Password"
-                      v-model="form.confirmPassword"
-                      :hasError="fieldsError.confirmPassword"
-                      @input="
-                        confirmPasswords(form.password, form.confirmPassword)
-                      "
-                      :disabled="isMainActionLoading"
-                      required
-                    />
-                    <div
-                      v-if="showRegister"
-                      class="text-[8px] text-lTheme-font"
-                    >
-                      <span class="text-lTheme-danger">*</span>Required
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  v-if="!showRegister"
-                  role="link"
-                  class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
-                  @click="showRegister = true"
-                >
-                  Don't have an account? Register
-                </div>
-              </div>
-
-              <!-- ERRORS -->
-              <div class="flex flex-col">
-                <span
-                  v-for="(error, index) in sortedErrors"
-                  :key="error.field + error.type"
-                  :style="{ opacity: (100 - 30 * index) / 100 }"
-                  class="text-lTheme-danger text-[9px] text-center"
-                  >{{ error.message }}</span
-                >
-
-                <span
-                  v-if="errors.length > 2"
-                  style="opacity: 40%"
-                  class="text-lTheme-danger text-[9px] text-center"
-                >
-                  {{ `+${errors.length - 1} more` }}</span
-                >
-              </div>
-            </form>
+            <LoginRegisterForm
+              v-if="showForm"
+              v-model:form="form"
+              v-model:modeRegister="showRegister"
+              :isFormLocked="isMainActionLoading"
+              v-model:hasError="hasError"
+            />
           </Transition>
         </div>
       </div>
@@ -214,15 +104,15 @@ const { logout, isAuthenticated, login, register } = useAuth();
 const { navigateTo } = useNavigation();
 const { toastSuccess, toastError, toastInfo } = usePresetToast();
 const {
-  validatePseudo,
+  //   validatePseudo,
   validateEmail,
   validatePassword,
-  confirmPasswords,
-  sortedErrors,
-  errors,
+  //   confirmPasswords,
+  //   sortedErrors,
+  //   errors,
   resetErrors,
-  fieldsError,
-  hasAnyError,
+  //   fieldsError,
+  //   hasAnyError,
 } = useForm();
 
 const ui = {
@@ -243,6 +133,8 @@ const isMenuOpen = ref(false);
 
 const isMainActionLoading = ref(false);
 const isLogoutLoading = ref(false);
+
+const hasError = ref(false);
 
 // Handles animations
 watch(showForm, () => {
@@ -326,36 +218,6 @@ const secondaryActions = () => {
   }
 };
 
-const handlePasswordInput = () => {
-  try {
-    if (showRegister.value) {
-      validatePassword(form.value.password);
-    } else {
-      validatePassword(form.value.password, {
-        required: true,
-      });
-    }
-  } catch (error) {
-    throwFrontError("Error validating password", {
-      password: form.value.password,
-      error,
-    });
-  }
-};
-
-const handleEmailInput = () => {
-  try {
-    if (showRegister.value) {
-      validateEmail(form.value.email);
-    }
-  } catch (error) {
-    throwFrontError("Error validating email", {
-      email: form.value.email,
-      error,
-    });
-  }
-};
-
 const loginFlow = async () => {
   isMainActionLoading.value = true;
 
@@ -368,7 +230,7 @@ const loginFlow = async () => {
       required: true,
     });
 
-    if (hasAnyError.value) {
+    if (hasError.value) {
       return;
     }
 
@@ -404,7 +266,7 @@ const registerFlow = async () => {
     validatePassword(password);
     confirmPasswords(form.value.password, form.value.confirmPassword);
 
-    if (hasAnyError.value) {
+    if (hasError.value) {
       return;
     }
 
