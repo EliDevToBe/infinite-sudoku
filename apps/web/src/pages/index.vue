@@ -139,12 +139,12 @@ const hasError = ref(false);
 // Handles animations
 watch(showForm, () => {
   if (showForm.value) {
-    verticalAnimation.value.push("translate-y-58");
+    verticalAnimation.value.push("max-sm:translate-y-58 translate-y-66");
 
     isFormAppearing.value = true;
     setTimeout(() => {
-      lateralRightAnimation.value.push("translate-x-20");
-      lateralLeftAnimation.value.push("translate-x--20");
+      lateralRightAnimation.value.push("translate-x-30 max-sm:translate-x-10");
+      lateralLeftAnimation.value.push("translate-x--32 max-sm:translate-x--13");
 
       setTimeout(() => {
         isMenuOpen.value = true;
