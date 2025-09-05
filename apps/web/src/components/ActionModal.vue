@@ -13,6 +13,7 @@
         class="flex items-center gap-5 w-full max-sm:justify-around justify-end"
       >
         <ButtonUI
+          :isLoading="isSecondaryActionLoading"
           v-if="secondaryActionLabel"
           size="sm"
           variant="secondary"
@@ -20,6 +21,7 @@
           >{{ secondaryActionLabel }}</ButtonUI
         >
         <ButtonUI
+          :isLoading="isMainActionLoading"
           v-if="mainActionLabel"
           size="md"
           variant="primary"
@@ -45,6 +47,8 @@ const props = defineProps<{
   mainActionLabel?: string;
   secondaryActionLabel?: string;
   specialMainAction?: boolean;
+  isMainActionLoading?: boolean;
+  isSecondaryActionLoading?: boolean;
 }>();
 
 const emit = defineEmits<{
