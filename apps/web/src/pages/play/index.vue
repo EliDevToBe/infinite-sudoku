@@ -284,6 +284,7 @@ const registerFlow = async () => {
 
     const success = await register({ email, password, pseudo });
     if (success) {
+      closeUnauthenticatedModal();
       toastSuccess({ description: "Successfully registered 🎉" });
 
       setTimeout(() => {
