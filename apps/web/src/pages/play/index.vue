@@ -57,21 +57,27 @@
         :secondary-action-label="actionModalProps.secondaryActionLabel"
         @on-secondary-action="actionModalProps.secondaryFunction"
         special-main-action
-        :isMainActionLoading="isRegistering"
+        :isMainActionLoading="isButtonLoading"
       >
         <UnlockFeatureModalBody
-          v-if="!showSubscribeModalBody"
+          v-if="!showFormModalBody"
           :context="subscribeModalContext"
-          @on-click-login="console.log('CHANGE MODEL BODY INTO A LOGIN')"
+          @on-click-login="
+            () => {
+              isRegisterMode = false;
+              showFormModalBody = true;
+            }
+          "
         />
 
-        <div v-else class="flex place-self-center h-75 max-sm:w-45 sm:w-full">
+        <div v-else :class="ui.fromWrapper">
           <LoginRegisterForm
             ref="LoginRegisterFormRef"
             v-model:form="form"
-            mode-register
-            :is-form-locked="isRegistering"
+            :mode-register="isRegisterMode"
+            :is-form-locked="isButtonLoading"
             v-model:has-error="hasFormError"
+            :hide-register-link="!isRegisterMode"
           />
         </div>
       </LazyActionModal>
@@ -99,16 +105,17 @@ const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
-const { isAuthenticated, register } = useAuth();
+const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
-const showSubscribeModalBody = ref(false);
+const showFormModalBody = ref(false);
 const hasFormError = ref(false);
-const isRegistering = ref(false);
+const isButtonLoading = ref(false);
+const isRegisterMode = ref(true);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
@@ -118,6 +125,13 @@ const subscribeModalContext = ref<"leaderboard" | "save">();
 const loginRegisterFormRef = useTemplateRef<
   InstanceType<typeof LoginRegisterForm>
 >("LoginRegisterFormRef");
+
+const ui = computed(() => ({
+  fromWrapper: [
+    "flex place-self-center max-sm:w-45 sm:w-full",
+    isRegisterMode.value ? "h-75" : "h-45",
+  ],
+}));
 
 const form = ref({
   email: "",
@@ -133,7 +147,7 @@ const hasUserInput = computed(() => {
 });
 
 const actionModalProps = computed(() => {
-  const normal = !showSubscribeModalBody.value;
+  const normal = !showFormModalBody.value;
 
   if (normal) {
     // Normal modal props
@@ -143,7 +157,7 @@ const actionModalProps = computed(() => {
       mainActionLabel: "I want it !",
       secondaryActionLabel: "Cancel",
       mainFunction: () => {
-        showSubscribeModalBody.value = true;
+        showFormModalBody.value = true;
       },
       secondaryFunction: closeUnauthenticatedModal,
     };
@@ -151,11 +165,11 @@ const actionModalProps = computed(() => {
 
   // Register modal props
   return {
-    title: "✨ Register ✨",
+    title: isRegisterMode.value ? "✨ Register ✨" : "✨ Login ✨",
     description: "Just a few steps away... ",
-    mainActionLabel: "Register",
+    mainActionLabel: isRegisterMode.value ? "Register" : "Login",
     secondaryActionLabel: "Cancel",
-    mainFunction: registerFlow,
+    mainFunction: isRegisterMode.value ? registerFlow : loginFlow,
     secondaryFunction: closeUnauthenticatedModal,
   };
 });
@@ -262,23 +276,30 @@ const handleSave = () => {
 const closeUnauthenticatedModal = () => {
   showUnauthenticatedModal.value = false;
 
+  form.value = {
+    email: "",
+    password: "",
+    pseudo: "",
+    confirmPassword: "",
+  };
+
   // Due to the modal animation
   setTimeout(() => {
-    showSubscribeModalBody.value = false;
+    showFormModalBody.value = false;
   }, 300);
 };
 
 const registerFlow = async () => {
-  isRegistering.value = true;
+  isButtonLoading.value = true;
 
   const email = normalize(form.value.email);
   const password = form.value.password.trim();
   const pseudo = form.value.pseudo.trim();
 
   try {
-    loginRegisterFormRef.value?.validateForm();
+    const isValid = loginRegisterFormRef.value?.validateForm();
 
-    if (hasFormError.value) {
+    if (hasFormError.value || !isValid) {
       return;
     }
 
@@ -298,7 +319,39 @@ const registerFlow = async () => {
       toastError(error, { description: "An error occurred" });
     }
   } finally {
-    isRegistering.value = false;
+    isButtonLoading.value = false;
+  }
+};
+
+const loginFlow = async () => {
+  isButtonLoading.value = true;
+
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+
+  try {
+    const isValid = loginRegisterFormRef.value?.validateForm();
+
+    if (hasFormError.value || !isValid) {
+      return;
+    }
+
+    const success = await login(email, password);
+    if (success) {
+      closeUnauthenticatedModal();
+      toastSuccess({
+        title: "Login successful",
+        description: `Welcome ${currentUser.value?.pseudo} !`,
+      });
+    }
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  } finally {
+    isButtonLoading.value = false;
   }
 };
 </script>

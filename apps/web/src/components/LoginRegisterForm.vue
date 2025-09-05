@@ -97,7 +97,7 @@
       </div>
 
       <div
-        v-if="!modeRegister"
+        v-if="!modeRegister && !hideRegisterLink"
         role="link"
         :class="[ui.fontSize, ui.linkClass]"
         @click="modeRegister = true"
@@ -136,6 +136,7 @@ import { useWindowSize } from "@vueuse/core";
 
 const props = defineProps<{
   isFormLocked: boolean;
+  hideRegisterLink?: boolean;
 }>();
 
 const form = defineModel<{
