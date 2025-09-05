@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, useTemplateRef } from "vue";
+import { onMounted, ref, computed, useTemplateRef, watch } from "vue";
 import { LazyActionModal } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 import { type Cell, type DifficultyOptions } from "@/utils";
@@ -104,7 +104,8 @@ import { isFrontError } from "@/utils/error";
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
-const { setSelectedCell, getSelectedCell } = useState();
+const { setSelectedCell, getSelectedCell, setSudokuSave, getSudokuSave } =
+  useState();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
@@ -175,6 +176,19 @@ const actionModalProps = computed(() => {
 });
 
 onMounted(async () => {
+  // Get local save for authenticated users
+  if (isAuthenticated.value) {
+    const localSave = getSudokuSave(currentDifficulty.value);
+
+    if (localSave) {
+      puzzle.value = localSave;
+
+      isPuzzleFetched.value = true;
+      return;
+    }
+  }
+
+  // Either get a new puzzle
   try {
     await setPuzzle();
     isPuzzleFetched.value = true;
@@ -185,6 +199,17 @@ onMounted(async () => {
     });
   }
 });
+
+// Local auto-save for authenticated users
+watch(
+  puzzle,
+  () => {
+    if (isAuthenticated.value) {
+      setSudokuSave(currentDifficulty.value, puzzle.value);
+    }
+  },
+  { deep: true }
+);
 
 const setPuzzle = async () => {
   const data = await getRandomPuzzle();
@@ -199,6 +224,17 @@ const handleDifficultySwitch = () => {
   }
 };
 
+/**
+ * Switch difficulty and handles local save
+ *
+ * If the user is **authenticated**:
+ * - **does** have a local save for the current difficulty, use it
+ * - **does not** have a local save for the current difficulty, set a new puzzle
+ *
+ * If the user is **not authenticated**:
+ * - set a new puzzle
+ *
+ */
 const switchDifficulty = () => {
   showPreventDifficultyModal.value = false;
   isLoading.value = true;
@@ -206,7 +242,20 @@ const switchDifficulty = () => {
   setSelectedCell(null);
 
   setTimeout(async () => {
-    await setPuzzle();
+    if (!isAuthenticated.value) {
+      await setPuzzle();
+    }
+
+    if (isAuthenticated.value) {
+      const localSave = getSudokuSave(currentDifficulty.value);
+
+      if (localSave) {
+        puzzle.value = localSave;
+      } else {
+        await setPuzzle();
+      }
+    }
+
     isLoading.value = false;
     oldDifficulty.value = currentDifficulty.value;
   }, 300);
