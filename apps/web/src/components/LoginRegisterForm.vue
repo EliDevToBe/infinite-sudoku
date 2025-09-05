@@ -174,7 +174,7 @@ const ui = computed(() => ({
   fontSize: "text-[8px] sm:text-[10px]",
   linkClass:
     "text-lTheme-font place-self-center hover:underline hover:cursor-pointer",
-  errorTextClass: "text-lTheme-danger text-[9px] text-center",
+  errorTextClass: "text-lTheme-danger text-[9px] sm:text-[11px] text-center",
   forgotPasswordClass: [
     "text-[8px] sm:text-[10px]",
     "text-lTheme-font place-self-center",
@@ -197,6 +197,12 @@ watch(
 
 watch(modeRegister, () => {
   resetErrors();
+  form.value = {
+    email: "",
+    password: "",
+    pseudo: "",
+    confirmPassword: "",
+  };
 });
 
 const isHorizontal = computed(() => width.value > 640);
@@ -251,6 +257,54 @@ const validateEmailInput = () => {
     });
   }
 };
+
+/**
+ * Validates the entire form based on current mode
+ * This method is called externally to perform full validation
+ */
+const validateForm = () => {
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+  const pseudo = form.value.pseudo.trim();
+  const confirmPassword = form.value.confirmPassword.trim();
+
+  try {
+    if (modeRegister.value) {
+      // Complete registration validation
+      validatePseudo(pseudo);
+      validateEmail(email);
+      validatePassword(password);
+      confirmPasswords(password, confirmPassword);
+    } else {
+      // Login validation less annoying, more UX friendly
+      validateEmail(email, { required: true });
+      validatePassword(password, { required: true });
+    }
+
+    if (!hasAnyError.value) {
+      form.value = {
+        email,
+        password,
+        pseudo,
+        confirmPassword,
+      };
+      return true;
+    }
+
+    hasError.value = true;
+
+    return false;
+  } catch (error) {
+    throwFrontError("Error validating form", { error });
+    return false;
+  }
+};
+
+// Expose the validation method to parent
+// Mandatory to pass an attribute ref="LoginRegisterFormRef"
+defineExpose({
+  validateForm,
+});
 </script>
 
 <style scoped lang=""></style>
