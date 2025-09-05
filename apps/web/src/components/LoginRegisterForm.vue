@@ -79,9 +79,9 @@
             <FormField
               name="confirmPassword"
               type="password"
-              placeholder="Confirm Password"
+              placeholder="Confirm password"
               :size="inputSize"
-              label="Confirm Password"
+              label="Confirm password"
               v-model="form.confirmPassword"
               :hasError="fieldsError.confirmPassword"
               @input="confirmPasswords"
