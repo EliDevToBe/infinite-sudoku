@@ -24,13 +24,13 @@
           <div
             v-if="!isAuthenticated"
             class="relative flex items-center justify-center transition-ease z-2"
-            :class="verticalAnimation.join(' ')"
+            :class="verticalAnimation"
           >
             <ButtonUI
               v-if="isFormAppearing"
               size="sm"
               class="z--1 absolute transition-transform transition-ease"
-              :class="lateralLeftAnimation.join(' ')"
+              :class="lateralLeftAnimation"
               @click="secondaryActions"
             >
               {{ showRegister ? "<<<" : "Cancel" }}
@@ -39,7 +39,7 @@
             <ButtonUI
               v-if="!showRegister"
               class="transition-transform transition-ease"
-              :class="lateralRightAnimation.join(' ')"
+              :class="lateralRightAnimation"
               size="md"
               @click="mainActions"
               :isLoading="isMainActionLoading"
@@ -51,7 +51,7 @@
             <ButtonUI
               v-if="showRegister"
               class="transition-transform transition-ease"
-              :class="lateralRightAnimation.join(' ')"
+              :class="lateralRightAnimation"
               size="md"
               @click="mainActions"
               :isLoading="isMainActionLoading"
