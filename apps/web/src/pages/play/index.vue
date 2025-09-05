@@ -57,6 +57,7 @@
         :secondary-action-label="actionModalProps.secondaryActionLabel"
         @on-secondary-action="actionModalProps.secondaryFunction"
         special-main-action
+        :isMainActionLoading="isRegistering"
       >
         <UnlockFeatureModalBody
           v-if="!showSubscribeModalBody"
@@ -64,15 +65,24 @@
           @on-click-login="console.log('CHANGE MODEL BODY INTO A LOGIN')"
         />
 
-        <SubscribeModalBody v-else />
+        <div v-else class="flex place-self-center h-75 max-sm:w-45 sm:w-full">
+          <LoginRegisterForm
+            ref="LoginRegisterFormRef"
+            v-model:form="form"
+            mode-register
+            :is-form-locked="isRegistering"
+            v-model:has-error="hasFormError"
+          />
+        </div>
       </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, useTemplateRef } from "vue";
 import { LazyActionModal } from "@/components";
+import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 import { type Cell, type DifficultyOptions } from "@/utils";
 import {
   useSudoku,
@@ -80,24 +90,41 @@ import {
   useMoveStack,
   useState,
   useAuth,
+  useUser,
 } from "@/composables";
+import { normalize } from "@/utils";
+import { isFrontError } from "@/utils/error";
 
 const { getRandomPuzzle, formatPuzzle } = useSudoku();
-const { toastError, toastInfo } = usePresetToast();
+const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
-const { isAuthenticated } = useAuth();
+const { isAuthenticated, register } = useAuth();
+const { currentUser } = useUser();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
 const showSubscribeModalBody = ref(false);
+const hasFormError = ref(false);
+const isRegistering = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>([]);
 const subscribeModalContext = ref<"leaderboard" | "save">();
+
+const loginRegisterFormRef = useTemplateRef<
+  InstanceType<typeof LoginRegisterForm>
+>("LoginRegisterFormRef");
+
+const form = ref({
+  email: "",
+  password: "",
+  pseudo: "",
+  confirmPassword: "",
+});
 
 const hasUserInput = computed(() => {
   return puzzle.value.some((row) =>
@@ -122,15 +149,13 @@ const actionModalProps = computed(() => {
     };
   }
 
-  // Subscribe modal props
+  // Register modal props
   return {
-    title: "✨ Subscribe ✨",
-    description: "and ",
+    title: "✨ Register ✨",
+    description: "Just a few steps away... ",
     mainActionLabel: "Register",
     secondaryActionLabel: "Cancel",
-    mainFunction: () => {
-      showSubscribeModalBody.value = false;
-    },
+    mainFunction: registerFlow,
     secondaryFunction: closeUnauthenticatedModal,
   };
 });
@@ -241,6 +266,39 @@ const closeUnauthenticatedModal = () => {
   setTimeout(() => {
     showSubscribeModalBody.value = false;
   }, 300);
+};
+
+const registerFlow = async () => {
+  isRegistering.value = true;
+
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+  const pseudo = form.value.pseudo.trim();
+
+  try {
+    loginRegisterFormRef.value?.validateForm();
+
+    if (hasFormError.value) {
+      return;
+    }
+
+    const success = await register({ email, password, pseudo });
+    if (success) {
+      toastSuccess({ description: "Successfully registered 🎉" });
+
+      setTimeout(() => {
+        toastInfo({ description: `Welcome ${currentUser.value?.pseudo} !` });
+      }, 1000);
+    }
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  } finally {
+    isRegistering.value = false;
+  }
 };
 </script>
 
