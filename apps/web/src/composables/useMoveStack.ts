@@ -40,15 +40,15 @@ export const useMoveStack = () => {
    * it truncates the history stack to maintain consistency
    *
    * @param prev - The cell state before the move
-   * @param next - The cell state after the move
+   * @param newMove - The cell state after the move
    */
-  const pushMove = (prev: Cell, next: Cell) => {
+  const pushMove = (prev: Cell, newMove: Cell) => {
     // Check if we're in a branched state (user made move after undo)
     if (historyMoveStack.value.length !== previousMoveStack.value.length) {
       const history = historyMoveStack.value[previousMoveStack.value.length];
 
       // If the next move differs from history, truncate the history
-      if (history && history.next.value !== next.value) {
+      if (history && history.next.value !== newMove.value) {
         historyMoveStack.value = historyMoveStack.value.slice(
           0,
           previousMoveStack.value.length,
@@ -56,7 +56,8 @@ export const useMoveStack = () => {
       }
     }
 
-    historyMoveStack.value.push({ prev: { ...prev }, next: { ...next } });
+    // Write history
+    historyMoveStack.value.push({ prev: { ...prev }, next: { ...newMove } });
     previousMoveStack.value.push({ ...prev });
   };
 
