@@ -174,6 +174,7 @@ const switchDifficulty = () => {
 };
 
 const cancelDifficultySwitch = () => {
+  showPreventDifficultyModal.value = false;
   setTimeout(() => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
