@@ -218,16 +218,25 @@ export const useForm = () => {
 
   const validatePseudo = (
     pseudo: string,
-    options: {
+    options?: {
       required?: boolean;
       invalid?: boolean;
       profanity?: boolean;
       length?: boolean;
-    } = { required: true, invalid: true, profanity: true, length: true },
+    },
   ) => {
     fieldsError.value.pseudo = false;
+    const config = options
+      ? {
+          required: false,
+          invalid: false,
+          profanity: false,
+          length: false,
+          ...options,
+        }
+      : { required: true, invalid: true, profanity: true, length: true };
 
-    if (options.required) {
+    if (config.required) {
       clearErrorText("pseudo", "required");
       if (!pseudo) {
         fieldsError.value.pseudo = true;
@@ -240,7 +249,7 @@ export const useForm = () => {
       }
     }
 
-    if (options.invalid) {
+    if (config.invalid) {
       clearErrorText("pseudo", "invalid");
       if (!verifyPseudo(pseudo)) {
         fieldsError.value.pseudo = true;
@@ -252,7 +261,7 @@ export const useForm = () => {
       }
     }
 
-    if (options.profanity) {
+    if (config.profanity) {
       clearErrorText("pseudo", "profanity");
       if (hasProfanity(pseudo)) {
         fieldsError.value.pseudo = true;
@@ -264,7 +273,7 @@ export const useForm = () => {
       }
     }
 
-    if (options.length) {
+    if (config.length) {
       clearErrorText("pseudo", "length");
       if (pseudo.length < 3 || pseudo.length > 16) {
         fieldsError.value.pseudo = true;
