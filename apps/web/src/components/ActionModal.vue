@@ -10,19 +10,18 @@
     </template>
     <template #footer v-if="mainActionLabel || secondaryActionLabel">
       <div
-        class="flex items-center gap-5 w-full max-sm:justify-between justify-end"
+        class="flex items-center gap-5 w-full max-sm:justify-around justify-end"
       >
         <ButtonUI
+          :isLoading="isSecondaryActionLoading"
           v-if="secondaryActionLabel"
           size="sm"
           variant="secondary"
-          @click="
-            emit('onSecondaryAction');
-            innerShow = false;
-          "
+          @click="emit('onSecondaryAction')"
           >{{ secondaryActionLabel }}</ButtonUI
         >
         <ButtonUI
+          :isLoading="isMainActionLoading"
           v-if="mainActionLabel"
           size="md"
           variant="primary"
@@ -31,10 +30,7 @@
               ? 'animate-rotating-border shadow-dTheme-accent!'
               : ''
           "
-          @click="
-            emit('onMainAction');
-            innerShow = false;
-          "
+          @click="emit('onMainAction')"
           >{{ mainActionLabel }}</ButtonUI
         >
       </div>
@@ -51,6 +47,8 @@ const props = defineProps<{
   mainActionLabel?: string;
   secondaryActionLabel?: string;
   specialMainAction?: boolean;
+  isMainActionLoading?: boolean;
+  isSecondaryActionLoading?: boolean;
 }>();
 
 const emit = defineEmits<{

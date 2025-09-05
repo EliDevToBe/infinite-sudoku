@@ -24,13 +24,13 @@
           <div
             v-if="!isAuthenticated"
             class="relative flex items-center justify-center transition-ease z-2"
-            :class="verticalAnimation.join(' ')"
+            :class="verticalAnimation"
           >
             <ButtonUI
               v-if="isFormAppearing"
               size="sm"
               class="z--1 absolute transition-transform transition-ease"
-              :class="lateralLeftAnimation.join(' ')"
+              :class="lateralLeftAnimation"
               @click="secondaryActions"
             >
               {{ showRegister ? "<<<" : "Cancel" }}
@@ -39,7 +39,7 @@
             <ButtonUI
               v-if="!showRegister"
               class="transition-transform transition-ease"
-              :class="lateralRightAnimation.join(' ')"
+              :class="lateralRightAnimation"
               size="md"
               @click="mainActions"
               :isLoading="isMainActionLoading"
@@ -51,7 +51,7 @@
             <ButtonUI
               v-if="showRegister"
               class="transition-transform transition-ease"
-              :class="lateralRightAnimation.join(' ')"
+              :class="lateralRightAnimation"
               size="md"
               @click="mainActions"
               :isLoading="isMainActionLoading"
@@ -74,131 +74,15 @@
             leave-from-class="opacity-100 transform translate-y-0 scale-100"
             leave-to-class="opacity-0 transform -translate-y-2 scale-95"
           >
-            <form v-if="isFormAppearing" :class="ui.formWrapper">
-              <div :class="ui.formContent">
-                <Transition
-                  enter-active-class="transition-all translate-y--5 duration-300 ease-in-out"
-                  enter-from-class="opacity-50 transform scale-95"
-                  enter-to-class="opacity-100 transform translate-y-0 scale-100"
-                >
-                  <FormField
-                    v-if="showRegister"
-                    name="pseudo"
-                    type="text"
-                    placeholder="Pseudo"
-                    size="sm"
-                    label="Pseudo"
-                    v-model="form.pseudo"
-                    :hasError="hasError.pseudo"
-                    @input="validatePseudo(form.pseudo)"
-                    :disabled="isMainActionLoading"
-                    required
-                  />
-                </Transition>
-
-                <FormField
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  size="sm"
-                  label="Email"
-                  v-model="form.email"
-                  :hasError="hasError.email"
-                  v-bind="{ required: showRegister }"
-                  @input="
-                    validateEmail(
-                      form.email,
-                      showRegister ? 'register' : 'login'
-                    )
-                  "
-                  :disabled="isMainActionLoading"
-                />
-
-                <div class="flex flex-col gap-2">
-                  <div>
-                    <FormField
-                      name="password"
-                      type="password"
-                      placeholder="Password"
-                      size="sm"
-                      label="Password"
-                      v-model="form.password"
-                      :hasError="hasError.password"
-                      @input="
-                        validatePassword(
-                          form.password,
-                          showRegister ? 'register' : 'login'
-                        )
-                      "
-                      :disabled="isMainActionLoading"
-                      v-bind="{ required: showRegister }"
-                    />
-                    <div
-                      v-if="!showRegister"
-                      role="link"
-                      class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
-                      @click="
-                        console.warn(
-                          'Forgotten password flow not yet implemented'
-                        )
-                      "
-                    >
-                      Forgot password?
-                    </div>
-                  </div>
-
-                  <div>
-                    <FormField
-                      v-if="showRegister"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Confirm Password"
-                      size="sm"
-                      label="Confirm Password"
-                      v-model="form.confirmPassword"
-                      :hasError="hasError.confirmPassword"
-                      @input="confirmPasswords"
-                      :disabled="isMainActionLoading"
-                      required
-                    />
-                    <div
-                      v-if="showRegister"
-                      class="text-[8px] text-lTheme-font"
-                    >
-                      <span class="text-lTheme-danger">*</span>Required
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  v-if="!showRegister"
-                  role="link"
-                  class="text-[8px] text-lTheme-font place-self-center hover:underline hover:cursor-pointer"
-                  @click="showRegister = true"
-                >
-                  Don't have an account? Register
-                </div>
-              </div>
-
-              <!-- ERRORS -->
-              <div class="flex flex-col">
-                <span
-                  v-for="(error, index) in sortedErrors"
-                  :key="error.field + error.type"
-                  :style="{ opacity: (100 - 30 * index) / 100 }"
-                  class="text-lTheme-danger text-[9px] text-center"
-                  >{{ error.message }}</span
-                >
-
-                <span
-                  v-if="errors.length > 2"
-                  style="opacity: 40%"
-                  class="text-lTheme-danger text-[9px] text-center"
-                >
-                  {{ `+${errors.length - 1} more` }}</span
-                >
-              </div>
-            </form>
+            <LoginRegisterForm
+              class="absolute max-sm:w-45 sm:w-90"
+              ref="LoginRegisterFormRef"
+              v-if="showForm"
+              v-model:form="form"
+              v-model:modeRegister="showRegister"
+              :isFormLocked="isMainActionLoading"
+              v-model:hasError="hasError"
+            />
           </Transition>
         </div>
       </div>
@@ -207,14 +91,14 @@
 </template>
 
 <script setup lang="ts">
-import { FormField, MainContent, MainWrapper } from "@/components";
+import { MainContent, MainWrapper } from "@/components";
 import { useAuth, useNavigation, useUser } from "@/composables";
-import { ref, watch, Transition, computed } from "vue";
+import { ref, watch, Transition, useTemplateRef } from "vue";
 import { ButtonUI } from "@/components/ui";
-import { normalize, verifyEmail, verifyPseudo, hasProfanity } from "@/utils";
-import { throwFrontError, isFrontError } from "@/utils/error";
-import { Logger } from "@/composables/useLogger";
+import { normalize } from "@/utils";
+import { isFrontError } from "@/utils/error";
 import { usePresetToast } from "@/composables/toast";
+import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 
 const { isAdmin, currentUser } = useUser();
 const { logout, isAuthenticated, login, register } = useAuth();
@@ -240,15 +124,20 @@ const isMenuOpen = ref(false);
 const isMainActionLoading = ref(false);
 const isLogoutLoading = ref(false);
 
+const hasError = ref(false);
+const loginRegisterFormRef = useTemplateRef<
+  InstanceType<typeof LoginRegisterForm>
+>("LoginRegisterFormRef");
+
 // Handles animations
 watch(showForm, () => {
   if (showForm.value) {
-    verticalAnimation.value.push("translate-y-58");
+    verticalAnimation.value.push("max-sm:translate-y-58 translate-y-66");
 
     isFormAppearing.value = true;
     setTimeout(() => {
-      lateralRightAnimation.value.push("translate-x-20");
-      lateralLeftAnimation.value.push("translate-x--20");
+      lateralRightAnimation.value.push("translate-x-30 max-sm:translate-x-10");
+      lateralLeftAnimation.value.push("translate-x--32 max-sm:translate-x--13");
 
       setTimeout(() => {
         isMenuOpen.value = true;
@@ -274,83 +163,20 @@ watch(showForm, () => {
 // When menu is closed, reset state
 watch(isMenuOpen, () => {
   if (!isMenuOpen.value) {
-    form.value.email = "";
-    form.value.password = "";
-    form.value.pseudo = "";
-
-    resetForm();
-
-    emailErrors.value = "";
-    passwordErrors.value = "";
-    pseudoErrors.value = "";
+    form.value = {
+      email: "",
+      password: "",
+      pseudo: "",
+      confirmPassword: "",
+    };
   }
 });
-
-const errorFields = ["pseudo", "email", "password", "confirmPassword"] as const;
-type ErrorField = (typeof errorFields)[number];
-type ErrorType =
-  | "invalid"
-  | "profanity"
-  | "length"
-  | "uppercase"
-  | "required"
-  | "special"
-  | "number"
-  | "mismatch";
-type FormError = {
-  field: ErrorField;
-  type: ErrorType;
-  message: string;
-};
-
-const errors = ref<FormError[]>([]);
-
-const sortedErrors = computed(() => {
-  return errors.value
-    .sort((a, b) => {
-      const fieldSorting =
-        errorFields.indexOf(a.field) - errorFields.indexOf(b.field);
-      if (fieldSorting) return fieldSorting;
-
-      // Sort by message length: longest first
-      return b.message.length - a.message.length;
-    })
-    .slice(0, 2);
-});
-
-const hasError = ref({
-  email: false,
-  password: false,
-  pseudo: false,
-  confirmPassword: false,
-});
-
-const pseudoErrors = ref();
-const emailErrors = ref();
-const passwordErrors = ref();
 
 const form = ref({
   email: "",
   password: "",
   pseudo: "",
   confirmPassword: "",
-});
-
-const resetForm = () => {
-  form.value.email = "";
-  form.value.password = "";
-  form.value.pseudo = "";
-  form.value.confirmPassword = "";
-
-  hasError.value.email = false;
-  hasError.value.password = false;
-  hasError.value.pseudo = false;
-  errors.value = [];
-};
-watch(showRegister, resetForm);
-
-const hasAnyError = computed(() => {
-  return Object.values(hasError.value).some((error) => error);
 });
 
 const mainActions = async () => {
@@ -378,172 +204,6 @@ const secondaryActions = () => {
   }
 };
 
-const clearErrorText = (field: ErrorField, type: ErrorType) => {
-  errors.value = errors.value.filter(
-    (error) => error.field !== field || error.type !== type
-  );
-};
-
-const validatePassword = (
-  password: string,
-  context: "login" | "loginAction" | "register"
-): boolean => {
-  hasError.value.password = false;
-
-  clearErrorText("password", "required");
-  if (!password) {
-    hasError.value.password = true;
-    errors.value.push({
-      field: "password",
-      type: "required",
-      message: "Password is required",
-    });
-    return false;
-  }
-
-  if (context === "register" || context === "loginAction") {
-    clearErrorText("password", "length");
-    if (password.length < 8 || password.length > 32) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "length",
-        message: "Password must be 8-32 chars long",
-      });
-    }
-  }
-
-  if (context === "register") {
-    clearErrorText("password", "uppercase");
-    if (!/[A-Z]/.test(password)) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "uppercase",
-        message: "Password requires at least 1 uppercase",
-      });
-    }
-
-    clearErrorText("password", "special");
-    if (!/[^A-Za-z0-9\s]/.test(password)) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "special",
-        message: "Password must have 1 special character",
-      });
-    }
-
-    clearErrorText("password", "number");
-    if (!/[0-9]/.test(password)) {
-      hasError.value.password = true;
-      errors.value.push({
-        field: "password",
-        type: "number",
-        message: "Password requires at least 1 number",
-      });
-    }
-  }
-
-  if (hasError.value.password) return false;
-
-  return true;
-};
-
-const confirmPasswords = () => {
-  hasError.value.confirmPassword = false;
-
-  clearErrorText("confirmPassword", "mismatch");
-  if (form.value.password !== form.value.confirmPassword) {
-    hasError.value.confirmPassword = true;
-    errors.value.push({
-      field: "confirmPassword",
-      type: "mismatch",
-      message: "Passwords do not match",
-    });
-  }
-};
-
-const validateEmail = (email: string, context?: "login" | "register") => {
-  if (context === "login") return;
-
-  hasError.value.email = false;
-
-  try {
-    clearErrorText("email", "required");
-    if (!email) {
-      hasError.value.email = true;
-      errors.value.push({
-        field: "email",
-        type: "required",
-        message: "Email is required",
-      });
-      return;
-    }
-
-    clearErrorText("email", "invalid");
-    if (!verifyEmail(email)) {
-      hasError.value.email = true;
-      errors.value.push({
-        field: "email",
-        type: "invalid",
-        message: "Invalid email format",
-      });
-    }
-  } catch (error) {
-    throwFrontError("Error validating email", { email, error });
-  }
-};
-
-const validatePseudo = (pseudo: string) => {
-  try {
-    hasError.value.pseudo = false;
-
-    clearErrorText("pseudo", "required");
-    if (!pseudo) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "required",
-        message: "Pseudo is required",
-      });
-      return;
-    }
-
-    clearErrorText("pseudo", "invalid");
-    if (!verifyPseudo(pseudo)) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "invalid",
-        message: "Invalid pseudo",
-      });
-    }
-
-    clearErrorText("pseudo", "profanity");
-    if (hasProfanity(pseudo)) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "profanity",
-        message: "Pseudo contains profanity",
-      });
-    }
-
-    clearErrorText("pseudo", "length");
-    if (pseudo.length < 3 || pseudo.length > 16) {
-      hasError.value.pseudo = true;
-      errors.value.push({
-        field: "pseudo",
-        type: "length",
-        message: "Pseudo must be 3-16 chars long",
-      });
-    }
-  } catch (error) {
-    throwFrontError("Error validating pseudo", { pseudo, error });
-  }
-};
-
 const loginFlow = async () => {
   isMainActionLoading.value = true;
 
@@ -551,10 +211,9 @@ const loginFlow = async () => {
   const password = form.value.password.trim();
 
   try {
-    validateEmail(email);
-    validatePassword(password, "loginAction");
+    loginRegisterFormRef.value?.validateForm();
 
-    if (hasAnyError.value) {
+    if (hasError.value) {
       return;
     }
 
@@ -585,12 +244,9 @@ const registerFlow = async () => {
   const pseudo = form.value.pseudo.trim();
 
   try {
-    validatePseudo(pseudo);
-    validateEmail(email);
-    validatePassword(password, "register");
-    confirmPasswords();
+    loginRegisterFormRef.value?.validateForm();
 
-    if (hasAnyError.value) {
+    if (hasError.value) {
       return;
     }
 
@@ -600,7 +256,11 @@ const registerFlow = async () => {
       navigateTo("/play/");
     }
   } catch (error) {
-    Logger.error(error);
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
   } finally {
     isMainActionLoading.value = false;
   }

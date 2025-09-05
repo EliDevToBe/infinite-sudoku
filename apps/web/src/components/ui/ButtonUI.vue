@@ -59,13 +59,13 @@ const ui = {
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
   ],
-  disabled: "opacity-50 cursor-not-allowed bg-gray-400 text-gray-700",
+  disabled: "cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
     sm: "min-w-15 max-w-fit h-8 text-xs p-1 rounded-md ",
-    md: "min-w-20 max-w-fit h-10 text-md p-2 rounded-md",
-    lg: "min-w-24 max-w-fit h-12 text-lg p-2 rounded-md",
+    md: "min-w-20 max-w-fit h-10 text-md p-2 rounded-lg",
+    lg: "min-w-24 max-w-fit h-12 text-lg p-2 rounded-lg",
   },
   light: {
     primary: [

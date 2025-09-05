@@ -10,8 +10,9 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
+        v-if="isPuzzleFetched"
         v-model="puzzle"
-        :is-loading="isLoading || !isPuzzleFetched"
+        :is-loading="isLoading"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -48,24 +49,40 @@
       ></FeatureArea>
 
       <LazyActionModal
-        title="✨ Unlock all features ! ✨"
-        description="Register to unlock exclusive features"
-        v-model:show="showSubscribeModal"
-        main-action-label="Register"
-        @on-main-action="showSubscribeModal = false"
-        secondary-action-label="Cancel"
-        @on-secondary-action="showSubscribeModal = false"
+        :title="actionModalProps.title"
+        :description="actionModalProps.description"
+        v-model:show="showUnauthenticatedModal"
+        :main-action-label="actionModalProps.mainActionLabel"
+        @on-main-action="actionModalProps.mainFunction"
+        :secondary-action-label="actionModalProps.secondaryActionLabel"
+        @on-secondary-action="actionModalProps.secondaryFunction"
         special-main-action
+        :isMainActionLoading="isRegistering"
       >
-        <SubscribeModalBody :context="subscribeModalContext" />
+        <UnlockFeatureModalBody
+          v-if="!showSubscribeModalBody"
+          :context="subscribeModalContext"
+          @on-click-login="console.log('CHANGE MODEL BODY INTO A LOGIN')"
+        />
+
+        <div v-else class="flex place-self-center h-75 max-sm:w-45 sm:w-full">
+          <LoginRegisterForm
+            ref="LoginRegisterFormRef"
+            v-model:form="form"
+            mode-register
+            :is-form-locked="isRegistering"
+            v-model:has-error="hasFormError"
+          />
+        </div>
       </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, useTemplateRef } from "vue";
 import { LazyActionModal } from "@/components";
+import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 import { type Cell, type DifficultyOptions } from "@/utils";
 import {
   useSudoku,
@@ -73,29 +90,74 @@ import {
   useMoveStack,
   useState,
   useAuth,
+  useUser,
 } from "@/composables";
+import { normalize } from "@/utils";
+import { isFrontError } from "@/utils/error";
 
-const { getRandomPuzzle, formatPuzzle, generatePlaceholderPuzzle } =
-  useSudoku();
-const { toastError, toastInfo } = usePresetToast();
+const { getRandomPuzzle, formatPuzzle } = useSudoku();
+const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell } = useState();
-const { isAuthenticated } = useAuth();
+const { isAuthenticated, register } = useAuth();
+const { currentUser } = useUser();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
-const showSubscribeModal = ref(false);
+const showUnauthenticatedModal = ref(false);
+const showSubscribeModalBody = ref(false);
+const hasFormError = ref(false);
+const isRegistering = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-const puzzle = ref<Cell[][]>(generatePlaceholderPuzzle());
+const puzzle = ref<Cell[][]>([]);
 const subscribeModalContext = ref<"leaderboard" | "save">();
+
+const loginRegisterFormRef = useTemplateRef<
+  InstanceType<typeof LoginRegisterForm>
+>("LoginRegisterFormRef");
+
+const form = ref({
+  email: "",
+  password: "",
+  pseudo: "",
+  confirmPassword: "",
+});
 
 const hasUserInput = computed(() => {
   return puzzle.value.some((row) =>
     row.some((cell) => cell.isEditable && cell.value !== 0)
   );
+});
+
+const actionModalProps = computed(() => {
+  const normal = !showSubscribeModalBody.value;
+
+  if (normal) {
+    // Normal modal props
+    return {
+      title: "✨ Unlock all features ! ✨",
+      description: "Register to unlock exclusive features",
+      mainActionLabel: "I want it !",
+      secondaryActionLabel: "Cancel",
+      mainFunction: () => {
+        showSubscribeModalBody.value = true;
+      },
+      secondaryFunction: closeUnauthenticatedModal,
+    };
+  }
+
+  // Register modal props
+  return {
+    title: "✨ Register ✨",
+    description: "Just a few steps away... ",
+    mainActionLabel: "Register",
+    secondaryActionLabel: "Cancel",
+    mainFunction: registerFlow,
+    secondaryFunction: closeUnauthenticatedModal,
+  };
 });
 
 onMounted(async () => {
@@ -137,6 +199,7 @@ const switchDifficulty = () => {
 };
 
 const cancelDifficultySwitch = () => {
+  showPreventDifficultyModal.value = false;
   setTimeout(() => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
@@ -179,7 +242,7 @@ const setNumber = (number: number) => {
 const handleLeaderboard = () => {
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "leaderboard";
-    showSubscribeModal.value = true;
+    showUnauthenticatedModal.value = true;
     return;
   }
 
@@ -189,11 +252,54 @@ const handleLeaderboard = () => {
 const handleSave = () => {
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "save";
-    showSubscribeModal.value = true;
+    showUnauthenticatedModal.value = true;
     return;
   }
 
   console.log("SAVE ACTION");
+};
+
+const closeUnauthenticatedModal = () => {
+  showUnauthenticatedModal.value = false;
+
+  // Due to the modal animation
+  setTimeout(() => {
+    showSubscribeModalBody.value = false;
+  }, 300);
+};
+
+const registerFlow = async () => {
+  isRegistering.value = true;
+
+  const email = normalize(form.value.email);
+  const password = form.value.password.trim();
+  const pseudo = form.value.pseudo.trim();
+
+  try {
+    loginRegisterFormRef.value?.validateForm();
+
+    if (hasFormError.value) {
+      return;
+    }
+
+    const success = await register({ email, password, pseudo });
+    if (success) {
+      closeUnauthenticatedModal();
+      toastSuccess({ description: "Successfully registered 🎉" });
+
+      setTimeout(() => {
+        toastInfo({ description: `Welcome ${currentUser.value?.pseudo} !` });
+      }, 1000);
+    }
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  } finally {
+    isRegistering.value = false;
+  }
 };
 </script>
 

@@ -44,9 +44,8 @@ export const useAuth = () => {
     const message = data.clientMessage;
 
     if (!response.ok && message) {
-      throwFrontError("Failed to register", {
+      throwFrontError(message, {
         email: payload.email,
-        message,
       });
     }
 

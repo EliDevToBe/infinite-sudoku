@@ -1,10 +1,15 @@
 <template>
-  <div :class="{ 'flex flex-row gap-2 items-center': horizontal }">
+  <div
+    :class="{
+      'flex flex-row gap-2 justify-between items-center w-full': horizontal,
+    }"
+  >
     <label :for="name" :class="labelClass"
       >{{ label
       }}<span class="text-lTheme-danger">
         {{ props.required ? "*" : "" }}
       </span>
+      {{ props.horizontal ? ":" : "" }}
     </label>
     <InputUI
       :id="name"
