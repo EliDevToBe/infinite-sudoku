@@ -18,17 +18,33 @@
       :id="value"
       tabindex="-1"
     />
-    <label class="cursor-pointer" :for="value" :id="`${value}-label`">{{
-      label
-    }}</label>
+
+    <template v-if="$slots.leadingSlot">
+      <slot name="leadingSlot"></slot>
+    </template>
+
+    <label
+      class="cursor-pointer max-sm:text-sm text-center"
+      :for="value"
+      :id="`${value}-label`"
+    >
+      <span>
+        {{ label }}
+      </span>
+
+      <template v-if="$slots.trailingSlot">
+        <slot name="trailingSlot"></slot>
+      </template>
+    </label>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { DifficultyOptions } from "@/utils";
 
 type Props = {
-  value: string;
+  value: DifficultyOptions;
   radioGroup: string;
   label: string;
 };
@@ -37,7 +53,7 @@ const props = withDefaults(defineProps<Props>(), {});
 const model = defineModel<string>();
 
 const ui = {
-  base: "flex grow box-border p-1 justify-center cursor-pointer",
+  base: "flex grow box-border p-0.5 sm:p-1 justify-center cursor-pointer gap-1",
   active: "bg-dTheme-surface rounded-md",
 };
 

@@ -38,6 +38,16 @@ export const validateInput = (input: string) => {
   return false;
 };
 
+export const calculateCompletionRate = (puzzle: Cell[][]) => {
+  const filledCells = puzzle
+    .flat()
+    .filter((cell) => cell.value !== 0 && cell.isEditable).length;
+
+  const fillableCells = puzzle.flat().filter((cell) => cell.isEditable).length;
+
+  return Math.floor((filledCells / fillableCells) * 100);
+};
+
 export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
   WayTooEasy: [0, 40],
   Easy: [41, 45],

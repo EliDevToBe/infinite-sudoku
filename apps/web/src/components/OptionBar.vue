@@ -1,34 +1,30 @@
 <template>
   <div :class="ui.wrapper">
-    <RadioUI
+    <OptionBarItem
+      group="difficulty"
+      v-model="difficulty"
       value="easy"
-      radioGroup="difficulty"
-      v-model="difficulty"
-      label="Easy"
       @update:modelValue="emit('onSelect')"
     />
 
-    <RadioUI
+    <OptionBarItem
+      group="difficulty"
+      v-model="difficulty"
       value="medium"
-      radioGroup="difficulty"
-      v-model="difficulty"
-      label="Medium"
       @update:modelValue="emit('onSelect')"
     />
 
-    <RadioUI
+    <OptionBarItem
+      group="difficulty"
+      v-model="difficulty"
       value="hard"
-      radioGroup="difficulty"
-      v-model="difficulty"
-      label="Hard"
       @update:modelValue="emit('onSelect')"
     />
 
-    <RadioUI
-      value="hardcore"
-      radioGroup="difficulty"
+    <OptionBarItem
+      group="difficulty"
       v-model="difficulty"
-      label="Hardcore"
+      value="hardcore"
       @update:modelValue="emit('onSelect')"
     />
   </div>
@@ -36,6 +32,7 @@
 
 <script setup lang="ts">
 import { type DifficultyOptions } from "@/utils";
+import OptionBarItem from "./OptionBarItem.vue";
 
 const difficulty = defineModel<DifficultyOptions>();
 
@@ -43,7 +40,7 @@ const ui = {
   wrapper: [
     "flex items-center justify-between rounded-md ",
     "transition-all duration-200 ease-in-out",
-    "w-95 sm:w-150 p-1 pl-2 pr-2 mx-2",
+    "w-95 sm:w-150 p-1 sm:px-2  mx-2",
     "bg-dTheme-surfaceOther",
   ],
 };
