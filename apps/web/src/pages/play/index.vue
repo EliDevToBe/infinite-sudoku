@@ -16,6 +16,7 @@
       ></SudokuGrid>
 
       <LazyActionModal
+        v-if="!isAuthenticated"
         title="Are you sure ?"
         description="Confirm switching difficulties"
         v-model:show="showPreventDifficultyModal"
@@ -217,7 +218,7 @@ const setPuzzle = async () => {
 };
 
 const handleDifficultySwitch = () => {
-  if (hasUserInput.value) {
+  if (hasUserInput.value && !isAuthenticated.value) {
     showPreventDifficultyModal.value = true;
   } else {
     switchDifficulty();

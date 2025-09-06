@@ -5,7 +5,7 @@
     v-model="difficulty"
     :label="labelMap[value]"
   >
-    <template #trailingSlot>
+    <template #trailingSlot v-if="isAuthenticated">
       <Transition
         enter-active-class="transition-all duration-500 ease-in-out"
         enter-from-class="opacity-0 -translate-y-3 scale-50"
