@@ -16,6 +16,7 @@
       ></SudokuGrid>
 
       <LazyActionModal
+        v-if="!isAuthenticated"
         title="Are you sure ?"
         description="Confirm switching difficulties"
         v-model:show="showPreventDifficultyModal"
@@ -217,7 +218,7 @@ const setPuzzle = async () => {
 };
 
 const handleDifficultySwitch = () => {
-  if (hasUserInput.value) {
+  if (hasUserInput.value && !isAuthenticated.value) {
     showPreventDifficultyModal.value = true;
   } else {
     switchDifficulty();
@@ -296,10 +297,13 @@ const setNumber = (number: number) => {
   const selectedCell = getSelectedCell();
   if (!selectedCell) return;
 
+  const currentCell = puzzle.value[selectedCell.y][selectedCell.x];
+  if (currentCell.value === number || !currentCell.isEditable) return;
+
   pushMove(selectedCell, { ...selectedCell, value: number });
 
-  puzzle.value[selectedCell.y][selectedCell.x].value = number;
-  setSelectedCell(puzzle.value[selectedCell.y][selectedCell.x]);
+  currentCell.value = number;
+  setSelectedCell(currentCell);
 };
 
 const handleLeaderboard = () => {
