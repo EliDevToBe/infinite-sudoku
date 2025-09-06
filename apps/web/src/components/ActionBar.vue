@@ -122,7 +122,9 @@ const dataEraseTooltip = computed(() => {
 
 const handleEraser = () => {
   const selectedCell = getSelectedCell();
-  if (!selectedCell) return;
+  if (!selectedCell || selectedCell.value === 0 || !selectedCell.isEditable) {
+    return;
+  }
   emit("onEraser", selectedCell);
 };
 
