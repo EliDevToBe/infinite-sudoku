@@ -6,13 +6,22 @@
     :label="labelMap[value]"
   >
     <template #trailingSlot>
-      <span
-        class="text-[11px] text-dTheme-light/80 flex justify-center items-center gap-1"
-        v-if="completionRate > 0"
+      <Transition
+        enter-active-class="transition-all duration-500 ease-in-out"
+        enter-from-class="opacity-0 -translate-y-3 scale-50"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-all duration-500 ease-in-out"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0 -translate-y-3 scale-50"
       >
-        <VueIcon name="lucide:puzzle"></VueIcon>
-        {{ completionRate }}%</span
-      >
+        <span
+          class="line-height-[11px] text-[11px] text-dTheme-light/80 flex justify-center items-center gap-1"
+          v-if="completionRate > 0"
+        >
+          <VueIcon name="lucide:puzzle"></VueIcon>
+          {{ completionRate }}%</span
+        >
+      </Transition>
     </template>
   </RadioUI>
 </template>
