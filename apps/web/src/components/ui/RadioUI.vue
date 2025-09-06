@@ -23,8 +23,14 @@
       <slot name="leadingSlot"></slot>
     </template>
 
-    <label class="cursor-pointer" :for="value" :id="`${value}-label`"
-      >{{ label }}
+    <label
+      class="cursor-pointer max-sm:text-sm text-center"
+      :for="value"
+      :id="`${value}-label`"
+    >
+      <span>
+        {{ label }}
+      </span>
 
       <template v-if="$slots.trailingSlot">
         <slot name="trailingSlot"></slot>
@@ -47,7 +53,7 @@ const props = withDefaults(defineProps<Props>(), {});
 const model = defineModel<string>();
 
 const ui = {
-  base: "flex grow box-border p-1 justify-center cursor-pointer gap-1",
+  base: "flex grow box-border p-0.5 sm:p-1 justify-center cursor-pointer gap-1",
   active: "bg-dTheme-surface rounded-md",
 };
 
