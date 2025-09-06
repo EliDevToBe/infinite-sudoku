@@ -270,6 +270,16 @@ const cancelDifficultySwitch = () => {
   }, 100);
 };
 
+const resetSudoku = async () => {
+  showNewSudokuModal.value = false;
+  isLoading.value = true;
+
+  setTimeout(async () => {
+    await setPuzzle();
+    isLoading.value = false;
+  }, 300);
+};
+
 const eraseCell = (event: { x: number; y: number }) => {
   pushMove(puzzle.value[event.y][event.x], {
     ...puzzle.value[event.y][event.x],
