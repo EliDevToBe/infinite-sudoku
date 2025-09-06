@@ -36,13 +36,13 @@
 
     <LazyTooltipUI :text="`Erase selected cell ${dataEraseTooltip}`">
       <button
-        :class="eraseClass"
+        :class="[ui.icon, ui.active]"
         @click="handleEraser"
         :aria-label="`Erase selected cell ${dataEraseTooltip}`"
         id="erase-button"
       >
         <VueIcon
-          :class="eraseClass"
+          :class="[ui.icon, ui.active]"
           name="lucide:eraser"
           aria-hidden="true"
         ></VueIcon>
@@ -65,6 +65,22 @@
         ></VueIcon>
       </button>
       <label for="note-button" class="sr-only">Note mode</label>
+    </LazyTooltipUI>
+
+    <LazyTooltipUI text="New sudoku">
+      <button
+        :class="[ui.icon, ui.active]"
+        :aria-label="`New sudoku`"
+        id="new-sudoku-button"
+        @click="emit('onNewSudoku')"
+      >
+        <VueIcon
+          :class="[ui.icon, ui.active]"
+          name="lucide:refresh-cw"
+          aria-hidden="true"
+        ></VueIcon>
+      </button>
+      <label for="new-sudoku-button" class="sr-only">New sudoku</label>
     </LazyTooltipUI>
   </div>
 </template>
@@ -90,6 +106,7 @@ const ui = {
   toggle: "text-green-500",
   noMove: "text-gray-500",
   hasMove: "sm:hover:bg-dTheme-light/10",
+  // danger: "text-red-500",
 };
 
 const emit = defineEmits<{
@@ -97,6 +114,7 @@ const emit = defineEmits<{
   onRedo: [];
   onEraser: [{ x: number; y: number }];
   onNote: [boolean];
+  onNewSudoku: [];
 }>();
 
 const isNoteMode = ref<boolean>(false);
@@ -106,9 +124,6 @@ const undoClass = computed(() => {
 });
 const redoClass = computed(() => {
   return [ui.icon, ui.active, canRedo.value ? ui.hasMove : ui.noMove];
-});
-const eraseClass = computed(() => {
-  return [ui.icon, ui.active];
 });
 const noteClass = computed(() => {
   return [ui.icon, ui.active, isNoteMode.value ? ui.toggle : ""];
