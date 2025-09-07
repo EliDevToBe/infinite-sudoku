@@ -20,7 +20,7 @@ export const useSudoku = () => {
     const { data, error } = await fetchApi({
       path: "/grid/:id",
       method: "GET",
-      params: { id: "59109878-da5c-4a3b-9a06-0f58b638116a" },
+      params: { id: "89057e9f-9573-49c3-afd8-fc280a1a9548" },
     });
 
     if (error) {
