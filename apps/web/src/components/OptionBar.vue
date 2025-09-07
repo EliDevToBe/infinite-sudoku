@@ -38,9 +38,9 @@ const difficulty = defineModel<DifficultyOptions>();
 
 const ui = {
   wrapper: [
-    "flex items-center justify-between rounded-md ",
+    "flex items-center justify-between rounded-md h-fit",
     "transition-all duration-200 ease-in-out",
-    "w-95 sm:w-150 p-1 sm:px-2  mx-2",
+    "w-95 sm:w-150 p-1 sm:px-2s mx-2",
     "bg-dTheme-surfaceOther",
   ],
 };

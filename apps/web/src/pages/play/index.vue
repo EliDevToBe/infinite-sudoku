@@ -1,7 +1,7 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="flex items-center justify-center">
+      <div class="flex justify-center sm:h-13 h-11">
         <OptionBar
           v-model="currentDifficulty"
           @on-select="handleDifficultySwitch"
@@ -37,8 +37,28 @@
           @on-eraser="eraseCell"
           @on-redo="handleRedo"
           @on-note="toastInfo({ description: 'Note mode coming soon 🥳' })"
-          class="rounded-b-none"
+          @on-new-sudoku="
+            hasUserInput ? (showNewSudokuModal = true) : resetSudoku()
+          "
         ></ActionBar>
+
+        <LazyActionModal
+          title="Get a new sudoku ?"
+          description="Confirm resetting your sudoku"
+          v-model:show="showNewSudokuModal"
+          main-action-label="Got it"
+          @on-main-action="resetSudoku"
+          @on-secondary-action="showNewSudokuModal = false"
+          secondary-action-label="Cancel"
+        >
+          <div class="flex flex-col gap-2">
+            <span class="inline-block">
+              The new sudoku will <span class="text-red-500">erase</span> your
+              current progress.
+            </span>
+            <span class="inline-block">Continue ?</span>
+          </div>
+        </LazyActionModal>
 
         <NumberBar @on-select="setNumber"></NumberBar>
       </div>
@@ -115,6 +135,7 @@ const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
 const showFormModalBody = ref(false);
+const showNewSudokuModal = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
@@ -236,7 +257,7 @@ const handleDifficultySwitch = () => {
  * - set a new puzzle
  *
  */
-const switchDifficulty = () => {
+const switchDifficulty = async () => {
   showPreventDifficultyModal.value = false;
   isLoading.value = true;
   resetMoveStacks();
@@ -268,6 +289,16 @@ const cancelDifficultySwitch = () => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
   }, 100);
+};
+
+const resetSudoku = async () => {
+  showNewSudokuModal.value = false;
+  isLoading.value = true;
+
+  setTimeout(async () => {
+    await setPuzzle();
+    isLoading.value = false;
+  }, 300);
 };
 
 const eraseCell = (event: { x: number; y: number }) => {
@@ -396,6 +427,11 @@ const loginFlow = async () => {
         title: "Login successful",
         description: `Welcome ${currentUser.value?.pseudo} !`,
       });
+
+      const localSave = getSudokuSave(currentDifficulty.value);
+      if (localSave) {
+        puzzle.value = localSave;
+      }
     }
   } catch (error) {
     if (isFrontError(error)) {

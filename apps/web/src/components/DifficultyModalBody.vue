@@ -12,6 +12,11 @@
     <span class="inline-block"
       >You will <span class="text-red-500">lose</span> your progress.</span
     >
+    <span class="inline-block mt-2"
+      >You can
+      <span class="text-amber-400">register</span>
+      to auto save your sudoku.
+    </span>
   </div>
 </template>
 
