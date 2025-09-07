@@ -58,3 +58,5 @@ pgdata/
 # Ignore global config backups
 *.bak
 *.old 
+
+.trigger

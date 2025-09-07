@@ -17,6 +17,10 @@
       "path": "packages/shared"
     },
     {
+      "name": "🤖 Trigger",
+      "path": "packages/trigger"
+    },
+    {
       "name": "✨ Root",
       "path": "."
     }
