@@ -1,0 +1,38 @@
+import { DifficultyOptions } from "../../../../apps/web/src/utils";
+import { sha256 } from "../sha256";
+import { SudokuComplete } from "./generator-v2";
+
+export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
+  wayTooEasy: [0, 40],
+  easy: [41, 45],
+  medium: [46, 49],
+  advanced: [50, 53],
+  hard: [54, 56],
+  hardcore: [57, 59],
+  diabolicExpert: [60, 64],
+} as const;
+
+export const REVAMPED_DIFFICULTY_BY_MISSING_CELLS_RANGE = {
+  // wayTooEasy: [0, 40],
+  easy: [40, 41, 42, 43, 44, 45], // 6
+  medium: [46, 47, 48, 49, 50, 51], // 5
+  hard: [52, 53, 54, 55], // 4
+  hardcore: [56, 57, 58, 59], // 4
+  // diabolicExpert: [60, 64], // 5
+};
+
+export const getRangeFromDifficulty = (difficulty: DifficultyOptions) => {
+  return REVAMPED_DIFFICULTY_BY_MISSING_CELLS_RANGE[difficulty];
+};
+
+export const prepareForDatabase = (
+  data: SudokuComplete,
+  difficulty: number,
+) => {
+  return {
+    puzzle: data.puzzle,
+    solution: data.solution,
+    difficulty,
+    sha256: sha256(data),
+  };
+};

@@ -47,13 +47,3 @@ export const calculateCompletionRate = (puzzle: Cell[][]) => {
 
   return Math.floor((filledCells / fillableCells) * 100);
 };
-
-export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
-  WayTooEasy: [0, 40],
-  Easy: [41, 45],
-  Medium: [46, 49],
-  Advanced: [50, 53],
-  Hard: [54, 56],
-  VeryHard: [57, 59],
-  DiabolicExpert: [60, 64],
-} as const;
