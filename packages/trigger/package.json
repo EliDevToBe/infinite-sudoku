@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx trigger.dev@latest dev"
+    "db:client": "npx prisma generate --schema=../../packages/database/prisma/schema.prisma",
+    "dev": "npm run db:client && npx trigger.dev@latest dev"
   },
   "keywords": [],
   "author": "",
