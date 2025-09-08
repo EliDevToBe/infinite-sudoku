@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --outDir ./dist",
+    "build": "npm run db:client && tsc --outDir ./dist",
     "start": "npx tsx api/index.ts",
     "dev": "npm run db:client && npx tsx --watch ./app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
