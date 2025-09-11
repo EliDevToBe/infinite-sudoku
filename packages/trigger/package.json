@@ -15,8 +15,12 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.15.0",
+    "@trigger.dev/build": "^4.0.2",
+    "@trigger.dev/sdk": "^4.0.2",
     "dotenv": "^17.2.2",
-    "prisma": "^6.15.0",
+    "prisma": "^6.15.0"
+  },
+  "devDependencies": {
     "trigger.dev": "^4.0.2"
   }
 }
