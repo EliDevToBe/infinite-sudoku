@@ -1,5 +1,8 @@
 import { prismaExtension } from "@trigger.dev/build/extensions/prisma";
 import { defineConfig } from "@trigger.dev/sdk/v3";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default defineConfig({
   project: process.env.TRIGGER_PROJECT_ID ?? "",
