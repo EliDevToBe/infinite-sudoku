@@ -27,6 +27,9 @@ export const bulkNewSudokuTask = task({
         .map((run) => run.output.preparedData),
     });
 
-    return newGrids.count;
+    return {
+      initialGridCount: results.runs.length,
+      createdGrid: newGrids.count,
+    };
   },
 });
