@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --outDir ./dist",
+    "build": "npm run db:client && tsc --outDir ./dist",
     "start": "npx tsx api/index.ts",
     "dev": "npm run db:client && npx tsx --watch ./app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -28,11 +28,10 @@
     "jsonwebtoken": "^9.0.2",
     "pino-pretty": "^13.0.0",
     "prisma": "^6.9.0",
-    "typescript": "^5.8.3",
     "zod": "^3.25.55"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.30"
+    "@types/node": "^22.18.1"
   }
 }

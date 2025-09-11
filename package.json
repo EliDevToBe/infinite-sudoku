@@ -7,7 +7,8 @@
     "apps/api",
     "apps/web",
     "packages/database",
-    "packages/shared"
+    "packages/shared",
+    "packages/trigger"
   ],
   "description": "",
   "homepage": "https://github.com/EliDevToBe/sudoking#readme",
@@ -36,12 +37,16 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
-    "@types/node": "^22.15.30",
+    "@trigger.dev/build": "^4.0.2",
+    "@types/node": "^22.18.1",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
     "lefthook": "^1.11.13",
     "pino-pretty": "^13.0.0",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "turbo": "^2.5.4"
+  },
+  "dependencies": {
+    "@trigger.dev/sdk": "^4.0.2",
+    "typescript": "^5.9.2"
   }
 }
