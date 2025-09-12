@@ -123,7 +123,7 @@ import {
 import { normalize } from "@/utils";
 import { isFrontError } from "@/utils/error";
 
-const { getRandomPuzzle, formatPuzzle } = useSudoku();
+const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell, setSudokuSave, getSudokuSave } =
@@ -143,7 +143,7 @@ const isRegisterMode = ref(true);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-const puzzle = ref<Cell[][]>([]);
+const puzzle = ref<Cell[][]>(createEmptyPuzzle());
 const subscribeModalContext = ref<"leaderboard" | "save">();
 
 const loginRegisterFormRef = useTemplateRef<

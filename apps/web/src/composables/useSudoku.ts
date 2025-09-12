@@ -17,6 +17,15 @@ export const useSudoku = () => {
     );
   };
 
+  const createEmptyPuzzle = (): Cell[][] => {
+    const data = Array.from({ length: 9 }, () =>
+      Array.from({ length: 9 }, () => {
+        return 0;
+      }),
+    );
+    return formatPuzzle(data);
+  };
+
   const getRandomPuzzle = async (difficulty: DifficultyOptions) => {
     const { data, error } = await fetchApi({
       path: "/grid/difficulty/:difficulty",
@@ -35,5 +44,5 @@ export const useSudoku = () => {
     return data;
   };
 
-  return { formatPuzzle, getRandomPuzzle };
+  return { formatPuzzle, getRandomPuzzle, createEmptyPuzzle };
 };
