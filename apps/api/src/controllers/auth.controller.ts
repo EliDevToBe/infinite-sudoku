@@ -26,7 +26,7 @@ const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: isProduction(),
   maxAge: 1000 * 60 * 60 * 24 * 2, // 2 days
-  sameSite: "strict" as const,
+  sameSite: "lax" as const,
   path: "/",
 };
 
