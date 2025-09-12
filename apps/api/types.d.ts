@@ -5,3 +5,5 @@ declare module "fastify" {
     prisma: PrismaClient;
   }
 }
+
+declare module "jsonwebtoken";
