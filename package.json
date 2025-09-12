@@ -23,7 +23,7 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --filter=!trigger",
     "dev:web": "turbo dev --filter=web",
     "dev:api": "turbo dev --filter=api",
     "db:start": "turbo db:start --filter=database",
