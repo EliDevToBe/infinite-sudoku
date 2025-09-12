@@ -49,7 +49,7 @@ const displayValue = computed(() => {
 
 const ui = {
   cell: [
-    "w-8 h-8 sm:w-12 sm:h-12",
+    "w-9 h-9 sm:w-12 sm:h-12",
     "bg-gray-300 text-dTheme-surface",
     "transition-all duration-200",
   ],
