@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper.js";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
+import type { DifficultyOptions } from "../../../../packages/shared/utils/sudoku/helper.js";
 import { GridController } from "../controllers/grid.controller.js";
 import { authenticated } from "../middlewares/auth.middleware.js";
 

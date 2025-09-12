@@ -371,6 +371,7 @@ const closeUnauthenticatedModal = () => {
   // Due to the modal animation
   setTimeout(() => {
     showFormModalBody.value = false;
+    isRegisterMode.value = true;
   }, 300);
 };
 

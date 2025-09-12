@@ -1,7 +1,9 @@
 import type { Prisma } from "@prisma/client";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper.js";
-import { getRangeFromDifficulty } from "@shared/utils/sudoku/helper.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import {
+  type DifficultyOptions,
+  getRangeFromDifficulty,
+} from "../../../../packages/shared/utils/sudoku/helper.js";
 
 type GridInsert = Prisma.gridCreateInput;
 
