@@ -1,7 +1,7 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="flex justify-center sm:h-13 h-11">
+      <div class="mt-4 flex justify-center sm:h-13 h-11">
         <OptionBar
           v-model="currentDifficulty"
           @on-select="handleDifficultySwitch"
