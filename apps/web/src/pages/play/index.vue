@@ -264,28 +264,28 @@ const switchDifficulty = async () => {
   resetMoveStacks();
   setSelectedCell(null);
 
-  setTimeout(async () => {
-    if (!isAuthenticated.value) {
+  if (!isAuthenticated.value) {
+    await setPuzzle();
+  }
+
+  if (isAuthenticated.value) {
+    const localSave = getSudokuSave(currentDifficulty.value);
+
+    if (localSave) {
+      puzzle.value = localSave;
+    } else {
       await setPuzzle();
     }
+  }
 
-    if (isAuthenticated.value) {
-      const localSave = getSudokuSave(currentDifficulty.value);
-
-      if (localSave) {
-        puzzle.value = localSave;
-      } else {
-        await setPuzzle();
-      }
-    }
-
-    isLoading.value = false;
-    oldDifficulty.value = currentDifficulty.value;
-  }, 300);
+  isLoading.value = false;
+  oldDifficulty.value = currentDifficulty.value;
 };
 
 const cancelDifficultySwitch = () => {
   showPreventDifficultyModal.value = false;
+
+  // Due to animation
   setTimeout(() => {
     isLoading.value = false;
     currentDifficulty.value = oldDifficulty.value;
@@ -296,10 +296,8 @@ const resetSudoku = async () => {
   showNewSudokuModal.value = false;
   isLoading.value = true;
 
-  setTimeout(async () => {
-    await setPuzzle();
-    isLoading.value = false;
-  }, 300);
+  await setPuzzle();
+  isLoading.value = false;
 };
 
 const eraseCell = (event: { x: number; y: number }) => {
