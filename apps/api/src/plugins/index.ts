@@ -9,10 +9,10 @@ import swaggerUi from "./swagger-ui.js";
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
+    server.register(cors);
     server.register(cookie);
     server.register(openapi);
     server.register(swaggerUi);
-    server.register(cors);
     server.register(helmet);
     server.register(prisma);
     done();

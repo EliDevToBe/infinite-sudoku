@@ -7,6 +7,7 @@ export default fp(
     if (!process.env.FRONTEND_URL) {
       throw new Error("FRONTEND_URL is not defined");
     }
+    console.log(process.env.FRONTEND_URL);
 
     server.register(cors, {
       origin: process.env.FRONTEND_URL,
