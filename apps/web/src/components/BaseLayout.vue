@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-screen h-screen flex flex-col overflow-auto"
+    class="w-screen h-screen-mobile md:h-screen flex flex-col overflow-auto"
     :class="{
       'bg-[linear-gradient(to_bottom,rgba(245,246,244,1)_0%,rgba(214,218,210,1)_100%)] ':
         isLightTheme,

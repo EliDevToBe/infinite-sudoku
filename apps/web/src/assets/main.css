@@ -1,6 +1,30 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+/* Mobile viewport height fix */
+:root {
+  --vh: 1vh;
+}
+
+/* Set the actual viewport height on mobile */
+@supports (height: 100dvh) {
+  :root {
+    --vh: 1dvh;
+  }
+}
+
+/* Fallback for browsers that don't support dvh */
+@supports not (height: 100dvh) {
+  :root {
+    --vh: 1vh;
+  }
+}
+
+/* Apply the custom viewport height */
+.h-screen-mobile {
+  height: calc(var(--vh, 1vh) * 100);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
