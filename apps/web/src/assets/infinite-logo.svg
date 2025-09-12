@@ -6,9 +6,8 @@
       <pattern patternUnits="userSpaceOnUse" x="690" y="1319" width="431" height="172"
         patternTransform="matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)" id="fill-0-render-720">
         <g>
-          <image id="fill-image-render-720-0"
-            href="https://design.penpot.app/assets/by-file-media-id/bd830f34-5ac9-8161-8006-ca3c259521d8"
-            preserveAspectRatio="xMidYMid slice" width="431" height="172" opacity="1"></image>
+          <image id="fill-image-render-720-0" href="@/assets/logo.webp" preserveAspectRatio="xMidYMid slice" width="431"
+            height="172" opacity="1"></image>
         </g>
       </pattern>
     </defs>

@@ -24,7 +24,7 @@
           <g>
             <image
               id="fill-image-render-720-0"
-              href="https://design.penpot.app/assets/by-file-media-id/bd830f34-5ac9-8161-8006-ca3c259521d8"
+              href="@/assets/logo.webp"
               preserveAspectRatio="xMidYMid slice"
               width="431"
               height="172"
