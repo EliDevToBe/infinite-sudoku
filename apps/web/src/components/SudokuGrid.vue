@@ -1,45 +1,53 @@
 <template>
   <!-- Main wrapper -->
-
-  <div :class="ui.wrapper">
-    <!-- Block Row (3x3)-->
-    <div
-      v-for="blockRow in blockStructure"
-      :key="blockRow.key"
-      :class="ui.blockRow"
-    >
-      <!-- Block Col (3x3)-->
+  <div class="relative">
+    <div :class="[ui.wrapper, { 'blur-[2px]': isInitializing }]">
+      <!-- Block Row (3x3)-->
       <div
-        v-for="block in blockRow.blocks"
-        :key="block.key"
-        :class="ui.fullBlock"
+        v-for="blockRow in blockStructure"
+        :key="blockRow.key"
+        :class="ui.blockRow"
       >
-        <!-- 3 rows in each block -->
+        <!-- Block Col (3x3)-->
         <div
-          v-for="cellRow in block.rows"
-          :key="cellRow.key"
-          :class="ui.cellRow"
+          v-for="block in blockRow.blocks"
+          :key="block.key"
+          :class="ui.fullBlock"
         >
-          <!-- and 3 cols in each row (cell isolated)-->
+          <!-- 3 rows in each block -->
           <div
-            v-for="cellData in cellRow.cells"
-            :key="cellData.key"
-            :class="ui.cellCol"
+            v-for="cellRow in block.rows"
+            :key="cellRow.key"
+            :class="ui.cellRow"
           >
-            <!-- Actual Cell -->
-            <Cell
-              :current-cell="cellData.cell"
-              v-model="cellData.cell.value"
-              @update:cell="
-                (value) => handleCellUpdate(value, cellData.position)
-              "
-              :is-loading="isLoading"
-              :is-selected="cellData.isSelected"
-            />
+            <!-- and 3 cols in each row (cell isolated)-->
+            <div
+              v-for="cellData in cellRow.cells"
+              :key="cellData.key"
+              :class="ui.cellCol"
+            >
+              <!-- Actual Cell -->
+              <Cell
+                :current-cell="cellData.cell"
+                v-model="cellData.cell.value"
+                @update:cell="
+                  (value) => handleCellUpdate(value, cellData.position)
+                "
+                :is-loading="isLoading"
+                :is-selected="cellData.isSelected"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <VueIcon
+      v-if="isInitializing"
+      width="75"
+      height="75"
+      name="svg-spinners:ring-resize"
+      class="text-dTheme-accent absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    />
   </div>
 </template>
 
@@ -50,6 +58,7 @@ import { computed } from "vue";
 
 const props = defineProps<{
   isLoading: boolean;
+  isInitializing: boolean;
 }>();
 
 const { getSelectedCell } = useState();

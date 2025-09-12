@@ -9,8 +9,9 @@
       @input="handleInput"
       @focus="setSelectedCell(currentCell)"
       @beforeinput="handleBeforeInput"
-      v-bind:class="{ 'bg-dTheme-light': isSelected }"
+      v-bind:class="{ 'bg-dTheme-accent/50': isSelected }"
       autocomplete="off"
+      inputmode="none"
     />
     <label :for="`cell-${currentCell.x}x-${currentCell.y}y`" class="sr-only"
       >number {{ currentCell.value }}</label
@@ -26,7 +27,7 @@ import { useState } from "@/composables";
 import { useMoveStack } from "@/composables";
 import { throwFrontError } from "@/utils/error";
 
-const { setSelectedCell, getSelectedCell } = useState();
+const { setSelectedCell } = useState();
 const { pushMove } = useMoveStack();
 
 const props = defineProps<{
@@ -48,7 +49,7 @@ const displayValue = computed(() => {
 
 const ui = {
   cell: [
-    "w-8 h-8 sm:w-12 sm:h-12",
+    "w-9 h-9 sm:w-12 sm:h-12",
     "bg-gray-300 text-dTheme-surface",
     "transition-all duration-200",
   ],

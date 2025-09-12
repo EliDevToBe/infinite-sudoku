@@ -1,7 +1,7 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="flex justify-center sm:h-13 h-11">
+      <div class="mt-4 flex justify-center sm:h-13 h-11">
         <OptionBar
           v-model="currentDifficulty"
           @on-select="handleDifficultySwitch"
@@ -10,7 +10,7 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
-        v-if="isPuzzleFetched"
+        :isInitializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
       ></SudokuGrid>
@@ -123,7 +123,7 @@ import {
 import { normalize } from "@/utils";
 import { isFrontError } from "@/utils/error";
 
-const { getRandomPuzzle, formatPuzzle } = useSudoku();
+const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const { setSelectedCell, getSelectedCell, setSudokuSave, getSudokuSave } =
@@ -143,7 +143,7 @@ const isRegisterMode = ref(true);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
-const puzzle = ref<Cell[][]>([]);
+const puzzle = ref<Cell[][]>(createEmptyPuzzle());
 const subscribeModalContext = ref<"leaderboard" | "save">();
 
 const loginRegisterFormRef = useTemplateRef<
