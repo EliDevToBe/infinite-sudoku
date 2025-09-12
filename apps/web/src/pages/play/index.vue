@@ -10,7 +10,7 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
-        v-if="isPuzzleFetched"
+        :isInitializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
       ></SudokuGrid>
