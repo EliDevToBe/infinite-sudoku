@@ -1,6 +1,7 @@
-import { DifficultyOptions } from "../../../../apps/web/src/utils";
 import { sha256 } from "../sha256";
 import { SudokuComplete } from "./generator-v2";
+
+export type DifficultyOptions = "easy" | "medium" | "hard" | "hardcore";
 
 export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
   wayTooEasy: [0, 40],

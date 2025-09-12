@@ -28,8 +28,6 @@ export type BlockRow = {
   blocks: Block[];
 };
 
-export type DifficultyOptions = "easy" | "medium" | "hard" | "hardcore";
-
 const POSSIBLE_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const validateInput = (input: string) => {
