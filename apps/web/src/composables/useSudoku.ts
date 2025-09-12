@@ -1,3 +1,4 @@
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 import type { Cell } from "../utils";
 import { useApi } from "./useApi";
 
@@ -16,11 +17,11 @@ export const useSudoku = () => {
     );
   };
 
-  const getRandomPuzzle = async () => {
+  const getRandomPuzzle = async (difficulty: DifficultyOptions) => {
     const { data, error } = await fetchApi({
-      path: "/grid/:id",
+      path: "/grid/difficulty/:difficulty",
       method: "GET",
-      params: { id: "	e8ee8d8f-199d-4d21-9833-7b5de52b4986" },
+      params: { difficulty },
     });
 
     if (error) {
@@ -31,7 +32,6 @@ export const useSudoku = () => {
       throw new Error("No data");
     }
 
-    // return data[Math.floor(Math.random() * data.length)];
     return data;
   };
 

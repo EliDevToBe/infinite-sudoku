@@ -110,7 +110,8 @@
 import { onMounted, ref, computed, useTemplateRef, watch } from "vue";
 import { LazyActionModal } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
-import { type Cell, type DifficultyOptions } from "@/utils";
+import { type Cell } from "@/utils";
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 import {
   useSudoku,
   usePresetToast,
@@ -234,7 +235,7 @@ watch(
 );
 
 const setPuzzle = async () => {
-  const data = await getRandomPuzzle();
+  const data = await getRandomPuzzle(currentDifficulty.value);
   puzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
