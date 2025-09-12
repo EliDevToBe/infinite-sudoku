@@ -27,7 +27,7 @@ import { useState } from "@/composables";
 import { useMoveStack } from "@/composables";
 import { throwFrontError } from "@/utils/error";
 
-const { setSelectedCell, getSelectedCell } = useState();
+const { setSelectedCell } = useState();
 const { pushMove } = useMoveStack();
 
 const props = defineProps<{
