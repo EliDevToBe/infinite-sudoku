@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run db:client && tsc --outDir ./dist",
+    "build": "echo '-= No build required on Vercel =-' && echo '-= Skipping to next step =-' && npm run db:client",
     "start": "npx tsx api/index.ts",
     "dev": "npm run db:client && npx tsx --watch ./app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
