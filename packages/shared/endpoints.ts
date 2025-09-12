@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { DifficultyOptions } from "./utils/sudoku/helper";
 
 type Endpoint = {
   path: `/${string}`;
@@ -32,6 +33,13 @@ export type ApiEndpoint = ValidateEndpoint<
         id: string;
       };
     }
+  | {
+      path: "/grid/difficulty/:difficulty";
+      method: "GET";
+      params: {
+        difficulty: DifficultyOptions;
+      };
+    }
 >;
 
 export type EndpointResponse = {
@@ -39,4 +47,5 @@ export type EndpointResponse = {
   "/user/:id": Prisma.userGetPayload<true>;
   "/grid": Prisma.gridGetPayload<true>[];
   "/grid/:id": Prisma.gridGetPayload<true>;
+  "/grid/difficulty/:difficulty": Prisma.gridGetPayload<true>;
 };

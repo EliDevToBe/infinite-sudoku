@@ -1,4 +1,6 @@
 import type { Prisma } from "@prisma/client";
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper.js";
+import { getRangeFromDifficulty } from "@shared/utils/sudoku/helper.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
 type GridInsert = Prisma.gridCreateInput;
@@ -43,6 +45,30 @@ export const GridController = () => {
     }
   };
 
+  const getRandomGridByDifficulty = async (
+    request: FastifyRequest<{ Params: { difficulty: DifficultyOptions } }>,
+    reply: FastifyReply,
+  ) => {
+    const prisma = request.server.prisma;
+    const difficulty = request.params.difficulty;
+
+    const range = getRangeFromDifficulty(difficulty);
+
+    try {
+      const grids = await prisma.grid.findMany({
+        where: { difficulty: { in: range } },
+      });
+
+      const grid = grids[Math.floor(Math.random() * grids.length)];
+
+      reply.send(grid);
+    } catch (error) {
+      reply
+        .status(500)
+        .send({ clientMessage: "Failed to get random grid", error });
+    }
+  };
+
   const createGrid = async (
     request: FastifyRequest<{ Body: GridInsert }>,
     reply: FastifyReply,
@@ -72,5 +98,11 @@ export const GridController = () => {
     }
   };
 
-  return { getGrids, getGrid, createGrid, deleteGrid };
+  return {
+    getGrids,
+    getGrid,
+    createGrid,
+    deleteGrid,
+    getRandomGridByDifficulty,
+  };
 };

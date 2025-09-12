@@ -11,7 +11,6 @@ import {
   type CellData,
   type CellRow,
   calculateCompletionRate,
-  type DifficultyOptions,
   validateInput,
 } from "./sudoku";
 
@@ -27,5 +26,4 @@ export {
   type Cell,
   type CellData,
   type CellRow,
-  type DifficultyOptions,
 };
