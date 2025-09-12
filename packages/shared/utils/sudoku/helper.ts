@@ -1,5 +1,5 @@
-import { sha256 } from "../sha256";
-import { SudokuComplete } from "./generator-v2";
+import { sha256 } from "../sha256.js";
+import { SudokuComplete } from "./generator-v2.js";
 
 export type DifficultyOptions = "easy" | "medium" | "hard" | "hardcore";
 
