@@ -17,6 +17,7 @@ export default fp(
         "Origin",
         "Accept",
         "access-token",
+        "Access-Control-Allow-Origin",
       ],
       exposedHeaders: ["access-token"],
       credentials: true,
