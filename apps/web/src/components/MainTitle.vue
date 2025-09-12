@@ -16,7 +16,7 @@ import { useNavigation } from "@/composables";
 const { navigateTo } = useNavigation();
 
 const ui = {
-  wrapper: "flex items-center justify-center gap-10 m-b-5 isolate",
+  wrapper: "relative flex items-center justify-center gap-10 m-b-5 isolate",
   titleLeft: "z-1 text-3xl rotate--12",
   titleRight: "text-3xl rotate-12",
   logo: "cursor-pointer",
