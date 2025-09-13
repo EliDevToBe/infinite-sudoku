@@ -79,7 +79,7 @@
         :secondary-action-label="actionModalProps.secondaryActionLabel"
         @on-secondary-action="actionModalProps.secondaryFunction"
         special-main-action
-        :isMainActionLoading="isButtonLoading"
+        :is-main-action-loading="isButtonLoading"
       >
         <UnlockFeatureModalBody
           v-if="!showFormModalBody"
