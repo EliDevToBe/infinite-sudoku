@@ -1,8 +1,11 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
 
-type UserGridInsert = Prisma.user_gridCreateInput;
-type UserGridUpdate = Prisma.user_gridUpdateInput;
+export type UserGridInsert = Prisma.user_gridCreateInput & {
+  user_id: string;
+  grid_id: string;
+};
+export type UserGridUpdate = Prisma.user_gridUpdateInput;
 
 export const UserGridController = () => {
   const getAllUserGrids = async (
@@ -103,17 +106,54 @@ export const UserGridController = () => {
     }
   };
 
+  /**
+   * Create a user grid
+   * If the user grid already exists, update it
+   * If the user grid does not exist, create it
+   */
   const createUserGrid = async (
     request: FastifyRequest<{ Body: UserGridInsert }>,
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
-      const userGrid = await prisma.user_grid.create({ data: request.body });
+      const { user_id, grid_id, ...data } = request.body;
+      const existingUserGrid = await prisma.user_grid.findUnique({
+        where: {
+          user_id_grid_id: {
+            user_id: user_id,
+            grid_id: grid_id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
 
-      reply.send(userGrid.id);
+      if (existingUserGrid) {
+        await prisma.user_grid.update({
+          where: { id: existingUserGrid.id },
+          data: data,
+        });
+        return reply.status(200).send(existingUserGrid);
+      }
+
+      const userGridId = await prisma.user_grid.create({
+        data: {
+          ...data,
+          grid: { connect: { id: grid_id } },
+          user: { connect: { id: user_id } },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      return reply.status(201).send(userGridId);
     } catch (error) {
-      reply.status(500).send({ clientMessage: "Failed to create grid", error });
+      return reply
+        .status(500)
+        .send({ clientMessage: "Failed to create grid", error });
     }
   };
 

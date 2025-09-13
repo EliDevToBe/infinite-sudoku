@@ -1,11 +1,11 @@
-import type { Prisma } from "@prisma/client";
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
-import { UserGridController } from "../controllers/user-grid.controller.js";
+import {
+  UserGridController,
+  type UserGridInsert,
+  type UserGridUpdate,
+} from "../controllers/user-grid.controller.js";
 import { authenticated } from "../middlewares/auth.middleware.js";
-
-type UserGridInsert = Prisma.user_gridCreateInput;
-type UserGridUpdate = Prisma.user_gridUpdateInput;
 
 export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
