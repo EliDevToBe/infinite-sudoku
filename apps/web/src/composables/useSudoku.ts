@@ -26,6 +26,18 @@ export const useSudoku = () => {
     return formatPuzzle(data);
   };
 
+  const isPuzzleCompleted = (puzzle: Cell[][]): boolean => {
+    return puzzle.every((row) => row.every((cell) => cell.value !== 0));
+  };
+
+  const isPuzzleSolved = (puzzle: Cell[][], solution: number[][]): boolean => {
+    return puzzle.every((row, rowIndex) =>
+      row.every(
+        (cell, colIndex) => cell.value === solution[rowIndex][colIndex],
+      ),
+    );
+  };
+
   const getRandomPuzzle = async (difficulty: DifficultyOptions) => {
     const { data, error } = await fetchApi({
       path: "/grid/difficulty/:difficulty",
@@ -44,5 +56,11 @@ export const useSudoku = () => {
     return data;
   };
 
-  return { formatPuzzle, getRandomPuzzle, createEmptyPuzzle };
+  return {
+    formatPuzzle,
+    getRandomPuzzle,
+    createEmptyPuzzle,
+    isPuzzleCompleted,
+    isPuzzleSolved,
+  };
 };

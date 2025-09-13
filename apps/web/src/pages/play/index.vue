@@ -13,6 +13,7 @@
         :isInitializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
+        @onPuzzleCompleted="console.log('OMEDETO')"
       ></SudokuGrid>
 
       <LazyActionModal
