@@ -111,7 +111,7 @@ export const UserGridController = () => {
     try {
       const userGrid = await prisma.user_grid.create({ data: request.body });
 
-      reply.send(userGrid);
+      reply.send(userGrid.id);
     } catch (error) {
       reply.status(500).send({ clientMessage: "Failed to create grid", error });
     }

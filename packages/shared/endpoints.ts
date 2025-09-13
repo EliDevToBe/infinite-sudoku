@@ -40,6 +40,15 @@ export type ApiEndpoint = ValidateEndpoint<
         difficulty: DifficultyOptions;
       };
     }
+  | {
+      path: "/user-grid";
+      method: "POST";
+      body: {
+        user_id: string;
+        grid_id: string;
+        backup_wip: number[][];
+      };
+    }
 >;
 
 export type EndpointResponse = {
@@ -54,4 +63,9 @@ export type EndpointResponse = {
       puzzle: true;
     };
   }>;
+  "/user-grid": Prisma.user_gridGetPayload<{
+    select: {
+      id: true;
+    };
+  }>[];
 };
