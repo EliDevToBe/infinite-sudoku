@@ -53,8 +53,13 @@
 
 <script setup lang="ts">
 import type { Block, BlockRow, Cell, CellData, CellRow } from "@/utils";
-import { useState } from "@/composables";
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useSudoku, useApi, useState, usePresetToast } from "@/composables";
+import { isFrontError, throwFrontError } from "@/utils/error";
+
+const emit = defineEmits<{
+  onPuzzleCompleted: [];
+}>();
 
 const props = defineProps<{
   isLoading: boolean;
@@ -62,6 +67,10 @@ const props = defineProps<{
 }>();
 
 const { getSelectedCell } = useState();
+const { isPuzzleCompleted, isPuzzleSolved } = useSudoku();
+const { currentSudokuSave } = useState();
+const { fetchApi } = useApi();
+const { toastError } = usePresetToast();
 
 const grid = defineModel<Cell[][]>({ required: true });
 
@@ -142,6 +151,44 @@ const handleCellUpdate = (
 ) => {
   grid.value[position.y][position.x].value = value;
 };
+
+watch(
+  grid,
+  async () => {
+    if (isPuzzleCompleted(grid.value)) {
+      if (!currentSudokuSave.value) return;
+      try {
+        const { data, error } = await fetchApi({
+          path: "/grid/:id",
+          method: "GET",
+          params: {
+            id: currentSudokuSave.value.id,
+          },
+        });
+
+        if (error) {
+          throwFrontError(error.message, { description: "An error occurred" });
+          return;
+        }
+        if (!data) {
+          throwFrontError("No data", { description: "An error occurred" });
+          return;
+        }
+
+        if (isPuzzleSolved(grid.value, data.solution as number[][])) {
+          emit("onPuzzleCompleted");
+        }
+      } catch (error) {
+        if (isFrontError(error)) {
+          toastError(error, { description: error.message });
+        } else {
+          toastError(error, { description: "An error occurred" });
+        }
+      }
+    }
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped lang=""></style>

@@ -18,6 +18,33 @@ export default fp(
 
     server.get<{ Params: { difficulty: DifficultyOptions } }>(
       "/grid/difficulty/:difficulty",
+      {
+        schema: {
+          params: {
+            type: "object",
+            properties: {
+              difficulty: {
+                type: "string",
+                enum: ["easy", "medium", "hard", "hardcore"],
+              },
+            },
+            required: ["difficulty"],
+          },
+          response: {
+            200: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                difficulty: { type: "string" },
+                puzzle: {
+                  type: "array",
+                  items: { type: "array", items: { type: "number" } },
+                },
+              },
+            },
+          },
+        },
+      },
       GridController().getRandomGridByDifficulty,
     );
 

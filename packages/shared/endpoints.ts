@@ -47,5 +47,11 @@ export type EndpointResponse = {
   "/user/:id": Prisma.userGetPayload<true>;
   "/grid": Prisma.gridGetPayload<true>[];
   "/grid/:id": Prisma.gridGetPayload<true>;
-  "/grid/difficulty/:difficulty": Prisma.gridGetPayload<true>;
+  "/grid/difficulty/:difficulty": Prisma.gridGetPayload<{
+    select: {
+      id: true;
+      difficulty: true;
+      puzzle: true;
+    };
+  }>;
 };
