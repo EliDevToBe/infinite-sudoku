@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { getDifficultyFromMissingCells } from "../../../../packages/shared/utils/sudoku/helper.js";
 
 export type UserGridInsert = Prisma.user_gridCreateInput & {
   user_id: string;
@@ -30,19 +31,19 @@ export const UserGridController = () => {
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
-    const userGridId = request.params.id;
+    const gridId = request.params.id;
 
     try {
-      const userGrid = await prisma.user_grid.findUnique({
-        where: { id: userGridId },
+      const grid = await prisma.user_grid.findUnique({
+        where: { id: gridId },
       });
 
-      if (!userGrid) {
+      if (!grid) {
         reply.status(404).send({ clientMessage: "User grid not found" });
         return;
       }
 
-      reply.send(userGrid);
+      reply.send(grid);
     } catch (error) {
       reply.status(500).send({
         clientMessage: "Failed to get user grid",
@@ -65,16 +66,26 @@ export const UserGridController = () => {
         return;
       }
 
-      const userGrid = await prisma.user_grid.findMany({
-        where: { user_id: userId },
+      const userGrids = await prisma.user_grid.findMany({
+        where: { user_id: userId, finished_at: null },
+        select: {
+          backup_wip: true,
+          grid: {
+            select: {
+              id: true,
+              difficulty: true,
+            },
+          },
+        },
       });
 
-      if (!userGrid) {
-        reply.status(404).send({ clientMessage: "User grid not found" });
-        return;
-      }
+      const result = userGrids.map((userGrid) => ({
+        id: userGrid.grid.id,
+        difficulty: getDifficultyFromMissingCells(userGrid.grid.difficulty),
+        hardSave: userGrid.backup_wip,
+      }));
 
-      reply.send(userGrid);
+      reply.send(result);
     } catch (error) {
       reply.status(500).send({
         clientMessage: "Failed to get user grid",

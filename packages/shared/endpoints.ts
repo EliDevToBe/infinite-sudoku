@@ -49,6 +49,13 @@ export type ApiEndpoint = ValidateEndpoint<
         backup_wip: number[][];
       };
     }
+  | {
+      path: "/user-grid/user/:id";
+      method: "GET";
+      params: {
+        id: string;
+      };
+    }
 >;
 
 export type EndpointResponse = {
@@ -67,5 +74,8 @@ export type EndpointResponse = {
     select: {
       id: true;
     };
+  }>[];
+  "/user-grid/user/:id": Prisma.user_gridGetPayload<{
+    select: { grid_id: true; backup_wip: true };
   }>[];
 };

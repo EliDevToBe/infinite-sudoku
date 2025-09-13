@@ -51,8 +51,25 @@ export const useSave = () => {
     return true;
   };
 
-  const loadHardSave = (_wip: string) => {
-    // WIP
+  const loadHardSave = async (userId: string) => {
+    const { data, error } = await fetchApi({
+      path: "/user-grid/user/:id",
+      method: "GET",
+      params: {
+        id: userId,
+      },
+    });
+
+    if (error) {
+      throwFrontError(error.message, { context: "[loadHardSave]", error });
+      return;
+    }
+    if (!data) {
+      throwFrontError("No data", { context: "[loadHardSave]", data });
+      return;
+    }
+
+    return data;
   };
 
   return { hardSave, loadHardSave };

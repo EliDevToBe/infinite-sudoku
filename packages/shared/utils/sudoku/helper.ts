@@ -26,6 +26,23 @@ export const getRangeFromDifficulty = (difficulty: DifficultyOptions) => {
   return REVAMPED_DIFFICULTY_BY_MISSING_CELLS_RANGE[difficulty];
 };
 
+export const getDifficultyFromMissingCells = (
+  missingCells: number,
+): DifficultyOptions => {
+  const difficultyWithRange = Object.entries(
+    REVAMPED_DIFFICULTY_BY_MISSING_CELLS_RANGE,
+  ).find(([_, range]) => range.includes(missingCells)) as [
+    DifficultyOptions,
+    number[],
+  ];
+
+  if (!difficultyWithRange) {
+    return "medium";
+  }
+
+  return difficultyWithRange[0];
+};
+
 export const prepareForDatabase = (
   data: SudokuComplete,
   difficulty: number,
