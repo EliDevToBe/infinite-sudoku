@@ -126,8 +126,13 @@ import { isFrontError } from "@/utils/error";
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
-const { setSelectedCell, getSelectedCell, setSudokuSave, getSudokuSave } =
-  useState();
+const {
+  setSelectedCell,
+  getSelectedCell,
+  setSudokuSave,
+  getSudokuSave,
+  updateSudokuSave,
+} = useState();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
@@ -204,7 +209,7 @@ onMounted(async () => {
     const localSave = getSudokuSave(currentDifficulty.value);
 
     if (localSave) {
-      puzzle.value = localSave;
+      puzzle.value = localSave.value;
 
       isPuzzleFetched.value = true;
       return;
@@ -228,7 +233,7 @@ watch(
   puzzle,
   () => {
     if (isAuthenticated.value) {
-      setSudokuSave(currentDifficulty.value, puzzle.value);
+      updateSudokuSave(currentDifficulty.value, puzzle.value);
     }
   },
   { deep: true }
@@ -236,6 +241,12 @@ watch(
 
 const setPuzzle = async () => {
   const data = await getRandomPuzzle(currentDifficulty.value);
+
+  setSudokuSave(currentDifficulty.value, {
+    value: formatPuzzle(data.puzzle as number[][]),
+    id: data.id,
+  });
+
   puzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
@@ -272,7 +283,7 @@ const switchDifficulty = async () => {
     const localSave = getSudokuSave(currentDifficulty.value);
 
     if (localSave) {
-      puzzle.value = localSave;
+      puzzle.value = localSave.value;
     } else {
       await setPuzzle();
     }
@@ -430,7 +441,7 @@ const loginFlow = async () => {
 
       const localSave = getSudokuSave(currentDifficulty.value);
       if (localSave) {
-        puzzle.value = localSave;
+        puzzle.value = localSave.value;
       }
     }
   } catch (error) {

@@ -27,7 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { calculateCompletionRate, type DifficultyOptions } from "@/utils";
+import { calculateCompletionRate } from "@/utils";
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { computed } from "vue";
 import { useAuth } from "@/composables/useAuth";
 import { useState } from "@/composables/useState";
@@ -55,6 +56,6 @@ const completionRate = computed(() => {
   const save = getSudokuSave(props.value);
   if (!save) return 0;
 
-  return calculateCompletionRate(save);
+  return calculateCompletionRate(save.value);
 });
 </script>
