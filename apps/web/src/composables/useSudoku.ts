@@ -17,6 +17,10 @@ export const useSudoku = () => {
     );
   };
 
+  const parsePuzzle = (puzzle: Cell[][]): number[][] => {
+    return puzzle.map((row) => row.map((cell) => cell.value));
+  };
+
   const createEmptyPuzzle = (): Cell[][] => {
     const data = Array.from({ length: 9 }, () =>
       Array.from({ length: 9 }, () => {
@@ -58,6 +62,7 @@ export const useSudoku = () => {
 
   return {
     formatPuzzle,
+    parsePuzzle,
     getRandomPuzzle,
     createEmptyPuzzle,
     isPuzzleCompleted,
