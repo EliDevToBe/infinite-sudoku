@@ -120,6 +120,7 @@ import {
   useState,
   useAuth,
   useUser,
+  useSave,
 } from "@/composables";
 import { normalize } from "@/utils";
 import { isFrontError } from "@/utils/error";
@@ -134,6 +135,7 @@ const {
   getSudokuSave,
   updateSudokuSave,
 } = useState();
+const { hardSave } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
@@ -358,14 +360,26 @@ const handleLeaderboard = () => {
   console.log("SHOW LEADERBOARD");
 };
 
-const handleSave = () => {
+const handleSave = async () => {
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "save";
     showUnauthenticatedModal.value = true;
     return;
   }
 
-  console.log("SAVE ACTION");
+  try {
+    const success = await hardSave();
+
+    if (success) {
+      toastSuccess({ description: "Progress saved 🎉" });
+    }
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  }
 };
 
 const closeUnauthenticatedModal = () => {
