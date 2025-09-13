@@ -88,6 +88,10 @@ export const useApi = () => {
 
       const data = await response.json();
 
+      if (!response.ok && data.clientMessage) {
+        return { data: null, error: new Error(data.clientMessage) };
+      }
+
       return { data, error: null };
     } catch (error) {
       return { data: null, error: error as Error };
