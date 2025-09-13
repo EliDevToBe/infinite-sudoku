@@ -135,7 +135,7 @@ const {
   getSudokuSave,
   updateSudokuSave,
 } = useState();
-const { hardSave } = useSave();
+const { hardSave, loadHardSave } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
@@ -350,7 +350,7 @@ const setNumber = (number: number) => {
   setSelectedCell(currentCell);
 };
 
-const handleLeaderboard = () => {
+const handleLeaderboard = async () => {
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "leaderboard";
     showUnauthenticatedModal.value = true;
@@ -358,6 +358,10 @@ const handleLeaderboard = () => {
   }
 
   console.log("SHOW LEADERBOARD");
+  if (!currentUser.value) return;
+
+  const test = await loadHardSave(currentUser.value.id);
+  console.log(test);
 };
 
 const handleSave = async () => {
