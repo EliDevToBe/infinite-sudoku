@@ -59,6 +59,11 @@ export const GridController = () => {
     try {
       const grids = await prisma.grid.findMany({
         where: { difficulty: { in: range } },
+        select: {
+          id: true,
+          difficulty: true,
+          puzzle: true,
+        },
       });
 
       const grid = grids[Math.floor(Math.random() * grids.length)];
