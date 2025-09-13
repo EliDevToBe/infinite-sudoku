@@ -10,10 +10,10 @@
     </template>
     <MainContent class="gap-3">
       <SudokuGrid
-        :isInitializing="!isPuzzleFetched"
+        :is-initializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
-        @onPuzzleCompleted="console.log('OMEDETO')"
+        @on-puzzle-completed="console.log('OMEDETO')"
       ></SudokuGrid>
 
       <LazyActionModal
