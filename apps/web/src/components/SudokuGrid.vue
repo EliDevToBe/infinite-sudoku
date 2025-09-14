@@ -56,6 +56,8 @@ import type { Block, BlockRow, Cell, CellData, CellRow } from "@/utils";
 import { computed, watch } from "vue";
 import { useSudoku, useApi, useState, usePresetToast } from "@/composables";
 import { isFrontError, throwFrontError } from "@/utils/error";
+import { useAuth } from "@/composables";
+import { useUser } from "@/composables";
 
 const emit = defineEmits<{
   onPuzzleCompleted: [];
@@ -67,7 +69,9 @@ const props = defineProps<{
 }>();
 
 const { getSelectedCell } = useState();
-const { isPuzzleCompleted, isPuzzleSolved } = useSudoku();
+const { isAuthenticated } = useAuth();
+const { currentUser } = useUser();
+const { isPuzzleCompleted, isPuzzleSolved, insertVictory } = useSudoku();
 const { currentSudokuSave } = useState();
 const { fetchApi } = useApi();
 const { toastError } = usePresetToast();
@@ -177,6 +181,9 @@ watch(
 
         if (isPuzzleSolved(grid.value, data.solution as number[][])) {
           emit("onPuzzleCompleted");
+          if (isAuthenticated.value && currentUser.value) {
+            insertVictory();
+          }
         }
       } catch (error) {
         if (isFrontError(error)) {

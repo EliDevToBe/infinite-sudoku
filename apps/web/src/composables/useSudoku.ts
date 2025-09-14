@@ -1,8 +1,10 @@
 import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { useApi } from "./useApi";
+import { useSave } from "./useSave";
 
 export const useSudoku = () => {
   const { fetchApi } = useApi();
+  const { hardSave } = useSave();
 
   const formatPuzzle = (puzzle: number[][]): Cell[][] => {
     return puzzle.map((row, rowIndex) =>
@@ -59,6 +61,34 @@ export const useSudoku = () => {
     return data;
   };
 
+  const insertVictory = async () => {
+    const recordId = await hardSave();
+    if (!recordId) {
+      throw new Error("No record ID");
+    }
+
+    const { data, error } = await fetchApi({
+      path: "/user-grid/:id",
+      method: "PUT",
+      params: { id: recordId },
+      body: {
+        finished_at: new Date().toISOString(),
+        backup_wip: null,
+        score: 100, // TODO: Determine score system
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data) {
+      throw new Error("No data");
+    }
+
+    return data;
+  };
+
   return {
     formatPuzzle,
     parsePuzzle,
@@ -66,5 +96,6 @@ export const useSudoku = () => {
     createEmptyPuzzle,
     isPuzzleCompleted,
     isPuzzleSolved,
+    insertVictory,
   };
 };

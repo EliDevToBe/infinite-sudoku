@@ -46,7 +46,7 @@ export const useSave = () => {
       return;
     }
 
-    return true;
+    return data.id;
   };
 
   const loadHardSave = async (

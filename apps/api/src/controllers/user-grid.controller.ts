@@ -177,13 +177,25 @@ export const UserGridController = () => {
     const body = request.body;
 
     try {
+      const existingUserGrid = await prisma.user_grid.findUnique({
+        where: { id: userGridId },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!existingUserGrid) {
+        return reply.status(404).send({ clientMessage: "User grid not found" });
+      }
+
       await prisma.user_grid.update({
         where: { id: userGridId },
         data: body,
       });
-      reply.send({ clientMessage: "User grid updated successfully" });
+
+      return reply.send({ clientMessage: "User grid updated successfully" });
     } catch (error) {
-      reply
+      return reply
         .status(500)
         .send({ clientMessage: "Failed to update user grid", error });
     }
