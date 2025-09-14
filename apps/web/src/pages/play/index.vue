@@ -392,14 +392,13 @@ const handleLeaderboard = async () => {
 };
 
 const handleSave = async () => {
-  isSaving.value = true;
-
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "save";
     showUnauthenticatedModal.value = true;
     return;
   }
 
+  isSaving.value = true;
   try {
     const success = await hardSave();
 
