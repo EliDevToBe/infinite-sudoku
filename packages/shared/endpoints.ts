@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import { DifficultyOptions } from "./utils/sudoku/helper";
+import { Cell, DifficultyOptions } from "./utils/sudoku/helper";
 
 type Endpoint = {
   path: `/${string}`;
@@ -40,6 +40,30 @@ export type ApiEndpoint = ValidateEndpoint<
         difficulty: DifficultyOptions;
       };
     }
+  | {
+      path: "/user-grid";
+      method: "POST";
+      body: {
+        user_id: string;
+        grid_id: string;
+        backup_wip: Cell[][];
+      };
+    }
+  | {
+      path: "/user-grid/user/:id";
+      method: "GET";
+      params: {
+        id: string;
+      };
+    }
+  | {
+      path: "/user-grid/delete/:id/:userId";
+      method: "DELETE";
+      params: {
+        id: string;
+        userId: string;
+      };
+    }
 >;
 
 export type EndpointResponse = {
@@ -54,4 +78,17 @@ export type EndpointResponse = {
       puzzle: true;
     };
   }>;
+  "/user-grid": Prisma.user_gridGetPayload<{
+    select: {
+      id: true;
+    };
+  }>[];
+  "/user-grid/user/:id": {
+    id: string;
+    difficulty: DifficultyOptions;
+    hardSave: Cell[][];
+  }[];
+  "/user-grid/delete/:id/:userId": {
+    clientMessage: string;
+  };
 };

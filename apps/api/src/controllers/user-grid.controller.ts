@@ -1,8 +1,12 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { getDifficultyFromMissingCells } from "../../../../packages/shared/utils/sudoku/helper.js";
 
-type UserGridInsert = Prisma.user_gridCreateInput;
-type UserGridUpdate = Prisma.user_gridUpdateInput;
+export type UserGridInsert = Prisma.user_gridCreateInput & {
+  user_id: string;
+  grid_id: string;
+};
+export type UserGridUpdate = Prisma.user_gridUpdateInput;
 
 export const UserGridController = () => {
   const getAllUserGrids = async (
@@ -27,19 +31,19 @@ export const UserGridController = () => {
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
-    const userGridId = request.params.id;
+    const gridId = request.params.id;
 
     try {
-      const userGrid = await prisma.user_grid.findUnique({
-        where: { id: userGridId },
+      const grid = await prisma.user_grid.findUnique({
+        where: { id: gridId },
       });
 
-      if (!userGrid) {
+      if (!grid) {
         reply.status(404).send({ clientMessage: "User grid not found" });
         return;
       }
 
-      reply.send(userGrid);
+      reply.send(grid);
     } catch (error) {
       reply.status(500).send({
         clientMessage: "Failed to get user grid",
@@ -62,16 +66,26 @@ export const UserGridController = () => {
         return;
       }
 
-      const userGrid = await prisma.user_grid.findMany({
-        where: { user_id: userId },
+      const userGrids = await prisma.user_grid.findMany({
+        where: { user_id: userId, finished_at: null },
+        select: {
+          backup_wip: true,
+          grid: {
+            select: {
+              id: true,
+              difficulty: true,
+            },
+          },
+        },
       });
 
-      if (!userGrid) {
-        reply.status(404).send({ clientMessage: "User grid not found" });
-        return;
-      }
+      const result = userGrids.map((userGrid) => ({
+        id: userGrid.grid.id,
+        difficulty: getDifficultyFromMissingCells(userGrid.grid.difficulty),
+        hardSave: userGrid.backup_wip,
+      }));
 
-      reply.send(userGrid);
+      reply.send(result);
     } catch (error) {
       reply.status(500).send({
         clientMessage: "Failed to get user grid",
@@ -103,17 +117,54 @@ export const UserGridController = () => {
     }
   };
 
+  /**
+   * Create a user grid
+   * If the user grid already exists, update it
+   * If the user grid does not exist, create it
+   */
   const createUserGrid = async (
     request: FastifyRequest<{ Body: UserGridInsert }>,
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
     try {
-      const userGrid = await prisma.user_grid.create({ data: request.body });
+      const { user_id, grid_id, ...data } = request.body;
+      const existingUserGrid = await prisma.user_grid.findUnique({
+        where: {
+          user_id_grid_id: {
+            user_id: user_id,
+            grid_id: grid_id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
 
-      reply.send(userGrid);
+      if (existingUserGrid) {
+        await prisma.user_grid.update({
+          where: { id: existingUserGrid.id },
+          data: data,
+        });
+        return reply.status(200).send(existingUserGrid);
+      }
+
+      const userGridId = await prisma.user_grid.create({
+        data: {
+          ...data,
+          grid: { connect: { id: grid_id } },
+          user: { connect: { id: user_id } },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      return reply.status(201).send(userGridId);
     } catch (error) {
-      reply.status(500).send({ clientMessage: "Failed to create grid", error });
+      return reply
+        .status(500)
+        .send({ clientMessage: "Failed to create grid", error });
     }
   };
 
@@ -139,17 +190,40 @@ export const UserGridController = () => {
   };
 
   const deleteUserGrid = async (
-    request: FastifyRequest<{ Params: { id: string } }>,
+    request: FastifyRequest<{ Params: { id: string; userId: string } }>,
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
-    const userGridId = request.params.id;
+
+    const userId = request.params.userId;
+    const gridId = request.params.id;
 
     try {
-      await prisma.user_grid.delete({ where: { id: userGridId } });
-      reply.send({ clientMessage: "User grid deleted successfully" });
+      const userGrid = await prisma.user_grid.findUnique({
+        where: {
+          user_id_grid_id: {
+            user_id: userId,
+            grid_id: gridId,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!userGrid) {
+        return reply
+          .status(404)
+          .send({ clientMessage: "User's grid not found" });
+      }
+
+      await prisma.user_grid.delete({
+        where: { user_id_grid_id: { user_id: userId, grid_id: gridId } },
+      });
+
+      return reply.send({ clientMessage: "User grid deleted successfully" });
     } catch (error) {
-      reply
+      return reply
         .status(500)
         .send({ clientMessage: "Failed to delete user grid", error });
     }

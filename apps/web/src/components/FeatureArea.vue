@@ -21,15 +21,21 @@
         :variant="isAuthenticated ? 'primary' : 'ghost'"
         @click="emit('onSave')"
         id="save-button"
+        :isLoading="isSaving"
+        :disabled="isSaving || !hasUserInput"
       >
-        <label for="save-button">Save progress</label>
+        <label
+          :class="{ 'cursor-not-allowed': isSaving || !hasUserInput }"
+          for="save-button"
+          >Save progress</label
+        >
       </ButtonUI>
     </LazyTooltipUI>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef, shallowRef, onMounted } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useAuth } from "@/composables/";
 import { useElementHover, useWindowSize, useFocus } from "@vueuse/core";
 import { LazyTooltipUI } from "@/components";
@@ -41,6 +47,11 @@ const ui = {
 const emit = defineEmits<{
   onLeaderboard: [];
   onSave: [];
+}>();
+
+const props = defineProps<{
+  isSaving: boolean;
+  hasUserInput: boolean;
 }>();
 
 const { isAuthenticated } = useAuth();

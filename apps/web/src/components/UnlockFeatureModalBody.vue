@@ -25,8 +25,11 @@
           :class="ui.icon"
           name="lucide:save"
         ></VueIcon>
-        <span :class="[ui.goldenText, 'animate-duration-4333']"> Saving</span>
+        <span :class="[ui.goldenText, 'animate-duration-4000']"> Saving</span>
         your progress
+        <span :class="[ui.goldenText, 'animate-duration-4333']">
+          across devices
+        </span>
       </li>
       <li class="ml-8">
         <VueIcon

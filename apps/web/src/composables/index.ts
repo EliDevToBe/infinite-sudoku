@@ -5,6 +5,7 @@ import { useForm } from "./useForm";
 import { Logger } from "./useLogger";
 import { useMoveStack } from "./useMoveStack";
 import { useNavigation } from "./useNavigation";
+import { useSave } from "./useSave";
 import { useState } from "./useState";
 import { useSudoku } from "./useSudoku";
 import { useTheme } from "./useTheme";
@@ -22,4 +23,5 @@ export {
   useSudoku,
   usePresetToast,
   useForm,
+  useSave,
 };

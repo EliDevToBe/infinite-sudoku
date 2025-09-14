@@ -1,5 +1,4 @@
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
-import type { Cell } from "../utils";
+import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { useApi } from "./useApi";
 
 export const useSudoku = () => {
@@ -15,6 +14,10 @@ export const useSudoku = () => {
         hypothesis: [],
       })),
     );
+  };
+
+  const parsePuzzle = (puzzle: Cell[][]): number[][] => {
+    return puzzle.map((row) => row.map((cell) => cell.value));
   };
 
   const createEmptyPuzzle = (): Cell[][] => {
@@ -58,6 +61,7 @@ export const useSudoku = () => {
 
   return {
     formatPuzzle,
+    parsePuzzle,
     getRandomPuzzle,
     createEmptyPuzzle,
     isPuzzleCompleted,
