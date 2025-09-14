@@ -4,7 +4,7 @@
       <div class="mt-4 flex justify-center sm:h-13 h-11">
         <OptionBar
           v-model="currentDifficulty"
-          @on-select="handleDifficultySwitch"
+          @on-select="handleDifficultySwitchDebounced"
         />
       </div>
     </template>
@@ -127,6 +127,7 @@ import {
 } from "@/composables";
 import { normalize } from "@/utils";
 import { isFrontError, throwFrontError } from "@/utils/error";
+import { useDebounceFn } from "@vueuse/core";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
@@ -271,6 +272,10 @@ const handleDifficultySwitch = () => {
     switchDifficulty();
   }
 };
+const handleDifficultySwitchDebounced = useDebounceFn(
+  handleDifficultySwitch,
+  400
+);
 
 /**
  * Switch difficulty and handles local save
