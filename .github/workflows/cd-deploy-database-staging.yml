@@ -40,6 +40,9 @@ jobs:
         run: npm install
 
       - name: Validate Prisma schema
+        env:
+          DATABASE_URL: "postgresql://postgres:test@localhost:5433/test_db"
+          DIRECT_URL: "postgresql://postgres:test@localhost:5433/test_db"
         run: npx prisma validate
 
       - name: Test migrations on local database
