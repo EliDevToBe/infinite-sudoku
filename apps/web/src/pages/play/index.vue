@@ -126,7 +126,7 @@ import {
   Logger,
 } from "@/composables";
 import { normalize } from "@/utils";
-import { isFrontError } from "@/utils/error";
+import { isFrontError, throwFrontError } from "@/utils/error";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
@@ -138,7 +138,12 @@ const {
   getSudokuSave,
   updateSudokuSave,
 } = useState();
-const { hardSave, loadHardSave, checkAndDeleteHardSave } = useSave();
+const {
+  hardSave,
+  loadHardSave,
+  checkAndDeleteHardSave,
+  checkHardSavesToLocal,
+} = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
@@ -213,16 +218,7 @@ const actionModalProps = computed(() => {
 onMounted(async () => {
   // Get hard & local save for authenticated users
   if (isAuthenticated.value && currentUser.value) {
-    const hardSaves = await loadHardSave(currentUser.value.id);
-
-    if (hardSaves && hardSaves.length > 0) {
-      hardSaves.map((save) => {
-        setSudokuSave(save.difficulty, {
-          value: save.hardSave,
-          id: save.id,
-        });
-      });
-    }
+    await checkHardSavesToLocal(currentUser.value.id);
 
     const localSave = getSudokuSave(currentDifficulty.value);
 
@@ -482,11 +478,19 @@ const loginFlow = async () => {
 
     const success = await login(email, password);
     if (success) {
+      if (!currentUser.value) {
+        return throwFrontError("Current user not set", {
+          context: "[loginFlow]",
+        });
+      }
+
       closeUnauthenticatedModal();
       toastSuccess({
         title: "Login successful",
-        description: `Welcome ${currentUser.value?.pseudo} !`,
+        description: `Welcome ${currentUser.value.pseudo} !`,
       });
+
+      await checkHardSavesToLocal(currentUser.value.id);
 
       const localSave = getSudokuSave(currentDifficulty.value);
       if (localSave) {

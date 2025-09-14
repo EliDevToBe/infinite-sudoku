@@ -3,13 +3,12 @@ import { throwFrontError } from "@/utils/error";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 import { useState } from "./useState";
-// import { useSudoku } from "./useSudoku";
 import { useUser } from "./useUser";
 
 const { fetchApi } = useApi();
 const { currentUser } = useUser();
 const { isAuthenticated } = useAuth();
-const { currentSudokuSave } = useState();
+const { currentSudokuSave, setSudokuSave } = useState();
 
 export const useSave = () => {
   const hardSave = async () => {
@@ -119,5 +118,23 @@ export const useSave = () => {
     return true;
   };
 
-  return { hardSave, loadHardSave, checkAndDeleteHardSave };
+  const checkHardSavesToLocal = async (userId: string) => {
+    const hardSaves = await loadHardSave(userId);
+
+    if (hardSaves && hardSaves.length > 0) {
+      hardSaves.forEach((save) => {
+        setSudokuSave(save.difficulty, {
+          value: save.hardSave,
+          id: save.id,
+        });
+      });
+    }
+  };
+
+  return {
+    hardSave,
+    loadHardSave,
+    checkAndDeleteHardSave,
+    checkHardSavesToLocal,
+  };
 };

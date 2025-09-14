@@ -12,7 +12,7 @@ export class FrontError extends Error {
 export const throwFrontError = (
   message: string,
   contextOpts: Record<string, unknown>,
-) => {
+): never => {
   const error = new FrontError(message, {
     context: contextOpts,
     url: window.location.href,
