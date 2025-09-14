@@ -1,3 +1,4 @@
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { throwFrontError } from "@/utils/error";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
@@ -72,5 +73,44 @@ export const useSave = () => {
     return data;
   };
 
-  return { hardSave, loadHardSave };
+  const checkAndDeleteHardSave = async (difficulty: DifficultyOptions) => {
+    if (!currentUser.value || !isAuthenticated.value) {
+      throwFrontError("Current user not found", {
+        context: "[checkAndDeleteHardSave]",
+      });
+      return;
+    }
+    const userId = currentUser.value.id;
+
+    const hardSaves = await loadHardSave(currentUser.value.id);
+    if (!hardSaves) {
+      throwFrontError("No data", {
+        context: "[checkAndDeleteHardSave]",
+        data: hardSaves,
+      });
+      return false;
+    }
+
+    const hardSaveToDelete = hardSaves.filter(
+      (hardSave) => hardSave.difficulty === difficulty,
+    );
+
+    if (!hardSaveToDelete) {
+      return true;
+    }
+
+    const promises = hardSaveToDelete.map((hardSave) => {
+      return fetchApi({
+        path: "/user-grid/delete/:id/:userId",
+        method: "DELETE",
+        params: { id: hardSave.id, userId },
+      });
+    });
+
+    await Promise.all(promises);
+
+    return true;
+  };
+
+  return { hardSave, loadHardSave, checkAndDeleteHardSave };
 };

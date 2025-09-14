@@ -190,17 +190,40 @@ export const UserGridController = () => {
   };
 
   const deleteUserGrid = async (
-    request: FastifyRequest<{ Params: { id: string } }>,
+    request: FastifyRequest<{ Params: { id: string; userId: string } }>,
     reply: FastifyReply,
   ) => {
     const prisma = request.server.prisma;
-    const userGridId = request.params.id;
+
+    const userId = request.params.userId;
+    const gridId = request.params.id;
 
     try {
-      await prisma.user_grid.delete({ where: { id: userGridId } });
-      reply.send({ clientMessage: "User grid deleted successfully" });
+      const userGrid = await prisma.user_grid.findUnique({
+        where: {
+          user_id_grid_id: {
+            user_id: userId,
+            grid_id: gridId,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!userGrid) {
+        return reply
+          .status(404)
+          .send({ clientMessage: "User's grid not found" });
+      }
+
+      await prisma.user_grid.delete({
+        where: { user_id_grid_id: { user_id: userId, grid_id: gridId } },
+      });
+
+      return reply.send({ clientMessage: "User grid deleted successfully" });
     } catch (error) {
-      reply
+      return reply
         .status(500)
         .send({ clientMessage: "Failed to delete user grid", error });
     }

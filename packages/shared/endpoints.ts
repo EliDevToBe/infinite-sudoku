@@ -56,6 +56,14 @@ export type ApiEndpoint = ValidateEndpoint<
         id: string;
       };
     }
+  | {
+      path: "/user-grid/delete/:id/:userId";
+      method: "DELETE";
+      params: {
+        id: string;
+        userId: string;
+      };
+    }
 >;
 
 export type EndpointResponse = {
@@ -75,7 +83,12 @@ export type EndpointResponse = {
       id: true;
     };
   }>[];
-  "/user-grid/user/:id": Prisma.user_gridGetPayload<{
-    select: { grid_id: true; backup_wip: true };
-  }>[];
+  "/user-grid/user/:id": {
+    id: string;
+    difficulty: DifficultyOptions;
+    hardSave: number[][];
+  }[];
+  "/user-grid/delete/:id/:userId": {
+    clientMessage: string;
+  };
 };

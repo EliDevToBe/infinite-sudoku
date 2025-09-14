@@ -45,8 +45,8 @@ export default fp(
       UserGridController().updateUserGrid,
     );
 
-    server.delete<{ Params: { id: string } }>(
-      "/user-grid/:id",
+    server.delete<{ Params: { id: string; userId: string } }>(
+      "/user-grid/delete/:id/:userId",
       { preHandler: authenticated },
       UserGridController().deleteUserGrid,
     );
