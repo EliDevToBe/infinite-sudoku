@@ -180,10 +180,10 @@ watch(
         }
 
         if (isPuzzleSolved(grid.value, data.solution as number[][])) {
-          emit("onPuzzleCompleted");
           if (isAuthenticated.value && currentUser.value) {
-            insertVictory();
+            await insertVictory();
           }
+          emit("onPuzzleCompleted");
         }
       } catch (error) {
         if (isFrontError(error)) {
