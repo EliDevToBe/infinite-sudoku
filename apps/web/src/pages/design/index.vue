@@ -76,7 +76,11 @@
       </section>
 
       <section class="flex justify-center">
-        <SudokuGrid v-model="formattedPuzzle" :is-loading="false"></SudokuGrid>
+        <SudokuGrid
+          :is-initializing="false"
+          v-model="formattedPuzzle"
+          :is-loading="false"
+        ></SudokuGrid>
       </section>
 
       <section>
@@ -140,7 +144,7 @@
       </section>
 
       <section>
-        <FeatureArea></FeatureArea>
+        <FeatureArea :has-user-input="false" :is-saving="false"></FeatureArea>
       </section>
 
       <section class="flex">
@@ -170,10 +174,11 @@
 import { useSudoku, useUser, usePresetToast } from "@/composables";
 import { ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
-import type { Cell, DifficultyOptions } from "@/utils";
+import type { Cell } from "@/utils";
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { LazyTooltipUI } from "@/components";
 import { LazyActionModal } from "@/components";
-// definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
+definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
   buttonWrapper: "flex flex-col w-[75%] gap-5",
@@ -210,7 +215,7 @@ watch(difficulty, async () => {
 });
 
 const getData = async () => {
-  const data = await getRandomPuzzle();
+  const data = await getRandomPuzzle("medium");
   formattedPuzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
