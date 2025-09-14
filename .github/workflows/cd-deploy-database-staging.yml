@@ -1,0 +1,66 @@
+name: Deploy database schema (staging)
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - "packages/database/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5433:5432
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready -U postgres
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: ./packages/database
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+
+      - name: Test migrations on local database
+        env:
+          DATABASE_URL: "postgresql://postgres:test@localhost:5433/test_db"
+          DIRECT_URL: "postgresql://postgres:test@localhost:5433/test_db"
+        run: |
+          # Test migrations on local database
+          npx prisma migrate deploy
+          # Verify the migration worked
+          npx prisma migrate status
+      
+      - name: Check migration status
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_STAGING_URL }}
+          DIRECT_URL: ${{ secrets.DATABASE_STAGING_DIRECT_URL }}
+        run: npx prisma migrate status
+
+      - name: Deploy migrations to staging
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_STAGING_URL }}
+          DIRECT_URL: ${{ secrets.DATABASE_STAGING_DIRECT_URL }}
+        run: npx prisma migrate deploy
+        
