@@ -70,5 +70,6 @@ jobs:
           DIRECT_URL: ${{ secrets.DATABASE_STAGING_DIRECT_URL }}
         run: |
           npx prisma migrate status
-          npx prisma db execute --stdin <<< "SELECT 1;" --schema=./prisma/schema.prisma
-        
+          npx prisma db execute --stdin <<< "SELECT current_database(), current_user, version();" --schema=./prisma/schema.prisma
+          npx prisma db execute --stdin <<< "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';" --schema=./prisma/schema.prisma
+  
