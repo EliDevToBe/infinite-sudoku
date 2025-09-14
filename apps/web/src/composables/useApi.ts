@@ -12,9 +12,7 @@ export const useApi = () => {
     const { method } = endpoint;
     const body = "body" in endpoint ? endpoint.body : undefined;
 
-    const headers = new Headers({
-      "Content-Type": "application/json",
-    });
+    const headers = new Headers();
 
     if (token) {
       headers.append("access-token", token);
@@ -27,6 +25,7 @@ export const useApi = () => {
     };
 
     if (body && method !== "GET") {
+      headers.set("Content-Type", "application/json");
       options.body = JSON.stringify(body);
     }
 
