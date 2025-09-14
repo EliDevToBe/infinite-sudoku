@@ -56,12 +56,6 @@ jobs:
           # Verify the migration worked
           npx prisma migrate status
       
-      - name: Check migration status
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_PRODUCTION_URL }}
-          DIRECT_URL: ${{ secrets.DATABASE_PRODUCTION_DIRECT_URL }}
-        run: npx prisma migrate status
-
       - name: Deploy migrations to production
         env:
           DATABASE_URL: ${{ secrets.DATABASE_PRODUCTION_URL }}
