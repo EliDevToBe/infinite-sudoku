@@ -65,6 +65,8 @@
       </div>
 
       <FeatureArea
+        :has-user-input="hasUserInput"
+        :is-saving="isSaving"
         class="mt-1"
         @on-leaderboard="handleLeaderboard"
         @on-save="handleSave"
@@ -121,6 +123,7 @@ import {
   useAuth,
   useUser,
   useSave,
+  Logger,
 } from "@/composables";
 import { normalize } from "@/utils";
 import { isFrontError } from "@/utils/error";
@@ -135,7 +138,7 @@ const {
   getSudokuSave,
   updateSudokuSave,
 } = useState();
-const { hardSave, loadHardSave } = useSave();
+const { hardSave, loadHardSave, checkAndDeleteHardSave } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 
@@ -148,6 +151,7 @@ const showNewSudokuModal = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
+const isSaving = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
@@ -173,8 +177,8 @@ const form = ref({
 });
 
 const hasUserInput = computed(() => {
-  return puzzle.value.some((row) =>
-    row.some((cell) => cell.isEditable && cell.value !== 0)
+  return puzzle.value.some((row: Cell[]) =>
+    row.some((cell: Cell) => cell.isEditable && cell.value !== 0)
   );
 });
 
@@ -207,8 +211,19 @@ const actionModalProps = computed(() => {
 });
 
 onMounted(async () => {
-  // Get local save for authenticated users
-  if (isAuthenticated.value) {
+  // Get hard & local save for authenticated users
+  if (isAuthenticated.value && currentUser.value) {
+    const hardSaves = await loadHardSave(currentUser.value.id);
+
+    if (hardSaves && hardSaves.length > 0) {
+      hardSaves.map((save) => {
+        setSudokuSave(save.difficulty, {
+          value: save.hardSave,
+          id: save.id,
+        });
+      });
+    }
+
     const localSave = getSudokuSave(currentDifficulty.value);
 
     if (localSave) {
@@ -282,7 +297,7 @@ const switchDifficulty = async () => {
     await setPuzzle();
   }
 
-  if (isAuthenticated.value) {
+  if (isAuthenticated.value && currentUser.value) {
     const localSave = getSudokuSave(currentDifficulty.value);
 
     if (localSave) {
@@ -309,6 +324,18 @@ const cancelDifficultySwitch = () => {
 const resetSudoku = async () => {
   showNewSudokuModal.value = false;
   isLoading.value = true;
+
+  // TODO
+  // if authenticated, checks user_grid for the current user/grid combo and deletes it
+  // because only 1 hardSave per difficulty is allowed
+  if (isAuthenticated.value) {
+    const success = await checkAndDeleteHardSave(currentDifficulty.value);
+    if (!success) {
+      Logger.error(
+        new Error("Failed to delete hard save while resetting sudoku")
+      );
+    }
+  }
 
   await setPuzzle();
   isLoading.value = false;
@@ -365,6 +392,8 @@ const handleLeaderboard = async () => {
 };
 
 const handleSave = async () => {
+  isSaving.value = true;
+
   if (!isAuthenticated.value) {
     subscribeModalContext.value = "save";
     showUnauthenticatedModal.value = true;
@@ -383,6 +412,8 @@ const handleSave = async () => {
     } else {
       toastError(error, { description: "An error occurred" });
     }
+  } finally {
+    isSaving.value = false;
   }
 };
 
