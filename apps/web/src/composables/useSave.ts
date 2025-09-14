@@ -1,16 +1,15 @@
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
+import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { throwFrontError } from "@/utils/error";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 import { useState } from "./useState";
-import { useSudoku } from "./useSudoku";
+// import { useSudoku } from "./useSudoku";
 import { useUser } from "./useUser";
 
 const { fetchApi } = useApi();
 const { currentUser } = useUser();
 const { isAuthenticated } = useAuth();
 const { currentSudokuSave } = useState();
-const { parsePuzzle } = useSudoku();
 
 export const useSave = () => {
   const hardSave = async () => {
@@ -25,7 +24,6 @@ export const useSave = () => {
       });
       return;
     }
-    const parsedPuzzle = parsePuzzle(currentSudokuSave.value.value);
 
     const { data, error } = await fetchApi({
       path: "/user-grid",
@@ -33,7 +31,7 @@ export const useSave = () => {
       body: {
         user_id: currentUser.value.id,
         grid_id: currentSudokuSave.value.id,
-        backup_wip: parsedPuzzle,
+        backup_wip: currentSudokuSave.value.value,
       },
     });
 
@@ -52,7 +50,16 @@ export const useSave = () => {
     return true;
   };
 
-  const loadHardSave = async (userId: string) => {
+  const loadHardSave = async (
+    userId: string,
+  ): Promise<
+    | {
+        id: string;
+        difficulty: DifficultyOptions;
+        hardSave: Cell[][];
+      }[]
+    | null
+  > => {
     const { data, error } = await fetchApi({
       path: "/user-grid/user/:id",
       method: "GET",
@@ -63,11 +70,11 @@ export const useSave = () => {
 
     if (error) {
       throwFrontError(error.message, { context: "[loadHardSave]", error });
-      return;
+      return null;
     }
     if (!data) {
       throwFrontError("No data", { context: "[loadHardSave]", data });
-      return;
+      return null;
     }
 
     return data;
@@ -92,7 +99,7 @@ export const useSave = () => {
     }
 
     const hardSaveToDelete = hardSaves.filter(
-      (hardSave) => hardSave.difficulty === difficulty,
+      (formattedGrid) => formattedGrid.difficulty === difficulty,
     );
 
     if (!hardSaveToDelete) {
