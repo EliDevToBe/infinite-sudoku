@@ -7,6 +7,16 @@ export default fp(
   (server: FastifyInstance, _opts: FastifyPluginOptions, done) => {
     server.register(treePlugins);
     server.register(cleanupUrl);
+
+    server.decorateRequest("user", {
+      getter() {
+        return this._user || { id: null };
+      },
+      setter(value) {
+        this._user = value;
+      },
+    });
+
     done();
   },
 );

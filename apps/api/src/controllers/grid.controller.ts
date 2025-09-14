@@ -54,11 +54,28 @@ export const GridController = () => {
     const prisma = request.server.prisma;
     const difficulty = request.params.difficulty;
 
+    // This exists only if user is authenticated
+    // considering that the route is open
+    const userId = request.user.id;
+
     const range = getRangeFromDifficulty(difficulty);
 
     try {
+      const whereClause: Prisma.gridWhereInput = {
+        difficulty: { in: range },
+      };
+
+      if (userId) {
+        whereClause.user_grid = {
+          none: {
+            finished_at: { not: null },
+            user_id: userId,
+          },
+        };
+      }
+
       const grids = await prisma.grid.findMany({
-        where: { difficulty: { in: range } },
+        where: whereClause,
         select: {
           id: true,
           difficulty: true,

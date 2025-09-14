@@ -26,6 +26,11 @@ export const authenticated = (
     });
     const hasRefreshExpired = isJwtExpired(refresh);
 
+    // Decorate the request with the user.id on all authenticated routes
+    request.setDecorator("user", {
+      id: access.id,
+    });
+
     if (hasAccessExpired && !hasRefreshExpired) {
       request.headers["access-token"] = generateToken(
         {

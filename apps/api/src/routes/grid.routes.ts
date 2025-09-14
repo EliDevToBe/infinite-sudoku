@@ -4,6 +4,7 @@ import fp from "fastify-plugin";
 import type { DifficultyOptions } from "../../../../packages/shared/utils/sudoku/helper.js";
 import { GridController } from "../controllers/grid.controller.js";
 import { authenticated } from "../middlewares/auth.middleware.js";
+import { isAuth } from "../middlewares/isAuth.middleware.js";
 
 type GridInsert = Prisma.gridCreateInput;
 
@@ -19,6 +20,7 @@ export default fp(
     server.get<{ Params: { difficulty: DifficultyOptions } }>(
       "/grid/difficulty/:difficulty",
       {
+        preHandler: isAuth,
         schema: {
           params: {
             type: "object",
