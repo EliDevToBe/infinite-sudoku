@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import { DifficultyOptions } from "./utils/sudoku/helper";
+import { Cell, DifficultyOptions } from "./utils/sudoku/helper";
 
 type Endpoint = {
   path: `/${string}`;
@@ -46,7 +46,7 @@ export type ApiEndpoint = ValidateEndpoint<
       body: {
         user_id: string;
         grid_id: string;
-        backup_wip: number[][];
+        backup_wip: Cell[][];
       };
     }
   | {
@@ -86,7 +86,7 @@ export type EndpointResponse = {
   "/user-grid/user/:id": {
     id: string;
     difficulty: DifficultyOptions;
-    hardSave: number[][];
+    hardSave: Cell[][];
   }[];
   "/user-grid/delete/:id/:userId": {
     clientMessage: string;

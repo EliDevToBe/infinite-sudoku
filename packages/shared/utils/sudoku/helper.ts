@@ -3,6 +3,14 @@ import { SudokuComplete } from "./generator-v2.js";
 
 export type DifficultyOptions = "easy" | "medium" | "hard" | "hardcore";
 
+export type Cell = {
+  x: number;
+  y: number;
+  value: number;
+  isEditable: boolean;
+  hypothesis: number[];
+};
+
 export const DIFFICULTY_BY_MISSING_CELLS_RANGE = {
   wayTooEasy: [0, 40],
   easy: [41, 45],

@@ -1,5 +1,4 @@
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
-import type { Cell } from "../utils";
+import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { useApi } from "./useApi";
 
 export const useSudoku = () => {

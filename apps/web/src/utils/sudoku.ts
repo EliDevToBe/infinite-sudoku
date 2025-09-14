@@ -1,10 +1,4 @@
-export type Cell = {
-  x: number;
-  y: number;
-  value: number;
-  isEditable: boolean;
-  hypothesis: number[];
-};
+import type { Cell } from "@shared/utils/sudoku/helper";
 
 export type CellData = {
   key: string;
