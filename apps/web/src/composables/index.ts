@@ -6,9 +6,11 @@ import { Logger } from "./useLogger";
 import { useMoveStack } from "./useMoveStack";
 import { useNavigation } from "./useNavigation";
 import { useSave } from "./useSave";
+import { useScore } from "./useScore";
 import { useState } from "./useState";
 import { useSudoku } from "./useSudoku";
 import { useTheme } from "./useTheme";
+import { useTimer } from "./useTimer";
 import { useUser } from "./useUser";
 
 export {
@@ -24,4 +26,6 @@ export {
   usePresetToast,
   useForm,
   useSave,
+  useScore,
+  useTimer,
 };
