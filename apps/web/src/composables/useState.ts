@@ -7,8 +7,8 @@ type Save = { value: Cell[][]; id: string };
 type SudokuSave = Partial<Record<DifficultyOptions, Save>>;
 
 const selectedCell = ref<Cell | null>(null);
-const sudokuSave = useStorage<SudokuSave>("infinite-sudoku-save", {});
 
+const sudokuSave = useStorage<SudokuSave>("infinite-sudoku-save", {});
 const currentSudokuSave = ref<Save | null>(null);
 
 export const useState = () => {

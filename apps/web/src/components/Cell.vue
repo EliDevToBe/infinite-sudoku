@@ -23,12 +23,13 @@
 import type { Cell } from "@/utils";
 import { validateInput } from "@/utils";
 import { computed, ref } from "vue";
-import { useState } from "@/composables";
+import { useState, useTimer } from "@/composables";
 import { useMoveStack } from "@/composables";
 import { throwFrontError } from "@/utils/error";
 
 const { setSelectedCell } = useState();
 const { pushMove } = useMoveStack();
+const { startTimer } = useTimer();
 
 const props = defineProps<{
   currentCell: Cell;
@@ -111,6 +112,8 @@ const handleInput = (event: Event) => {
   if (newCell.value !== cellBeforeUpdate.value.value) {
     pushMove(cellBeforeUpdate.value, newCell);
   }
+
+  startTimer();
 
   inputElement.value = input;
   emit("update:cell", Number(input));

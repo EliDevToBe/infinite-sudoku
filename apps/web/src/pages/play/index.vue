@@ -13,7 +13,7 @@
         :is-initializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
-        @on-puzzle-completed="console.log('OMEDETO')"
+        @on-puzzle-completed="resetSudoku"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -128,6 +128,7 @@ import {
 import { normalize } from "@/utils";
 import { isFrontError, throwFrontError } from "@/utils/error";
 import { useDebounceFn } from "@vueuse/core";
+import { useTimer } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
@@ -147,6 +148,7 @@ const {
 } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
+const { startTimer } = useTimer();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -326,7 +328,6 @@ const resetSudoku = async () => {
   showNewSudokuModal.value = false;
   isLoading.value = true;
 
-  // TODO
   // if authenticated, checks user_grid for the current user/grid combo and deletes it
   // because only 1 hardSave per difficulty is allowed
   if (isAuthenticated.value) {
@@ -373,6 +374,8 @@ const setNumber = (number: number) => {
   if (currentCell.value === number || !currentCell.isEditable) return;
 
   pushMove(selectedCell, { ...selectedCell, value: number });
+
+  startTimer();
 
   currentCell.value = number;
   setSelectedCell(currentCell);
