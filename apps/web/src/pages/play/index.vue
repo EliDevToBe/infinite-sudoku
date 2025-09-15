@@ -8,12 +8,14 @@
         />
       </div>
     </template>
-    <MainContent class="gap-3">
+    <MainContent class="gap-3 relative">
+      <LazyTimer :difficulty="currentDifficulty" :grid="puzzle" />
       <SudokuGrid
         :is-initializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
-        @on-puzzle-completed="resetSudoku"
+        :difficulty="currentDifficulty"
+        @on-puzzle-completed="handleCompletion"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -111,7 +113,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, useTemplateRef, watch } from "vue";
-import { LazyActionModal } from "@/components";
+import { LazyActionModal, LazyTimer } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 import { type Cell } from "@/utils";
 import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
@@ -148,7 +150,7 @@ const {
 } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
-const { startTimer } = useTimer();
+const { startTimer, resetTimer } = useTimer();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -514,6 +516,11 @@ const loginFlow = async () => {
   } finally {
     isButtonLoading.value = false;
   }
+};
+
+const handleCompletion = () => {
+  resetTimer();
+  resetSudoku();
 };
 </script>
 

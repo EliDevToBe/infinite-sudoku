@@ -1,13 +1,13 @@
 import { useNow } from "@vueuse/core";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
+const now = useNow({ interval: 500 });
 const timerState = ref({
   isActive: false,
   startTime: 0,
   pausedTime: 0,
   lastPauseTime: 0,
 });
-const now = useNow({ interval: 500 });
 
 export const useTimer = () => {
   const startTimer = () => {
@@ -36,6 +36,16 @@ export const useTimer = () => {
     }
   };
 
+  const resetTimer = () => {
+    timerState.value.startTime = 0;
+    timerState.value.pausedTime = 0;
+    timerState.value.lastPauseTime = 0;
+    timerState.value.isActive = false;
+  };
+
+  /**
+   * Return the active time in milliseconds
+   */
   const getTimerActiveTime = () => {
     if (!timerState.value.startTime) return 0;
 
@@ -69,7 +79,7 @@ export const useTimer = () => {
     }
   };
 
-  const currentTimerTime = computed(() => {
+  const timerDisplay = computed(() => {
     const now = getTimerActiveTime();
 
     return new Intl.DateTimeFormat("fr-FR", {
@@ -86,16 +96,12 @@ export const useTimer = () => {
     document.removeEventListener("visibilitychange", handleVisibilityChange);
   });
 
-  const getTimerState = () => {
-    return timerState.value;
-  };
-
   return {
     startTimer,
     pauseTimer,
     resumeTimer,
+    resetTimer,
     getTimerActiveTime,
-    currentTimerTime,
-    getTimerState,
+    timerDisplay,
   };
 };
