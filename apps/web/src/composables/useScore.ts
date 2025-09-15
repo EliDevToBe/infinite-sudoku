@@ -1,36 +1,35 @@
 import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 
+const CONFIG = {
+  points_per_cell: 50,
+  multipliers: {
+    easy: 0.9,
+    medium: 1.2,
+    hard: 1.5,
+    hardcore: 2.0,
+  },
+  time_penalty: { value: 100, interval_in_ms: 5 * 60 * 1000 }, // 5min * 60sec * 1000ms
+};
+
 export const useScore = () => {
   const calculateScore = (
     puzzle: Cell[][],
     difficulty: DifficultyOptions,
-    completionTime: number,
+    completionTimeInMs: number,
   ) => {
     // Base points from missing cells (ensures harder puzzles = more points)
-    const missingCells = puzzle.flat().filter((cell) => cell.isEditable).length;
-    const basePoints = missingCells * 15; // 15 points per missing cell
+    const missingCellsCount = puzzle
+      .flat()
+      .filter((cell) => cell.isEditable).length;
+    const basePoints = missingCellsCount * CONFIG.points_per_cell;
 
-    // Difficulty multiplier
-    const difficultyMultipliers = {
-      easy: 1.0,
-      medium: 1.2,
-      hard: 1.5,
-      hardcore: 2.0,
-    };
+    const penalty =
+      Math.floor(completionTimeInMs / CONFIG.time_penalty.interval_in_ms) *
+      CONFIG.time_penalty.value;
 
-    // Time bonus (rewards speed)
-    const parTimes = {
-      easy: 300, // 5 minutes
-      medium: 600, // 10 minutes
-      hard: 900, // 15 minutes
-      hardcore: 1200, // 20 minutes
-    };
+    const score = basePoints * CONFIG.multipliers[difficulty] - penalty;
 
-    const timeMultiplier = Math.max(0.3, parTimes[difficulty] / completionTime);
-
-    return Math.floor(
-      basePoints * difficultyMultipliers[difficulty] * timeMultiplier,
-    );
+    return score;
   };
 
   return { calculateScore };
