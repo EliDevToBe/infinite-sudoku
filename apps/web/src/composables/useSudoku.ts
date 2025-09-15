@@ -61,7 +61,7 @@ export const useSudoku = () => {
     return data;
   };
 
-  const insertVictory = async () => {
+  const insertVictory = async (score: number) => {
     const recordId = await hardSave();
     if (!recordId) {
       throw new Error("No record ID");
@@ -74,7 +74,7 @@ export const useSudoku = () => {
       body: {
         finished_at: new Date().toISOString(),
         backup_wip: null,
-        score: 100, // TODO: Determine score system
+        score,
       },
     });
 
