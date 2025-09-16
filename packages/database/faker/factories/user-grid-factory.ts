@@ -1,13 +1,9 @@
-import type { Faker } from "@faker-js/faker";
 import type { Prisma, PrismaClient } from "@prisma/client";
 
 type UserGrid = Prisma.user_gridCreateInput;
 
 export class UserGridFactory {
-  constructor(
-    private readonly fakerClient: Faker,
-    private readonly prisma: PrismaClient,
-  ) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   private create(userId: string, gridId: string): UserGrid {
     return {
