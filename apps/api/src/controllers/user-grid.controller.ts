@@ -122,7 +122,7 @@ export const UserGridController = () => {
    * If the user grid already exists, update it
    * If the user grid does not exist, create it
    */
-  const createUserGrid = async (
+  const upsert = async (
     request: FastifyRequest<{ Body: UserGridInsert }>,
     reply: FastifyReply,
   ) => {
@@ -141,10 +141,11 @@ export const UserGridController = () => {
         },
       });
 
+      // UPDATE
       if (existingUserGrid) {
         await prisma.user_grid.update({
           where: { id: existingUserGrid.id },
-          data: data,
+          data: { ...data, updated_at: new Date().toISOString() },
         });
         return reply.status(200).send(existingUserGrid);
       }
@@ -246,7 +247,7 @@ export const UserGridController = () => {
     getById,
     getByUserId,
     getByGridId,
-    createUserGrid,
+    upsert,
     updateUserGrid,
     deleteUserGrid,
   };
