@@ -275,9 +275,9 @@ onUnmounted(() => {
 // Local auto-save for authenticated users
 watch(
   puzzle,
-  () => {
+  async () => {
     if (isAuthenticated.value) {
-      updateSudokuSave(currentDifficulty.value, {
+      await updateSudokuSave(currentDifficulty.value, {
         value: puzzle.value,
         time: getTimerActiveTime(),
       });
@@ -300,11 +300,11 @@ const setPuzzle = async () => {
   puzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
-const handleDifficultySwitch = () => {
+const handleDifficultySwitch = async () => {
   if (hasUserInput.value && !isAuthenticated.value) {
     showPreventDifficultyModal.value = true;
   } else {
-    switchDifficulty();
+    await switchDifficulty();
   }
 };
 const handleDifficultySwitchDebounced = useDebounceFn(
@@ -340,7 +340,7 @@ const switchDifficulty = async () => {
 
   if (isAuthenticated.value && currentUser.value) {
     // Save time locally before initializing new timer
-    updateSudokuSave(oldDifficulty.value, {
+    await updateSudokuSave(oldDifficulty.value, {
       time: getTimerActiveTime(),
     });
 

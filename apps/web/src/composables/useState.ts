@@ -30,7 +30,7 @@ export const useState = () => {
     setTotalElapsedTime(save.time);
   };
 
-  const updateSudokuSave = (
+  const updateSudokuSave = async (
     difficulty: DifficultyOptions,
     save: Partial<Save>,
   ) => {
@@ -38,12 +38,12 @@ export const useState = () => {
 
     sudokuSave.value[difficulty] = {
       value: save.value ?? currentSudokuSave.value?.value ?? [],
-      id: save.id ?? currentSudokuSave.value?.id ?? "",
+      id: currentSudokuSave.value?.id ?? "",
       time: save.time ?? currentSudokuSave.value?.time ?? 0,
     };
     currentSudokuSave.value = {
       value: save.value ?? currentSudokuSave.value?.value ?? [],
-      id: save.id ?? currentSudokuSave.value?.id ?? "",
+      id: currentSudokuSave.value?.id ?? "",
       time: save.time ?? currentSudokuSave.value?.time ?? 0,
     };
   };
