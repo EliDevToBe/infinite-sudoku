@@ -34,7 +34,7 @@ jobs:
         run: biome ci
 
       - name: Generate Prisma client
-        run: npx prisma generate
+        run: npx prisma generate --schema=../../packages/database/prisma/schema.prisma
 
       - name: Type Check
         run: tsc --noEmit
