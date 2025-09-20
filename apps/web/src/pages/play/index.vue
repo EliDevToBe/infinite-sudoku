@@ -15,7 +15,7 @@
         v-model="puzzle"
         :is-loading="isLoading"
         :difficulty="currentDifficulty"
-        @on-puzzle-completed="handleCompletion"
+        @on-puzzle-completed="showVictoryModal = true"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -86,14 +86,9 @@
         :is-main-action-loading="isButtonLoading"
       >
         <UnlockFeatureModalBody
-          v-if="!showFormModalBody"
-          :context="subscribeModalContext"
-          @on-click-login="
-            () => {
-              isRegisterMode = false;
-              showFormModalBody = true;
-            }
-          "
+          v-if="showFeatureModalBody"
+          :context="unlockFeatureModalContext"
+          @on-click-login="showLoginModal"
         />
 
         <div v-else :class="ui.fromWrapper">
@@ -106,6 +101,25 @@
             :hide-register-link="!isRegisterMode"
           />
         </div>
+      </LazyActionModal>
+
+      <LazyActionModal
+        description="You have completed the puzzle!"
+        title="🎉 Congratulations 🥳"
+        v-model:show="showVictoryModal"
+        main-action-label="Next one!"
+        @on-main-action="handleCompletion"
+        :dismissible="false"
+        :close="false"
+      >
+        <VictoryModalBody
+          @on-click-login="
+            handleCompletion();
+            showLoginModal();
+          "
+          :puzzle="puzzle"
+          :current-difficulty="currentDifficulty"
+        />
       </LazyActionModal>
     </MainContent>
   </MainWrapper>
@@ -120,12 +134,13 @@ import {
   watch,
   onUnmounted,
 } from "vue";
-import { LazyActionModal, LazyTimer } from "@/components";
+import { LazyActionModal } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import {
   useSudoku,
   usePresetToast,
+  useScore,
   useMoveStack,
   useState,
   useAuth,
@@ -164,15 +179,15 @@ const {
   addTimerEvent,
   removeTimerEvent,
   pauseTimer,
-  getTimerState,
 } = useTimer();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
-const showFormModalBody = ref(false);
+const showFeatureModalBody = ref(true);
 const showNewSudokuModal = ref(false);
+const showVictoryModal = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
@@ -181,7 +196,7 @@ const isSaving = ref(false);
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>(createEmptyPuzzle());
-const subscribeModalContext = ref<"leaderboard" | "save">();
+const unlockFeatureModalContext = ref<"leaderboard" | "save">();
 
 const loginRegisterFormRef = useTemplateRef<
   InstanceType<typeof LoginRegisterForm>
@@ -208,7 +223,7 @@ const hasUserInput = computed(() => {
 });
 
 const actionModalProps = computed(() => {
-  const normal = !showFormModalBody.value;
+  const normal = showFeatureModalBody.value;
 
   if (normal) {
     // Normal modal props
@@ -218,7 +233,7 @@ const actionModalProps = computed(() => {
       mainActionLabel: "I want it !",
       secondaryActionLabel: "Cancel",
       mainFunction: () => {
-        showFormModalBody.value = true;
+        showFeatureModalBody.value = false;
       },
       secondaryFunction: closeUnauthenticatedModal,
     };
@@ -432,7 +447,7 @@ const setNumber = (number: number) => {
 
 const handleLeaderboard = async () => {
   if (!isAuthenticated.value) {
-    subscribeModalContext.value = "leaderboard";
+    unlockFeatureModalContext.value = "leaderboard";
     showUnauthenticatedModal.value = true;
     return;
   }
@@ -446,7 +461,7 @@ const handleLeaderboard = async () => {
 
 const handleSave = async () => {
   if (!isAuthenticated.value) {
-    subscribeModalContext.value = "save";
+    unlockFeatureModalContext.value = "save";
     showUnauthenticatedModal.value = true;
     return;
   }
@@ -481,7 +496,7 @@ const closeUnauthenticatedModal = () => {
 
   // Due to the modal animation
   setTimeout(() => {
-    showFormModalBody.value = false;
+    showFeatureModalBody.value = true;
     isRegisterMode.value = true;
   }, 300);
 };
@@ -573,8 +588,16 @@ const loginFlow = async () => {
 };
 
 const handleCompletion = () => {
+  showVictoryModal.value = false;
+
   resetTimer();
   resetSudoku();
+};
+
+const showLoginModal = () => {
+  showFeatureModalBody.value = false;
+  isRegisterMode.value = false;
+  showUnauthenticatedModal.value = true;
 };
 </script>
 
