@@ -1,5 +1,5 @@
 <template>
-  <div :class="[ui.card, rank < 3 ? ui.topPlayers : '']">
+  <div :class="[ui.card, topAndSelfUI]">
     <!-- Rank -->
     <div :class="ui.rankWrapper">
       <div class="justify-center">
@@ -20,6 +20,7 @@
       <div :class="ui.playerName">
         {{ pseudo }}
         <VueIcon
+          v-if="isCurrentUser"
           :width="ui.currentUserIconSize"
           :height="ui.currentUserIconSize"
           :class="ui.currentUserIcon"
@@ -32,31 +33,41 @@
     </div>
 
     <!-- Total puzzle count -->
-    <div :class="ui.colItemWrapper">
+    <div :class="ui.statWrapper">
       <VueIcon
-        :width="ui.colItemIconSize"
-        :height="ui.colItemIconSize"
-        :class="ui.colItemIcon"
+        :width="ui.statIconSize"
+        :height="ui.statIconSize"
+        :class="ui.statIcon"
         name="lucide:puzzle"
       />
-      <span :class="ui.colItemText">{{ 8 }}</span>
+      <span :class="ui.statText">{{ 8 }}</span>
     </div>
 
-    <!-- Time -->
-    <div :class="ui.colItemWrapper">
+    <!-- Average Time -->
+    <div :class="ui.statWrapper">
       <VueIcon
-        :width="ui.colItemIconSize"
-        :height="ui.colItemIconSize"
-        :class="ui.colItemIcon"
+        :width="ui.statIconSize"
+        :height="ui.statIconSize"
+        :class="ui.statIcon"
         name="lucide:clock"
       />
-      <span :class="ui.colItemText">{{ formatTime(time) }}</span>
+      <span :class="ui.statText">{{ formatTime(time) }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { formatTime } from "@/utils";
+import { computed } from "vue";
+
+const props = defineProps<{
+  icon?: string;
+  pseudo: string;
+  score: number;
+  time: number;
+  rank: number;
+  isCurrentUser?: boolean;
+}>();
 
 const ui = {
   card: [
@@ -72,10 +83,10 @@ const ui = {
   currentUserIconSize: "20",
 
   score: "text-amber-400 font-bold text-lg",
-  colItemWrapper: "flex items-center justify-center gap-1",
-  colItemIcon: "text-dTheme-font/60",
-  colItemIconSize: "14",
-  colItemText: "text-dTheme-font/80 text-xs sm:text-sm",
+  statWrapper: "flex items-center justify-center gap-1",
+  statIcon: "text-dTheme-font/60",
+  statIconSize: "14",
+  statText: "text-dTheme-font/80 text-xs sm:text-sm",
 
   medalIcon: "text-amber-400",
   medalIconSize: "20",
@@ -83,20 +94,28 @@ const ui = {
 
   topPlayers:
     "bg-gradient-to-r from-amber-500/5 to-yellow-500/20 border border-amber-500/30",
+  selfPlayer:
+    "border border-dTheme-accent bg-gradient-to-r from-dTheme-accent/5 to-dTheme-accent/20",
 };
+
+const topAndSelfUI = computed(() => {
+  if (props.rank < 3 && props.isCurrentUser) {
+    return ui.selfPlayer;
+  }
+  if (props.rank < 3) {
+    return ui.topPlayers;
+  }
+  if (props.isCurrentUser) {
+    return ui.selfPlayer;
+  }
+  return "";
+});
+
 const medalIcons = [
   "lucide:crown",
   "tabler:circle-number-2",
   "tabler:circle-dashed-number-3",
 ];
-
-const props = defineProps<{
-  icon?: string;
-  pseudo: string;
-  score: number;
-  time: number;
-  rank: number;
-}>();
 
 const formatScore = (score: number): string => {
   return score.toLocaleString();
