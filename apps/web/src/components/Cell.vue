@@ -23,8 +23,7 @@
 import type { Cell } from "@shared/utils/sudoku/helper";
 import { validateInput } from "@/utils";
 import { computed, ref } from "vue";
-import { useState, useTimer } from "@/composables";
-import { useMoveStack } from "@/composables";
+import { useState, useTimer, useMoveStack } from "@/composables";
 import { throwFrontError } from "@/utils/error";
 
 const { setSelectedCell } = useState();

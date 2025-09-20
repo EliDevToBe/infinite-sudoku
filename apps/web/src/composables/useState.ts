@@ -1,7 +1,7 @@
 import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { useStorage } from "@vueuse/core";
 import { ref } from "vue";
-import { useTimer } from "@/composables";
+import { useTimer } from "./useTimer";
 
 type Save = { value: Cell[][]; id: string; time: number };
 type SudokuSave = Partial<Record<DifficultyOptions, Save>>;

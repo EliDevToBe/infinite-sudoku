@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import type { Block, BlockRow, CellData, CellRow } from "@/utils";
-import type { Cell } from "@shared/utils/sudoku/helper";
+import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { computed, watch } from "vue";
 import {
   useSudoku,
@@ -62,11 +62,10 @@ import {
   usePresetToast,
   useScore,
   useTimer,
+  useAuth,
+  useUser,
 } from "@/composables";
 import { isFrontError, throwFrontError } from "@/utils/error";
-import { useAuth } from "@/composables";
-import { useUser } from "@/composables";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 
 const emit = defineEmits<{
   onPuzzleCompleted: [];
