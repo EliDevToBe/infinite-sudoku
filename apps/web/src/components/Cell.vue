@@ -96,6 +96,8 @@ const handleInput = (event: Event) => {
       pushMove(cellBeforeUpdate.value, newCell);
     }
 
+    startTimer();
+
     emit("update:cell", 0);
     return;
   }
