@@ -5,6 +5,8 @@
     :ui="ui"
     v-model:open="showModel"
     @update:open="(event) => emit('onClose')"
+    :dismissible="dismissible"
+    :close="close"
   >
     <template #body v-if="$slots.body">
       <slot name="body"></slot>
@@ -24,6 +26,8 @@ const emit = defineEmits<{
 const props = defineProps<{
   title: string;
   description: string;
+  dismissible?: boolean;
+  close?: boolean;
 }>();
 
 const ui = {
