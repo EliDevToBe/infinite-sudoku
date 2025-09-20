@@ -1,7 +1,7 @@
 import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 
 const CONFIG = {
-  points_per_cell: 50,
+  points_per_cell: 50, // Base points from missing cells (ensures harder puzzles = more points)
   multipliers: {
     easy: 0.9, // Points projection: 1,600 - 2,025
     medium: 1.2, // Points projection: 2,460 - 2,960
@@ -17,7 +17,6 @@ export const useScore = () => {
     difficulty: DifficultyOptions,
     completionTimeInMs: number,
   ) => {
-    // Base points from missing cells (ensures harder puzzles = more points)
     const missingCellsCount = puzzle
       .flat()
       .filter((cell) => cell.isEditable).length;

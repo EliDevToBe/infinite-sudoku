@@ -18,14 +18,14 @@ export const isAuth = (
   try {
     const access = verifyToken({ token: accessToken, type: "access" });
 
-    // Decorate the request with the user.id if use is authenticated
+    // Decorate the request with the user.id if user is authenticated
     request.setDecorator("user", {
       id: access.id,
     });
 
     done();
   } catch (_error) {
-    reply.code(401).send({
+    return reply.code(401).send({
       code: 401,
       message: "Unauthorized",
       error: "Invalid token",
