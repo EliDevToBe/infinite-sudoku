@@ -99,6 +99,7 @@ export type EndpointResponse = {
     id: string;
     difficulty: DifficultyOptions;
     hardSave: Cell[][];
+    time: number;
   }[];
   "/user-grid/delete/:id/:userId": {
     clientMessage: string;

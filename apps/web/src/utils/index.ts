@@ -7,7 +7,6 @@ import {
 import {
   type Block,
   type BlockRow,
-  type Cell,
   type CellData,
   type CellRow,
   calculateCompletionRate,
@@ -23,7 +22,6 @@ export {
   calculateCompletionRate,
   type Block,
   type BlockRow,
-  type Cell,
   type CellData,
   type CellRow,
 };

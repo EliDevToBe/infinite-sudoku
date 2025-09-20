@@ -115,8 +115,7 @@
 import { onMounted, ref, computed, useTemplateRef, watch } from "vue";
 import { LazyActionModal, LazyTimer } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
-import { type Cell } from "@/utils";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
+import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import {
   useSudoku,
   usePresetToast,

@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Cell } from "@/utils";
+import type { Cell } from "@shared/utils/sudoku/helper";
 import { validateInput } from "@/utils";
 import { computed, ref } from "vue";
 import { useState, useTimer } from "@/composables";

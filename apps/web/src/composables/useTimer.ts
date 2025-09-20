@@ -1,15 +1,20 @@
 import { useNow } from "@vueuse/core";
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, ref } from "vue";
 
-const now = useNow({ interval: 500 });
+const now = useNow({ interval: 250 });
 const timerState = ref({
   isActive: false,
   startTime: 0,
   pausedTime: 0,
   lastPauseTime: 0,
+  totalElapsedTime: 0,
 });
 
 export const useTimer = () => {
+  const getTimerState = () => {
+    return timerState.value;
+  };
+
   const startTimer = () => {
     if (!timerState.value.isActive && !timerState.value.startTime) {
       timerState.value.startTime = now.value.getTime();
@@ -41,13 +46,19 @@ export const useTimer = () => {
     timerState.value.pausedTime = 0;
     timerState.value.lastPauseTime = 0;
     timerState.value.isActive = false;
+    timerState.value.totalElapsedTime = 0;
+  };
+
+  const setTotalElapsedTime = (milliseconds: number) => {
+    timerState.value.totalElapsedTime = milliseconds;
   };
 
   /**
    * Return the active time in milliseconds
    */
   const getTimerActiveTime = () => {
-    if (!timerState.value.startTime) return 0;
+    if (!timerState.value.startTime && !timerState.value.totalElapsedTime)
+      return 0;
 
     const currentTime = now.value.getTime();
     const totalTime = currentTime - timerState.value.startTime;
@@ -55,7 +66,12 @@ export const useTimer = () => {
       ? 0
       : currentTime - timerState.value.lastPauseTime;
 
-    return totalTime - timerState.value.pausedTime - currentPausedTime;
+    return (
+      totalTime -
+      timerState.value.pausedTime -
+      currentPausedTime +
+      timerState.value.totalElapsedTime
+    );
   };
 
   const handleVisibilityChange = () => {
@@ -80,6 +96,7 @@ export const useTimer = () => {
   };
 
   const timerDisplay = computed(() => {
+    timerState.value.totalElapsedTime > 0;
     const now = getTimerActiveTime();
 
     return new Intl.DateTimeFormat("fr-FR", {
@@ -88,20 +105,24 @@ export const useTimer = () => {
     }).format(new Date(now));
   });
 
-  onMounted(() => {
+  const addTimerEvent = () => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
-  });
+  };
 
-  onUnmounted(() => {
+  const removeTimerEvent = () => {
     document.removeEventListener("visibilitychange", handleVisibilityChange);
-  });
+  };
 
   return {
+    getTimerState,
     startTimer,
     pauseTimer,
     resumeTimer,
     resetTimer,
     getTimerActiveTime,
+    setTotalElapsedTime,
     timerDisplay,
+    addTimerEvent,
+    removeTimerEvent,
   };
 };

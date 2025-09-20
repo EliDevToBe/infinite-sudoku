@@ -52,7 +52,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Block, BlockRow, Cell, CellData, CellRow } from "@/utils";
+import type { Block, BlockRow, CellData, CellRow } from "@/utils";
+import type { Cell } from "@shared/utils/sudoku/helper";
 import { computed, watch } from "vue";
 import {
   useSudoku,

@@ -76,6 +76,7 @@ export const UserGridController = () => {
               difficulty: true,
             },
           },
+          time: true,
         },
       });
 
@@ -83,6 +84,7 @@ export const UserGridController = () => {
         id: userGrid.grid.id,
         difficulty: getDifficultyFromMissingCells(userGrid.grid.difficulty),
         hardSave: userGrid.backup_wip,
+        time: userGrid.time,
       }));
 
       reply.send(result);
@@ -145,7 +147,10 @@ export const UserGridController = () => {
       if (existingUserGrid) {
         await prisma.user_grid.update({
           where: { id: existingUserGrid.id },
-          data: { ...data, updated_at: new Date().toISOString() },
+          data: {
+            ...data,
+            updated_at: new Date().toISOString(),
+          },
         });
         return reply.status(200).send(existingUserGrid);
       }
