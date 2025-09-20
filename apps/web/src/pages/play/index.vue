@@ -9,7 +9,7 @@
       </div>
     </template>
     <MainContent class="gap-3 relative">
-      <LazyTimer :difficulty="currentDifficulty" :grid="puzzle" />
+      <Timer :difficulty="currentDifficulty" :grid="puzzle" />
       <SudokuGrid
         :is-initializing="!isPuzzleFetched"
         v-model="puzzle"
