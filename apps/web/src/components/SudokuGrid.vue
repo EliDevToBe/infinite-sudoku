@@ -182,7 +182,7 @@ const isPuzzleFilled = computed(() => isPuzzleCompleted(grid.value));
 watch(
   isPuzzleFilled,
   async () => {
-    if (!currentSudokuSave.value || !isAuthenticated.value) return;
+    if (!currentSudokuSave.value) return;
 
     try {
       const { data, error } = await fetchApi({
@@ -203,9 +203,9 @@ watch(
       }
 
       if (isPuzzleSolved(grid.value, data.solution as number[][])) {
-        if (isAuthenticated.value && currentUser.value) {
-          pauseTimer();
+        pauseTimer();
 
+        if (isAuthenticated.value && currentUser.value) {
           const score = calculateScore(
             grid.value,
             props.difficulty,

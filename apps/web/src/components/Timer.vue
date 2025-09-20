@@ -8,7 +8,6 @@
     leave-to-class="opacity-0"
   >
     <div
-      v-if="isAuthenticated"
       class="flex px-5 justify-center w-full absolute -translate-y-5 pointer-events-none"
     >
       <span class="text-dTheme-font text-sm">{{ timerDisplay }}</span>
