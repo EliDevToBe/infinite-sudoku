@@ -1,17 +1,19 @@
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
+import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { useStorage } from "@vueuse/core";
 import { ref } from "vue";
-import type { Cell } from "@/utils";
+import { useTimer } from "./useTimer";
 
-type Save = { value: Cell[][]; id: string };
+type Save = { value: Cell[][]; id: string; time: number };
 type SudokuSave = Partial<Record<DifficultyOptions, Save>>;
 
 const selectedCell = ref<Cell | null>(null);
-const sudokuSave = useStorage<SudokuSave>("infinite-sudoku-save", {});
 
+const sudokuSave = useStorage<SudokuSave>("infinite-sudoku-save", {});
 const currentSudokuSave = ref<Save | null>(null);
 
 export const useState = () => {
+  const { setTotalElapsedTime } = useTimer();
+
   const setSelectedCell = (cell: Cell | null) => {
     selectedCell.value = cell ? { ...cell } : null;
   };
@@ -25,18 +27,24 @@ export const useState = () => {
 
     sudokuSave.value[difficulty] = save;
     currentSudokuSave.value = save;
+    setTotalElapsedTime(save.time);
   };
 
-  const updateSudokuSave = (difficulty: DifficultyOptions, save: Cell[][]) => {
+  const updateSudokuSave = async (
+    difficulty: DifficultyOptions,
+    save: Partial<Save>,
+  ) => {
     if (!sudokuSave.value) return;
 
     sudokuSave.value[difficulty] = {
-      value: save,
+      value: save.value ?? currentSudokuSave.value?.value ?? [],
       id: currentSudokuSave.value?.id ?? "",
+      time: save.time ?? currentSudokuSave.value?.time ?? 0,
     };
     currentSudokuSave.value = {
-      value: save,
+      value: save.value ?? currentSudokuSave.value?.value ?? [],
       id: currentSudokuSave.value?.id ?? "",
+      time: save.time ?? currentSudokuSave.value?.time ?? 0,
     };
   };
 

@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "db:start": "docker compose up -d && npx tsx ../shared/utils/wait.ts && npm run db:apply-migrations && npm run db:seed",
+    "db:start": "docker compose up -d && npx tsx ../shared/utils/wait.ts && npm run db:apply-migrations && npm run db:client && npm run db:seed",
     "db:clean": "docker compose down --rmi all",
     "db:reset": "docker compose down --rmi all -v",
     "db:restart": "npm run db:reset && npm run db:start",

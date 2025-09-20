@@ -8,12 +8,14 @@
         />
       </div>
     </template>
-    <MainContent class="gap-3">
+    <MainContent class="gap-3 relative">
+      <Timer :difficulty="currentDifficulty" :grid="puzzle" />
       <SudokuGrid
         :is-initializing="!isPuzzleFetched"
         v-model="puzzle"
         :is-loading="isLoading"
-        @on-puzzle-completed="console.log('OMEDETO')"
+        :difficulty="currentDifficulty"
+        @on-puzzle-completed="showVictoryModal = true"
       ></SudokuGrid>
 
       <LazyActionModal
@@ -84,14 +86,9 @@
         :is-main-action-loading="isButtonLoading"
       >
         <UnlockFeatureModalBody
-          v-if="!showFormModalBody"
-          :context="subscribeModalContext"
-          @on-click-login="
-            () => {
-              isRegisterMode = false;
-              showFormModalBody = true;
-            }
-          "
+          v-if="showFeatureModalBody"
+          :context="unlockFeatureModalContext"
+          @on-click-login="showLoginModal"
         />
 
         <div v-else :class="ui.fromWrapper">
@@ -105,19 +102,45 @@
           />
         </div>
       </LazyActionModal>
+
+      <LazyActionModal
+        description="You have completed the puzzle!"
+        title="🎉 Congratulations 🥳"
+        v-model:show="showVictoryModal"
+        main-action-label="Next one!"
+        @on-main-action="handleCompletion"
+        :dismissible="false"
+        :close="false"
+      >
+        <VictoryModalBody
+          @on-click-login="
+            handleCompletion();
+            showLoginModal();
+          "
+          :puzzle="puzzle"
+          :current-difficulty="currentDifficulty"
+        />
+      </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, useTemplateRef, watch } from "vue";
+import {
+  onMounted,
+  ref,
+  computed,
+  useTemplateRef,
+  watch,
+  onUnmounted,
+} from "vue";
 import { LazyActionModal } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
-import { type Cell } from "@/utils";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
+import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import {
   useSudoku,
   usePresetToast,
+  useScore,
   useMoveStack,
   useState,
   useAuth,
@@ -128,6 +151,7 @@ import {
 import { normalize } from "@/utils";
 import { isFrontError, throwFrontError } from "@/utils/error";
 import { useDebounceFn } from "@vueuse/core";
+import { useTimer } from "@/composables";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
@@ -147,13 +171,23 @@ const {
 } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
+const {
+  startTimer,
+  resetTimer,
+  getTimerActiveTime,
+  setTotalElapsedTime,
+  addTimerEvent,
+  removeTimerEvent,
+  pauseTimer,
+} = useTimer();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
-const showFormModalBody = ref(false);
+const showFeatureModalBody = ref(true);
 const showNewSudokuModal = ref(false);
+const showVictoryModal = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
@@ -162,7 +196,7 @@ const isSaving = ref(false);
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>(createEmptyPuzzle());
-const subscribeModalContext = ref<"leaderboard" | "save">();
+const unlockFeatureModalContext = ref<"leaderboard" | "save">();
 
 const loginRegisterFormRef = useTemplateRef<
   InstanceType<typeof LoginRegisterForm>
@@ -189,7 +223,7 @@ const hasUserInput = computed(() => {
 });
 
 const actionModalProps = computed(() => {
-  const normal = !showFormModalBody.value;
+  const normal = showFeatureModalBody.value;
 
   if (normal) {
     // Normal modal props
@@ -199,7 +233,7 @@ const actionModalProps = computed(() => {
       mainActionLabel: "I want it !",
       secondaryActionLabel: "Cancel",
       mainFunction: () => {
-        showFormModalBody.value = true;
+        showFeatureModalBody.value = false;
       },
       secondaryFunction: closeUnauthenticatedModal,
     };
@@ -217,14 +251,20 @@ const actionModalProps = computed(() => {
 });
 
 onMounted(async () => {
+  addTimerEvent();
+
   // Get hard & local save for authenticated users
   if (isAuthenticated.value && currentUser.value) {
-    await checkHardSavesToLocal(currentUser.value.id);
-
     const localSave = getSudokuSave(currentDifficulty.value);
 
-    if (localSave) {
-      puzzle.value = localSave.value;
+    if (!localSave) {
+      await checkHardSavesToLocal(currentUser.value.id);
+    }
+
+    const localSaveNewTry = getSudokuSave(currentDifficulty.value);
+    if (localSaveNewTry) {
+      puzzle.value = localSaveNewTry.value;
+      setTotalElapsedTime(localSaveNewTry.time);
 
       isPuzzleFetched.value = true;
       return;
@@ -243,12 +283,19 @@ onMounted(async () => {
   }
 });
 
+onUnmounted(() => {
+  removeTimerEvent();
+});
+
 // Local auto-save for authenticated users
 watch(
   puzzle,
-  () => {
+  async () => {
     if (isAuthenticated.value) {
-      updateSudokuSave(currentDifficulty.value, puzzle.value);
+      await updateSudokuSave(currentDifficulty.value, {
+        value: puzzle.value,
+        time: getTimerActiveTime(),
+      });
     }
   },
   { deep: true }
@@ -257,19 +304,22 @@ watch(
 const setPuzzle = async () => {
   const data = await getRandomPuzzle(currentDifficulty.value);
 
+  resetTimer();
+
   setSudokuSave(currentDifficulty.value, {
     value: formatPuzzle(data.puzzle as number[][]),
     id: data.id,
+    time: 0,
   });
 
   puzzle.value = formatPuzzle(data.puzzle as number[][]);
 };
 
-const handleDifficultySwitch = () => {
+const handleDifficultySwitch = async () => {
   if (hasUserInput.value && !isAuthenticated.value) {
     showPreventDifficultyModal.value = true;
   } else {
-    switchDifficulty();
+    await switchDifficulty();
   }
 };
 const handleDifficultySwitchDebounced = useDebounceFn(
@@ -278,7 +328,7 @@ const handleDifficultySwitchDebounced = useDebounceFn(
 );
 
 /**
- * Switch difficulty and handles local save
+ * Switch difficulty and handles local save, with timer management.
  *
  * If the user is **authenticated**:
  * - **does** have a local save for the current difficulty, use it
@@ -287,22 +337,35 @@ const handleDifficultySwitchDebounced = useDebounceFn(
  * If the user is **not authenticated**:
  * - set a new puzzle
  *
+ * Timer management:
+ * - Pauses it
+ * - Saves the time locally to the previous difficulty
+ * - Resets the timer, ready for the new difficulty
  */
 const switchDifficulty = async () => {
   showPreventDifficultyModal.value = false;
   isLoading.value = true;
   resetMoveStacks();
   setSelectedCell(null);
+  pauseTimer();
 
   if (!isAuthenticated.value) {
     await setPuzzle();
   }
 
   if (isAuthenticated.value && currentUser.value) {
+    // Save time locally before initializing new timer
+    await updateSudokuSave(oldDifficulty.value, {
+      time: getTimerActiveTime(),
+    });
+
+    resetTimer();
+
     const localSave = getSudokuSave(currentDifficulty.value);
 
     if (localSave) {
       puzzle.value = localSave.value;
+      setTotalElapsedTime(localSave.time);
     } else {
       await setPuzzle();
     }
@@ -326,7 +389,6 @@ const resetSudoku = async () => {
   showNewSudokuModal.value = false;
   isLoading.value = true;
 
-  // TODO
   // if authenticated, checks user_grid for the current user/grid combo and deletes it
   // because only 1 hardSave per difficulty is allowed
   if (isAuthenticated.value) {
@@ -348,6 +410,9 @@ const eraseCell = (event: { x: number; y: number }) => {
     value: 0,
   });
   puzzle.value[event.y][event.x].value = 0;
+
+  startTimer();
+
   setSelectedCell(null);
 };
 
@@ -374,13 +439,15 @@ const setNumber = (number: number) => {
 
   pushMove(selectedCell, { ...selectedCell, value: number });
 
+  startTimer();
+
   currentCell.value = number;
   setSelectedCell(currentCell);
 };
 
 const handleLeaderboard = async () => {
   if (!isAuthenticated.value) {
-    subscribeModalContext.value = "leaderboard";
+    unlockFeatureModalContext.value = "leaderboard";
     showUnauthenticatedModal.value = true;
     return;
   }
@@ -394,7 +461,7 @@ const handleLeaderboard = async () => {
 
 const handleSave = async () => {
   if (!isAuthenticated.value) {
-    subscribeModalContext.value = "save";
+    unlockFeatureModalContext.value = "save";
     showUnauthenticatedModal.value = true;
     return;
   }
@@ -429,7 +496,7 @@ const closeUnauthenticatedModal = () => {
 
   // Due to the modal animation
   setTimeout(() => {
-    showFormModalBody.value = false;
+    showFeatureModalBody.value = true;
     isRegisterMode.value = true;
   }, 300);
 };
@@ -495,11 +562,18 @@ const loginFlow = async () => {
         description: `Welcome ${currentUser.value.pseudo} !`,
       });
 
-      await checkHardSavesToLocal(currentUser.value.id);
-
       const localSave = getSudokuSave(currentDifficulty.value);
-      if (localSave) {
-        puzzle.value = localSave.value;
+      if (!localSave) {
+        await checkHardSavesToLocal(currentUser.value.id);
+      }
+
+      const localSaveNewTry = getSudokuSave(currentDifficulty.value);
+      if (localSaveNewTry) {
+        puzzle.value = localSaveNewTry.value;
+        setTotalElapsedTime(localSaveNewTry.time);
+
+        isPuzzleFetched.value = true;
+        return;
       }
     }
   } catch (error) {
@@ -511,6 +585,19 @@ const loginFlow = async () => {
   } finally {
     isButtonLoading.value = false;
   }
+};
+
+const handleCompletion = () => {
+  showVictoryModal.value = false;
+
+  resetTimer();
+  resetSudoku();
+};
+
+const showLoginModal = () => {
+  showFeatureModalBody.value = false;
+  isRegisterMode.value = false;
+  showUnauthenticatedModal.value = true;
 };
 </script>
 

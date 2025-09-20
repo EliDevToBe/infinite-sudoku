@@ -36,7 +36,7 @@ export default fp(
     server.post<{ Body: UserGridInsert }>(
       "/user-grid",
       { preHandler: authenticated },
-      UserGridController().createUserGrid,
+      UserGridController().upsert,
     );
 
     server.put<{ Params: { id: string }; Body: UserGridUpdate }>(

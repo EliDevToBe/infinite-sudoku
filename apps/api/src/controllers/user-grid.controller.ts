@@ -76,6 +76,7 @@ export const UserGridController = () => {
               difficulty: true,
             },
           },
+          time: true,
         },
       });
 
@@ -83,6 +84,7 @@ export const UserGridController = () => {
         id: userGrid.grid.id,
         difficulty: getDifficultyFromMissingCells(userGrid.grid.difficulty),
         hardSave: userGrid.backup_wip,
+        time: userGrid.time,
       }));
 
       reply.send(result);
@@ -122,7 +124,7 @@ export const UserGridController = () => {
    * If the user grid already exists, update it
    * If the user grid does not exist, create it
    */
-  const createUserGrid = async (
+  const upsert = async (
     request: FastifyRequest<{ Body: UserGridInsert }>,
     reply: FastifyReply,
   ) => {
@@ -141,10 +143,14 @@ export const UserGridController = () => {
         },
       });
 
+      // UPDATE
       if (existingUserGrid) {
         await prisma.user_grid.update({
           where: { id: existingUserGrid.id },
-          data: data,
+          data: {
+            ...data,
+            updated_at: new Date().toISOString(),
+          },
         });
         return reply.status(200).send(existingUserGrid);
       }
@@ -177,13 +183,25 @@ export const UserGridController = () => {
     const body = request.body;
 
     try {
+      const existingUserGrid = await prisma.user_grid.findUnique({
+        where: { id: userGridId },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!existingUserGrid) {
+        return reply.status(404).send({ clientMessage: "User grid not found" });
+      }
+
       await prisma.user_grid.update({
         where: { id: userGridId },
         data: body,
       });
-      reply.send({ clientMessage: "User grid updated successfully" });
+
+      return reply.send({ clientMessage: "User grid updated successfully" });
     } catch (error) {
-      reply
+      return reply
         .status(500)
         .send({ clientMessage: "Failed to update user grid", error });
     }
@@ -234,7 +252,7 @@ export const UserGridController = () => {
     getById,
     getByUserId,
     getByGridId,
-    createUserGrid,
+    upsert,
     updateUserGrid,
     deleteUserGrid,
   };

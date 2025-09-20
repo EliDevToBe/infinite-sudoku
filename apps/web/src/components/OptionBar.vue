@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { type DifficultyOptions } from "@/utils";
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 import OptionBarItem from "./OptionBarItem.vue";
 
 const difficulty = defineModel<DifficultyOptions>();

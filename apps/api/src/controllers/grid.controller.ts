@@ -54,11 +54,28 @@ export const GridController = () => {
     const prisma = request.server.prisma;
     const difficulty = request.params.difficulty;
 
+    // This exists only if user is authenticated
+    // considering that the route is open
+    const userId = request.user.id;
+
     const range = getRangeFromDifficulty(difficulty);
 
     try {
+      const whereClause: Prisma.gridWhereInput = {
+        difficulty: { in: range },
+      };
+
+      if (userId) {
+        whereClause.user_grid = {
+          none: {
+            finished_at: { not: null },
+            user_id: userId,
+          },
+        };
+      }
+
       const grids = await prisma.grid.findMany({
-        where: { difficulty: { in: range } },
+        where: whereClause,
         select: {
           id: true,
           difficulty: true,
@@ -68,9 +85,13 @@ export const GridController = () => {
 
       const grid = grids[Math.floor(Math.random() * grids.length)];
 
-      reply.send(grid);
+      if (!grid) {
+        return reply.status(404).send({ clientMessage: "Grid not found" });
+      }
+
+      return reply.send(grid);
     } catch (error) {
-      reply
+      return reply
         .status(500)
         .send({ clientMessage: "Failed to get random grid", error });
     }

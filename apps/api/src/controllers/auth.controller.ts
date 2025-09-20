@@ -1,8 +1,11 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import jwt from "jsonwebtoken";
 import { useHash } from "../utils/hash.js";
 import { isProduction } from "../utils/isProduction.js";
 import { useToken } from "../utils/token.js";
+
+const { TokenExpiredError, JsonWebTokenError } = jwt;
 
 type RegisterInput = Prisma.userCreateInput;
 type User = Prisma.userGetPayload<{
@@ -172,7 +175,13 @@ export const AuthController = () => {
       });
     } catch (error) {
       console.error("Error refreshing token", error);
-      return reply.status(500).send({ clientMessage: "Internal server error" });
+
+      if (error instanceof TokenExpiredError) {
+        return reply.status(401).send({ clientMessage: "Session expired" });
+      }
+      if (error instanceof JsonWebTokenError) {
+        return reply.status(401).send({ clientMessage: "Unauthorized" });
+      }
     }
   };
 

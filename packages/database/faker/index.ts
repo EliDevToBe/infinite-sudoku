@@ -24,7 +24,7 @@ const fakerSeeder = async () => {
   const grids = await gridFactory.createMany(10);
   const gridIds = grids.map((grid) => grid.id);
 
-  const userGridFactory = new UserGridFactory(faker, prisma);
+  const userGridFactory = new UserGridFactory(prisma);
   await userGridFactory.createMany(userIds, gridIds);
 
   console.log(centerText(" -  - --== Done 👌 ==-- -  - "));

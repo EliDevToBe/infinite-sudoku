@@ -50,7 +50,6 @@ router.beforeEach(async (to, _from) => {
     (to.meta.roles &&
       !(to.meta.roles as string[]).includes(currentUser.value?.role || ""))
   ) {
-    console.debug(currentUser.value?.role);
     return { name: "/" };
   }
 });

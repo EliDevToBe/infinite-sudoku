@@ -3,12 +3,14 @@ import { throwFrontError } from "@/utils/error";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 import { useState } from "./useState";
+import { useTimer } from "./useTimer";
 import { useUser } from "./useUser";
 
 const { fetchApi } = useApi();
 const { currentUser } = useUser();
 const { isAuthenticated } = useAuth();
 const { currentSudokuSave, setSudokuSave } = useState();
+const { getTimerActiveTime } = useTimer();
 
 export const useSave = () => {
   const hardSave = async () => {
@@ -31,6 +33,7 @@ export const useSave = () => {
         user_id: currentUser.value.id,
         grid_id: currentSudokuSave.value.id,
         backup_wip: currentSudokuSave.value.value,
+        time: getTimerActiveTime(),
       },
     });
 
@@ -46,7 +49,7 @@ export const useSave = () => {
       return;
     }
 
-    return true;
+    return data.id;
   };
 
   const loadHardSave = async (
@@ -56,6 +59,7 @@ export const useSave = () => {
         id: string;
         difficulty: DifficultyOptions;
         hardSave: Cell[][];
+        time: number;
       }[]
     | null
   > => {
@@ -126,6 +130,7 @@ export const useSave = () => {
         setSudokuSave(save.difficulty, {
           value: save.hardSave,
           id: save.id,
+          time: save.time,
         });
       });
     }

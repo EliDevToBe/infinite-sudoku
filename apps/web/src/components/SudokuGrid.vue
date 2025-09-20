@@ -52,9 +52,19 @@
 </template>
 
 <script setup lang="ts">
-import type { Block, BlockRow, Cell, CellData, CellRow } from "@/utils";
+import type { Block, BlockRow, CellData, CellRow } from "@/utils";
+import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
 import { computed, watch } from "vue";
-import { useSudoku, useApi, useState, usePresetToast } from "@/composables";
+import {
+  useSudoku,
+  useApi,
+  useState,
+  usePresetToast,
+  useScore,
+  useTimer,
+  useAuth,
+  useUser,
+} from "@/composables";
 import { isFrontError, throwFrontError } from "@/utils/error";
 
 const emit = defineEmits<{
@@ -64,13 +74,18 @@ const emit = defineEmits<{
 const props = defineProps<{
   isLoading: boolean;
   isInitializing: boolean;
+  difficulty: DifficultyOptions;
 }>();
 
 const { getSelectedCell } = useState();
-const { isPuzzleCompleted, isPuzzleSolved } = useSudoku();
+const { isAuthenticated } = useAuth();
+const { currentUser } = useUser();
+const { isPuzzleCompleted, isPuzzleSolved, insertVictory } = useSudoku();
 const { currentSudokuSave } = useState();
 const { fetchApi } = useApi();
 const { toastError } = usePresetToast();
+const { calculateScore } = useScore();
+const { getTimerActiveTime, pauseTimer } = useTimer();
 
 const grid = defineModel<Cell[][]>({ required: true });
 
@@ -152,38 +167,59 @@ const handleCellUpdate = (
   grid.value[position.y][position.x].value = value;
 };
 
+const isPuzzleFilled = computed(() => isPuzzleCompleted(grid.value));
+
+/**
+ * This is the main watcher for the puzzle completion
+ * - On completion, call API to fetch solution
+ * - Compare solution with current grid
+ *
+ * When solved:
+ * - [Authenticated]: insert record in DB for current user
+ * - Emit event
+ */
 watch(
-  grid,
+  isPuzzleFilled,
   async () => {
-    if (isPuzzleCompleted(grid.value)) {
-      if (!currentSudokuSave.value) return;
-      try {
-        const { data, error } = await fetchApi({
-          path: "/grid/:id",
-          method: "GET",
-          params: {
-            id: currentSudokuSave.value.id,
-          },
-        });
+    if (!currentSudokuSave.value) return;
 
-        if (error) {
-          throwFrontError(error.message, { description: "An error occurred" });
-          return;
-        }
-        if (!data) {
-          throwFrontError("No data", { description: "An error occurred" });
-          return;
-        }
+    try {
+      const { data, error } = await fetchApi({
+        path: "/grid/:id",
+        method: "GET",
+        params: {
+          id: currentSudokuSave.value.id,
+        },
+      });
 
-        if (isPuzzleSolved(grid.value, data.solution as number[][])) {
-          emit("onPuzzleCompleted");
+      if (error) {
+        throwFrontError(error.message, { description: "An error occurred" });
+        return;
+      }
+      if (!data) {
+        throwFrontError("No data", { description: "An error occurred" });
+        return;
+      }
+
+      if (isPuzzleSolved(grid.value, data.solution as number[][])) {
+        pauseTimer();
+
+        if (isAuthenticated.value && currentUser.value) {
+          const score = calculateScore(
+            grid.value,
+            props.difficulty,
+            getTimerActiveTime()
+          );
+
+          await insertVictory(score);
         }
-      } catch (error) {
-        if (isFrontError(error)) {
-          toastError(error, { description: error.message });
-        } else {
-          toastError(error, { description: "An error occurred" });
-        }
+        emit("onPuzzleCompleted");
+      }
+    } catch (error) {
+      if (isFrontError(error)) {
+        toastError(error, { description: error.message });
+      } else {
+        toastError(error, { description: "An error occurred" });
       }
     }
   },

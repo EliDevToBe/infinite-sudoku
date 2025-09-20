@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DifficultyOptions } from "@/utils";
+import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 
 defineProps<{
   oldDifficulty: DifficultyOptions;

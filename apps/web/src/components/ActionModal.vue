@@ -4,6 +4,8 @@
     :description="description"
     v-model:show="innerShow"
     @on-close="emit('onSecondaryAction')"
+    :dismissible="dismissible"
+    :close="close"
   >
     <template #body>
       <slot></slot>
@@ -49,6 +51,8 @@ const props = defineProps<{
   specialMainAction?: boolean;
   isMainActionLoading?: boolean;
   isSecondaryActionLoading?: boolean;
+  dismissible?: boolean;
+  close?: boolean;
 }>();
 
 const emit = defineEmits<{

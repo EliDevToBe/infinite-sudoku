@@ -39,3 +39,10 @@ export const calculateCompletionRate = (puzzle: Cell[][]) => {
 
   return Math.floor((filledCells / fillableCells) * 100);
 };
+
+export const formatTime = (time: number) => {
+  return new Intl.DateTimeFormat("fr-FR", {
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(new Date(time));
+};
