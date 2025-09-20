@@ -23,12 +23,17 @@ const emit = defineEmits<{
   onClose: [];
 }>();
 
-const props = defineProps<{
-  title: string;
-  description: string;
-  dismissible?: boolean;
-  close?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    description: string;
+    dismissible?: boolean;
+    close?: boolean;
+  }>(),
+  {
+    dismissible: true,
+  }
+);
 
 const ui = {
   overlay:
