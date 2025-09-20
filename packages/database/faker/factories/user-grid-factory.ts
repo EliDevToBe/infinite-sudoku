@@ -19,7 +19,9 @@ export class UserGridFactory {
   createMany(userIds: string[], gridIds: string[]) {
     return Promise.all(
       userIds.map((userId) => {
+        // Random grid attribution
         const gridId = gridIds[Math.floor(Math.random() * gridIds.length)];
+
         return this.prisma.user_grid.create({
           data: this.create(userId, gridId),
         });
