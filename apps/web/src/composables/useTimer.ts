@@ -1,5 +1,6 @@
 import { useNow } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { formatTime } from "@/utils";
 
 const now = useNow({ interval: 250 });
 const timerState = ref({
@@ -99,10 +100,7 @@ export const useTimer = () => {
     timerState.value.totalElapsedTime > 0;
     const now = getTimerActiveTime();
 
-    return new Intl.DateTimeFormat("fr-FR", {
-      minute: "2-digit",
-      second: "2-digit",
-    }).format(new Date(now));
+    return formatTime(now);
   });
 
   const addTimerEvent = () => {

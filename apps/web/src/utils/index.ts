@@ -10,6 +10,7 @@ import {
   type CellData,
   type CellRow,
   calculateCompletionRate,
+  formatTime,
   validateInput,
 } from "./sudoku";
 
@@ -24,4 +25,5 @@ export {
   type BlockRow,
   type CellData,
   type CellRow,
+  formatTime,
 };
