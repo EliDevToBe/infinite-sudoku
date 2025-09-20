@@ -8,6 +8,7 @@
     leave-to-class="opacity-0"
   >
     <div
+      v-if="hasTimeToDisplay"
       class="flex px-5 justify-center w-full absolute -translate-y-5 pointer-events-none"
     >
       <span class="text-dTheme-font text-sm">{{ timerDisplay }}</span>
@@ -18,15 +19,18 @@
 <script setup lang="ts">
 import { useTimer } from "@/composables";
 import type { Cell, DifficultyOptions } from "@shared/utils/sudoku/helper";
-import { useAuth } from "@/composables";
+import { computed } from "vue";
 
 const props = defineProps<{
   difficulty: DifficultyOptions;
   grid: Cell[][];
 }>();
 
-const { timerDisplay } = useTimer();
-const { isAuthenticated } = useAuth();
+const { timerDisplay, getTimerActiveTime } = useTimer();
+
+const hasTimeToDisplay = computed(() => {
+  return getTimerActiveTime() > 0;
+});
 </script>
 
 <style scoped lang=""></style>
