@@ -112,7 +112,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, useTemplateRef, watch } from "vue";
+import {
+  onMounted,
+  ref,
+  computed,
+  useTemplateRef,
+  watch,
+  onUnmounted,
+} from "vue";
 import { LazyActionModal, LazyTimer } from "@/components";
 import LoginRegisterForm from "@/components/LoginRegisterForm.vue";
 import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
@@ -149,7 +156,16 @@ const {
 } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
-const { startTimer, resetTimer } = useTimer();
+const {
+  startTimer,
+  resetTimer,
+  getTimerActiveTime,
+  setTotalElapsedTime,
+  addTimerEvent,
+  removeTimerEvent,
+  pauseTimer,
+  getTimerState,
+} = useTimer();
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -220,14 +236,20 @@ const actionModalProps = computed(() => {
 });
 
 onMounted(async () => {
+  addTimerEvent();
+
   // Get hard & local save for authenticated users
   if (isAuthenticated.value && currentUser.value) {
-    await checkHardSavesToLocal(currentUser.value.id);
-
     const localSave = getSudokuSave(currentDifficulty.value);
 
-    if (localSave) {
-      puzzle.value = localSave.value;
+    if (!localSave) {
+      await checkHardSavesToLocal(currentUser.value.id);
+    }
+
+    const localSaveNewTry = getSudokuSave(currentDifficulty.value);
+    if (localSaveNewTry) {
+      puzzle.value = localSaveNewTry.value;
+      setTotalElapsedTime(localSaveNewTry.time);
 
       isPuzzleFetched.value = true;
       return;
@@ -246,12 +268,19 @@ onMounted(async () => {
   }
 });
 
+onUnmounted(() => {
+  removeTimerEvent();
+});
+
 // Local auto-save for authenticated users
 watch(
   puzzle,
   () => {
     if (isAuthenticated.value) {
-      updateSudokuSave(currentDifficulty.value, puzzle.value);
+      updateSudokuSave(currentDifficulty.value, {
+        value: puzzle.value,
+        time: getTimerActiveTime(),
+      });
     }
   },
   { deep: true }
@@ -260,9 +289,12 @@ watch(
 const setPuzzle = async () => {
   const data = await getRandomPuzzle(currentDifficulty.value);
 
+  resetTimer();
+
   setSudokuSave(currentDifficulty.value, {
     value: formatPuzzle(data.puzzle as number[][]),
     id: data.id,
+    time: 0,
   });
 
   puzzle.value = formatPuzzle(data.puzzle as number[][]);
@@ -281,7 +313,7 @@ const handleDifficultySwitchDebounced = useDebounceFn(
 );
 
 /**
- * Switch difficulty and handles local save
+ * Switch difficulty and handles local save, with timer management.
  *
  * If the user is **authenticated**:
  * - **does** have a local save for the current difficulty, use it
@@ -290,22 +322,35 @@ const handleDifficultySwitchDebounced = useDebounceFn(
  * If the user is **not authenticated**:
  * - set a new puzzle
  *
+ * Timer management:
+ * - Pauses it
+ * - Saves the time locally to the previous difficulty
+ * - Resets the timer, ready for the new difficulty
  */
 const switchDifficulty = async () => {
   showPreventDifficultyModal.value = false;
   isLoading.value = true;
   resetMoveStacks();
   setSelectedCell(null);
+  pauseTimer();
 
   if (!isAuthenticated.value) {
     await setPuzzle();
   }
 
   if (isAuthenticated.value && currentUser.value) {
+    // Save time locally before initializing new timer
+    updateSudokuSave(oldDifficulty.value, {
+      time: getTimerActiveTime(),
+    });
+
+    resetTimer();
+
     const localSave = getSudokuSave(currentDifficulty.value);
 
     if (localSave) {
       puzzle.value = localSave.value;
+      setTotalElapsedTime(localSave.time);
     } else {
       await setPuzzle();
     }
@@ -350,6 +395,9 @@ const eraseCell = (event: { x: number; y: number }) => {
     value: 0,
   });
   puzzle.value[event.y][event.x].value = 0;
+
+  startTimer();
+
   setSelectedCell(null);
 };
 
@@ -499,11 +547,18 @@ const loginFlow = async () => {
         description: `Welcome ${currentUser.value.pseudo} !`,
       });
 
-      await checkHardSavesToLocal(currentUser.value.id);
-
       const localSave = getSudokuSave(currentDifficulty.value);
-      if (localSave) {
-        puzzle.value = localSave.value;
+      if (!localSave) {
+        await checkHardSavesToLocal(currentUser.value.id);
+      }
+
+      const localSaveNewTry = getSudokuSave(currentDifficulty.value);
+      if (localSaveNewTry) {
+        puzzle.value = localSaveNewTry.value;
+        setTotalElapsedTime(localSaveNewTry.time);
+
+        isPuzzleFetched.value = true;
+        return;
       }
     }
   } catch (error) {
