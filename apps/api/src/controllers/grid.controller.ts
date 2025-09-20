@@ -85,9 +85,13 @@ export const GridController = () => {
 
       const grid = grids[Math.floor(Math.random() * grids.length)];
 
-      reply.send(grid);
+      if (!grid) {
+        return reply.status(404).send({ clientMessage: "Grid not found" });
+      }
+
+      return reply.send(grid);
     } catch (error) {
-      reply
+      return reply
         .status(500)
         .send({ clientMessage: "Failed to get random grid", error });
     }
