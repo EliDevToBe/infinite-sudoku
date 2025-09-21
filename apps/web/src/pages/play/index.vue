@@ -123,6 +123,16 @@
           :current-difficulty="currentDifficulty"
         />
       </LazyActionModal>
+
+      <LazyActionModal
+        title=" Leaderboard"
+        description="Check the leaderboard"
+        v-model:show="showLeaderboardModal"
+        :close="true"
+        class="sm:w-full sm:max-h-150 max-h-125"
+      >
+        <LeaderBoardModalBody />
+      </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
@@ -142,7 +152,6 @@ import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import {
   useSudoku,
   usePresetToast,
-  useScore,
   useMoveStack,
   useState,
   useAuth,
@@ -183,13 +192,15 @@ const {
   pauseTimer,
 } = useTimer();
 
-const isLoading = ref(false);
-const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
 const showFeatureModalBody = ref(true);
 const showNewSudokuModal = ref(false);
 const showVictoryModal = ref(false);
+const showLeaderboardModal = ref(false);
+
+const isLoading = ref(false);
+const isPuzzleFetched = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
@@ -326,7 +337,7 @@ const handleDifficultySwitch = async () => {
 };
 const handleDifficultySwitchDebounced = useDebounceFn(
   handleDifficultySwitch,
-  400
+  300
 );
 
 /**
@@ -454,11 +465,7 @@ const handleLeaderboard = async () => {
     return;
   }
 
-  console.log("SHOW LEADERBOARD");
-  if (!currentUser.value) return;
-
-  const test = await loadHardSave(currentUser.value.id);
-  console.log(test);
+  showLeaderboardModal.value = true;
 };
 
 const handleSave = async () => {

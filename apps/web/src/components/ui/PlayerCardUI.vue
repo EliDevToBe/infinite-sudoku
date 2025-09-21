@@ -5,8 +5,8 @@
       <div class="justify-center">
         <div v-if="rank < 3">
           <VueIcon
-            :width="ui.medalIconSize"
-            :height="ui.medalIconSize"
+            :width="topRankSizes[rank]"
+            :height="topRankSizes[rank]"
             :class="ui.medalIcon"
             :name="medalIcons[rank]"
           />
@@ -71,18 +71,20 @@ const props = defineProps<{
 
 const ui = {
   card: [
-    "grid grid-cols-[0.5fr_2fr_1fr_1fr] items-center gap-3 p-1 px-2 rounded-lg",
+    "grid grid-cols-[0.5fr_2fr_1fr_1fr] items-center gap-3 rounded-lg",
+    "sm:p-1 p-0.5 px-2",
     "bg-dTheme-light/10 hover:bg-dTheme-light/20",
     "transition-colors duration-200",
   ],
   rankWrapper: "flex items-center justify-center",
-  playerInfo: "flex grow flex-col gap-1",
+  playerInfo: "flex flex-col sm:gap-1 gap-0 h-10 sm:h-12",
   playerName: "flex items-center gap-2 text-dTheme-font font-medium text-sm",
 
-  currentUserIcon: "text-dTheme-accent",
+  currentUserIcon: "text-dTheme-accent max-sm:w-4 max-sm:h-4",
   currentUserIconSize: "20",
 
-  score: "text-amber-400 font-bold text-lg",
+  score:
+    "text-amber-400 font-bold text-lg line-height-none sm:line-height-normal text-right",
   statWrapper: "flex items-center justify-center gap-1",
   statIcon: "text-dTheme-font/60",
   statIconSize: "14",
@@ -116,6 +118,7 @@ const medalIcons = [
   "tabler:circle-number-2",
   "tabler:circle-dashed-number-3",
 ];
+const topRankSizes = [23, 22, 21];
 
 const formatScore = (score: number): string => {
   return score.toLocaleString();
