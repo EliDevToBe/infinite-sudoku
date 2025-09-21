@@ -49,7 +49,7 @@
 
         <!-- Empty State -->
         <div
-          v-if="!isLoading && !error && leaderboardData.length === 0"
+          v-if="!isLoading && leaderboardData.length === 0"
           :class="ui.emptyWrapper"
         >
           <VueIcon
@@ -79,7 +79,6 @@ const { fetchLeaderboard } = useLeaderBoard();
 
 const activeTab = ref<"daily" | "weekly" | "monthly">("daily");
 const isLoading = ref(false);
-const error = ref<string | null>(null);
 const leaderboardData = ref<LeaderboardPlayer[]>([]);
 const currentPlayerPosition = ref<CurrentPlayerPosition | null>(null);
 
@@ -111,20 +110,13 @@ const ui = {
 
 watch(activeTab, async () => {
   const data = await fetchLeaderboard(activeTab.value);
-  if (!data) return;
-  leaderboardData.value = data.players;
-  if (data.currentPlayer) {
-    currentPlayerPosition.value = data.currentPlayer;
-  }
-});
 
-onMounted(async () => {
-  const data = await fetchLeaderboard(activeTab.value);
-  if (!data) return;
-  leaderboardData.value = data.players;
-
-  if (data.currentPlayer) {
-    currentPlayerPosition.value = data.currentPlayer;
+  if (!data) {
+    leaderboardData.value = [];
+    currentPlayerPosition.value = null;
+  } else {
+    currentPlayerPosition.value = data.currentPlayer ?? null;
+    leaderboardData.value = data.players;
   }
 });
 </script>

@@ -57,7 +57,8 @@ export const LeaderboardController = () => {
         }
       }
 
-      const top20Grids = await prisma.user_grid.findMany({
+      const top20Grids = await prisma.user_grid.groupBy({
+        by: ["user_id"],
         where: {
           finished_at: {
             gte: startDate,
@@ -67,28 +68,79 @@ export const LeaderboardController = () => {
             not: null,
           },
         },
-        include: {
-          user: {
-            select: {
-              id: true,
-              pseudo: true,
-            },
-          },
+        _sum: {
+          score: true,
+        },
+        _avg: {
+          time: true,
         },
         orderBy: {
-          score: "desc",
+          _sum: {
+            score: "desc",
+          },
         },
-        take: 20, // Limit 20
+        take: 20,
       });
+
+      // No data found
+      if (top20Grids.length === 0) {
+        return reply.send({
+          players: [],
+          currentPlayer: null,
+        });
+      }
+
+      request.server.log.info(`Top grids count: ${top20Grids.length}`);
+
+      // Get user information for the top 20 users
+      const userIds = top20Grids.map((grid) => grid.user_id);
+      const users = await prisma.user.findMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+        select: {
+          id: true,
+          pseudo: true,
+        },
+      });
+
+      const aggregatedUsers = top20Grids.map((grid) => ({
+        ...grid,
+        user: users.find((user) => user.id === grid.user_id),
+      }));
+      request.server.log.info(
+        `Aggregated keys: ${Object.keys(aggregatedUsers[0])}`,
+      );
+
+      // Create a map for quick user lookup
+      // Ready format for the map
+      const formattedAggregatedUsers = aggregatedUsers.map(
+        (aggregatedUser) => ({
+          ...aggregatedUser,
+          _avg: {
+            time: Math.round(aggregatedUser._avg.time ?? 0),
+          },
+        }),
+      );
+      const userMap = new Map(
+        formattedAggregatedUsers.map((aggregatedUser) => {
+          return [aggregatedUser.user_id, aggregatedUser];
+        }),
+      );
+      request.server.log.info(`Map size: ${userMap.size}`);
 
       // Get current user's position if not in top 20
       let currentPlayerPosition = null;
-      const currentUserInTop20 = top20Grids.find(
+      const currentUserInTop20 = aggregatedUsers.find(
         (topGrid) => topGrid.user_id === authUserId,
       );
 
       if (!currentUserInTop20) {
-        const currentUserGrid = await prisma.user_grid.findFirst({
+        // Retrieve current user aggregated score and time
+        const currentUserGrid = await prisma.user_grid.groupBy({
+          by: ["user_id"],
           where: {
             user_id: authUserId,
             finished_at: {
@@ -99,51 +151,109 @@ export const LeaderboardController = () => {
               not: null,
             },
           },
-          include: {
-            user: {
-              select: {
-                id: true,
-                pseudo: true,
-              },
-            },
+          _sum: {
+            score: true,
+          },
+          _avg: {
+            time: true,
           },
           orderBy: {
-            score: "desc",
+            _sum: {
+              score: "desc",
+            },
           },
         });
 
-        if (currentUserGrid && currentUserGrid.score !== null) {
-          // Calculate actual rank
-          const rank =
-            (await prisma.user_grid.count({
+        request.server.log.info(
+          `Current user grid count: ${currentUserGrid.length}`,
+        );
+
+        // Retrieve current user information
+        const currentUserInfo = await prisma.user.findUnique({
+          where: {
+            id: authUserId,
+          },
+          select: {
+            id: true,
+            pseudo: true,
+          },
+        });
+
+        // Should never happen
+        if (!currentUserInfo) {
+          return reply.status(404).send({
+            clientMessage: "User not found",
+          });
+        }
+
+        /**
+         * If data for the current period, we format it in the map
+         * and calculate precise rank of current user.
+         *
+         * Else, the currentPlayerPosition is null.
+         */
+        if (currentUserGrid.length !== 0) {
+          // Set aggregated data in the map
+          userMap.set(authUserId, {
+            ...currentUserGrid[0],
+            user: currentUserInfo,
+            _avg: {
+              time: Math.round(currentUserGrid[0]._avg.time ?? 0),
+            },
+          });
+
+          if (currentUserGrid && currentUserGrid[0]._sum.score !== null) {
+            const actualScore = currentUserGrid[0]._sum.score;
+            const actualTime = currentUserGrid[0]._avg.time ?? 0;
+
+            // Count users with higher aggregated scores
+            const usersWithHigherScores = await prisma.user_grid.groupBy({
+              by: ["user_id"],
               where: {
                 finished_at: {
                   gte: startDate,
                   lte: now,
                 },
                 score: {
-                  gt: currentUserGrid.score,
+                  not: null,
                 },
               },
-            })) + 1;
+              _sum: {
+                score: true,
+              },
+              having: {
+                score: {
+                  _sum: {
+                    gt: actualScore,
+                  },
+                },
+              },
+            });
 
-          currentPlayerPosition = {
-            rank,
-            pseudo: currentUserGrid.user.pseudo,
-            score: currentUserGrid.score,
-            time: currentUserGrid.time || 0,
-          };
+            // Rank starts at 1, array index starts at 0
+            const rank = usersWithHigherScores.length + 1;
+
+            currentPlayerPosition = {
+              rank,
+              pseudo: currentUserInfo.pseudo,
+              score: actualScore,
+              time: actualTime,
+            };
+          }
         }
       }
 
       // Format response
-      const players = top20Grids.map((ug) => ({
-        id: ug.user.id,
-        pseudo: ug.user.pseudo,
-        score: ug.score || 0,
-        time: ug.time || 0,
-        isCurrentUser: ug.user_id === authUserId,
-      }));
+      const players = Array.from(userMap.values()).map((val, index) => {
+        return {
+          id: val.user?.id,
+          rank: index + 1,
+          pseudo: val.user?.pseudo,
+          score: val._sum.score || 0,
+          time: val._avg.time || 0,
+          isCurrentUser: val.user_id === authUserId,
+        };
+      });
 
       return reply.send({
         players,
