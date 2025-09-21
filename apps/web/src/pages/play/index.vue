@@ -54,13 +54,15 @@
           @on-secondary-action="showNewSudokuModal = false"
           secondary-action-label="Cancel"
         >
-          <div class="flex flex-col gap-2">
-            <span class="inline-block">
-              The new sudoku will <span class="text-red-500">erase</span> your
-              current progress.
-            </span>
-            <span class="inline-block">Continue ?</span>
-          </div>
+          <ModalBodyWrapperUI>
+            <div class="flex flex-col gap-2">
+              <span class="inline-block">
+                The new sudoku will <span class="text-red-500">erase</span> your
+                current progress.
+              </span>
+              <span class="inline-block">Continue ?</span>
+            </div>
+          </ModalBodyWrapperUI>
         </LazyActionModal>
 
         <NumberBar @on-select="setNumber"></NumberBar>
