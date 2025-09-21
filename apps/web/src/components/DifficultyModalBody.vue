@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <ModalBodyWrapperUI>
     <span class="inline-block">
       Switching difficulty from
       <span class="font-bold text-green-500 text-lg">{{ oldDifficulty }}</span>
@@ -17,7 +17,7 @@
       <span class="text-amber-400">register</span>
       to auto save your sudoku.
     </span>
-  </div>
+  </ModalBodyWrapperUI>
 </template>
 
 <script setup lang="ts">
