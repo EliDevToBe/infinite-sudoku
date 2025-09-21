@@ -76,6 +76,13 @@ export type ApiEndpoint = ValidateEndpoint<
         userId: string;
       };
     }
+  | {
+      path: "/leaderboard/:period";
+      method: "GET";
+      params: {
+        period: "daily" | "weekly" | "monthly";
+      };
+    }
 >;
 
 export type EndpointResponse = {
@@ -109,4 +116,19 @@ export type EndpointResponse = {
       id: true;
     };
   }>;
+  "/leaderboard/:period": {
+    players: Array<{
+      id: string;
+      pseudo: string;
+      score: number;
+      time: number;
+      isCurrentUser: boolean;
+    }>;
+    currentPlayer?: {
+      rank: number;
+      pseudo: string;
+      score: number;
+      time: number;
+    };
+  };
 };

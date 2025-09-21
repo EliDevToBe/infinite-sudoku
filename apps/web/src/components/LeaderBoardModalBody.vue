@@ -75,7 +75,7 @@ import type {
 } from "@/composables/useLeaderBoard";
 import { useLeaderBoard } from "@/composables";
 
-const { generateMockLeaderboard } = useLeaderBoard();
+const { fetchLeaderboard } = useLeaderBoard();
 
 const activeTab = ref<"daily" | "weekly" | "monthly">("daily");
 const isLoading = ref(false);
@@ -109,16 +109,23 @@ const ui = {
   emptyText: "text-dTheme-light/60 text-sm",
 };
 
-watch(activeTab, () => {
-  const data = generateMockLeaderboard();
+watch(activeTab, async () => {
+  const data = await fetchLeaderboard(activeTab.value);
+  if (!data) return;
   leaderboardData.value = data.players;
-  currentPlayerPosition.value = data.currentPlayer;
+  if (data.currentPlayer) {
+    currentPlayerPosition.value = data.currentPlayer;
+  }
 });
 
-onMounted(() => {
-  const data = generateMockLeaderboard();
+onMounted(async () => {
+  const data = await fetchLeaderboard(activeTab.value);
+  if (!data) return;
   leaderboardData.value = data.players;
-  currentPlayerPosition.value = data.currentPlayer;
+
+  if (data.currentPlayer) {
+    currentPlayerPosition.value = data.currentPlayer;
+  }
 });
 </script>
 
