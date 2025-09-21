@@ -11,10 +11,11 @@
 
       <template #footer>
         <div class="inline text-[10px] text-dTheme-accentDarker">
-          Made with
-          <span class="text-red-500">♥</span>
-          by
-          <a href="https://github.com/EliDevToBe" target="_blank">EliDevToBe</a>
+          <a href="https://github.com/EliDevToBe" target="_blank">
+            Made with
+            <span class="text-red-500">♥</span>
+            by EliDevToBe</a
+          >
         </div>
       </template>
     </BaseLayout>
