@@ -1,16 +1,15 @@
 <template>
-  <div class="flex flex-col sm:gap-4 gap-2">
-    <div class="p-3 sm:px-4 sticky top-0 bg-transparent backdrop-blur-sm">
+  <div :class="[ui.mainWrapper, isEmptyState ? 'h-full' : '']">
+    <div :class="ui.tabWrapper">
       <TabBarUI radio-group="leaderboard" :tabs="tabs" v-model="activeTab" />
     </div>
 
-    <div
-      ref="cursorRef"
-      :class="ui.wrapper"
-      class="overflow-visible flex-1 pb-8 px-10 h-full"
-    >
+    <div ref="cursorRef" :class="ui.contentWrapper">
       <!-- Loading State -->
-      <div v-if="isLoading" :class="ui.loadingWrapper">
+      <div
+        v-if="isLoading"
+        :class="[ui.loadingWrapper, isEmptyState ? ui.emptyStateClass : '']"
+      >
         <VueIcon
           :width="ui.loadingIconSize"
           :height="ui.loadingIconSize"
@@ -21,8 +20,8 @@
       </div>
 
       <!-- Leaderboard List -->
-      <div v-else>
-        <!-- Top 20 Players -->
+      <div v-else :class="isEmptyState ? ui.emptyStateClass : ''">
+        <!-- Top Players -->
         <div :class="ui.playersList">
           <PlayerCardUI
             :rank="index"
@@ -35,7 +34,7 @@
           />
         </div>
 
-        <!-- Current Player Position (if not in top 20) -->
+        <!-- Current Player -->
         <div v-if="currentPlayerPosition && currentPlayerPosition.rank > 20">
           <div :class="ui.separator"></div>
           <PlayerCardUI
@@ -43,7 +42,7 @@
             :pseudo="currentPlayerPosition.pseudo"
             :score="currentPlayerPosition.score"
             :time="currentPlayerPosition.time"
-            :is-current-user="true"
+            is-current-user
           />
         </div>
 
@@ -58,7 +57,7 @@
             :class="ui.emptyIcon"
             name="lucide:trophy"
           />
-          <span :class="ui.emptyText">No scores yet for this period</span>
+          <span :class="ui.emptyText">No {{ activeTab }} scores yet</span>
         </div>
       </div>
     </div>
@@ -66,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { TabBarUI } from "./ui";
 import type { Tab } from "./ui/TabBar.UI.vue";
 import type {
@@ -93,7 +92,11 @@ const tabs: Tab[] = [
 ];
 
 const ui = {
-  wrapper: "flex flex-col gap-4",
+  mainWrapper: "flex flex-col sm:gap-4 grow gap-2",
+  contentWrapper: "flex flex-col flex-1 gap-4 overflow-visible pb-8 px-10",
+
+  tabWrapper: "p-3 sm:px-4 sticky top-0 bg-transparent backdrop-blur-sm",
+
   loadingWrapper: "flex flex-col items-center justify-center h-full gap-3",
   loadingIcon: "text-dTheme-accent",
   loadingIconSize: "24",
@@ -102,23 +105,36 @@ const ui = {
   playersList: "flex flex-col gap-1 sm:gap-2 mb-4",
 
   separator: "h-px bg-dTheme-light/30 mb-3",
-  emptyWrapper: "flex flex-col items-center justify-center h-full gap-3",
+  emptyWrapper: "flex flex-col items-center justify-center gap-3",
   emptyIcon: "text-dTheme-light/90",
   emptyIconSize: "48",
   emptyText: "text-dTheme-light/60 text-sm",
+
+  emptyStateClass: "flex flex-col grow items-center justify-center",
 };
 
-watch(activeTab, async () => {
-  const data = await fetchLeaderboard(activeTab.value);
-
-  if (!data) {
-    leaderboardData.value = [];
-    currentPlayerPosition.value = null;
-  } else {
-    currentPlayerPosition.value = data.currentPlayer ?? null;
-    leaderboardData.value = data.players;
-  }
+const isEmptyState = computed(() => {
+  return isLoading.value || leaderboardData.value.length === 0;
 });
+
+watch(
+  activeTab,
+  async () => {
+    isLoading.value = true;
+    const data = await fetchLeaderboard(activeTab.value);
+
+    if (!data) {
+      leaderboardData.value = [];
+      currentPlayerPosition.value = null;
+    } else {
+      currentPlayerPosition.value = data.currentPlayer ?? null;
+      leaderboardData.value = data.players;
+    }
+
+    isLoading.value = false;
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang=""></style>
