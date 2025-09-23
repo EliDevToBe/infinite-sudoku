@@ -126,7 +126,7 @@
 
       <LazyActionModal
         title=" Leaderboard"
-        description="Check the leaderboard"
+        description="🧠 See who's crushing it!"
         v-model:show="showLeaderboardModal"
         close
         :class="ui.leaderboardModal"
