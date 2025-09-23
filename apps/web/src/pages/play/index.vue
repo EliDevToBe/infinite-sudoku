@@ -93,7 +93,7 @@
           @on-click-login="showLoginModal"
         />
 
-        <div v-else :class="ui.fromWrapper">
+        <div v-else :class="uiComputed.fromWrapper">
           <LoginRegisterForm
             ref="LoginRegisterFormRef"
             v-model:form="form"
@@ -128,8 +128,8 @@
         title=" Leaderboard"
         description="Check the leaderboard"
         v-model:show="showLeaderboardModal"
-        :close="true"
-        class="sm:w-full sm:max-h-150 max-h-125"
+        close
+        :class="ui.leaderboardModal"
       >
         <LeaderBoardModalBody />
       </LazyActionModal>
@@ -174,12 +174,7 @@ const {
   getSudokuSave,
   updateSudokuSave,
 } = useState();
-const {
-  hardSave,
-  loadHardSave,
-  checkAndDeleteHardSave,
-  checkHardSavesToLocal,
-} = useSave();
+const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 const {
@@ -215,12 +210,16 @@ const loginRegisterFormRef = useTemplateRef<
   InstanceType<typeof LoginRegisterForm>
 >("LoginRegisterFormRef");
 
-const ui = computed(() => ({
+const uiComputed = computed(() => ({
   fromWrapper: [
     "flex place-self-center max-sm:w-45 sm:w-full",
     isRegisterMode.value ? "h-75" : "h-45",
   ],
 }));
+
+const ui = {
+  leaderboardModal: "sm:w-full sm:h-150 h-125",
+};
 
 const form = ref({
   email: "",
