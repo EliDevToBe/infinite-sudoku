@@ -74,6 +74,9 @@ export const LeaderboardController = () => {
         _avg: {
           time: true,
         },
+        _count: {
+          grid_id: true,
+        },
         orderBy: {
           _sum: {
             score: "desc",
@@ -157,6 +160,9 @@ export const LeaderboardController = () => {
           _avg: {
             time: true,
           },
+          _count: {
+            grid_id: true,
+          },
           orderBy: {
             _sum: {
               score: "desc",
@@ -205,6 +211,7 @@ export const LeaderboardController = () => {
           if (currentUserGrid && currentUserGrid[0]._sum.score !== null) {
             const actualScore = currentUserGrid[0]._sum.score;
             const actualTime = currentUserGrid[0]._avg.time ?? 0;
+            const actualPuzzleCount = currentUserGrid[0]._count.grid_id;
 
             // Count users with higher aggregated scores
             const usersWithHigherScores = await prisma.user_grid.groupBy({
@@ -238,6 +245,7 @@ export const LeaderboardController = () => {
               pseudo: currentUserInfo.pseudo,
               score: actualScore,
               time: actualTime,
+              puzzleCount: actualPuzzleCount,
             };
           }
         }
@@ -250,7 +258,8 @@ export const LeaderboardController = () => {
           rank: index + 1,
           pseudo: val.user?.pseudo,
           score: val._sum.score || 0,
-          time: val._avg.time || 0,
+          time: val._avg.time,
+          puzzleCount: val._count.grid_id,
           isCurrentUser: val.user_id === authUserId,
         };
       });

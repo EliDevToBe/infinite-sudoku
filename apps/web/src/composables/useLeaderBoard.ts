@@ -5,6 +5,7 @@ export type LeaderboardPlayer = {
   pseudo: string;
   score: number;
   time: number;
+  puzzleCount: number;
   isCurrentUser: boolean;
 };
 
@@ -13,6 +14,7 @@ export type CurrentPlayerPosition = {
   pseudo: string;
   score: number;
   time: number;
+  puzzleCount: number;
 };
 
 export const useLeaderBoard = () => {
@@ -54,6 +56,7 @@ export const useLeaderBoard = () => {
         pseudo: isCurrentUser ? "YOU" : `Player${i + 1}`,
         score: Math.floor(Math.random() * 5000) + 1000,
         time: Math.floor(Math.random() * 300000) + 60000, // 1-5 minutes
+        puzzleCount: Math.floor(Math.random() * 10) + 1,
         isCurrentUser,
       });
     }
@@ -67,6 +70,7 @@ export const useLeaderBoard = () => {
       pseudo: "YOU",
       score: Math.floor(Math.random() * 2000) + 500,
       time: Math.floor(Math.random() * 600000) + 120000, // 2-10 minutes
+      puzzleCount: Math.floor(Math.random() * 10) + 1,
     };
 
     // Simulate request/response latency

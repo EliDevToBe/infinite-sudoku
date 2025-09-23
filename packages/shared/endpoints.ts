@@ -122,6 +122,7 @@ export type EndpointResponse = {
       pseudo: string;
       score: number;
       time: number;
+      puzzleCount: number;
       isCurrentUser: boolean;
     }>;
     currentPlayer?: {
@@ -129,6 +130,7 @@ export type EndpointResponse = {
       pseudo: string;
       score: number;
       time: number;
+      puzzleCount: number;
     };
   };
 };
