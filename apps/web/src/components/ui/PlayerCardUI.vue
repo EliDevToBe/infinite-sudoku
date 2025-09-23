@@ -29,29 +29,35 @@
       </div>
       <div :class="ui.score">
         {{ formatScore(score) }}
+        <span :class="ui.scorePts">pts</span>
       </div>
     </div>
 
-    <!-- Total puzzle count -->
-    <div :class="ui.statWrapper">
-      <VueIcon
-        :width="ui.statIconSize"
-        :height="ui.statIconSize"
-        :class="ui.statIcon"
-        name="lucide:puzzle"
-      />
-      <span :class="ui.statText">{{ 8 }}</span>
-    </div>
+    <!-- Stats -->
+    <div :class="ui.statsBlock">
+      <TooltipUI text="Puzzles solved" :options="{ side: 'top' }">
+        <div :class="ui.statWrapper">
+          <VueIcon
+            :width="ui.statIconSize"
+            :height="ui.statIconSize"
+            :class="ui.statIcon"
+            name="lucide:puzzle"
+          />
+          <span :class="ui.statText">{{ puzzleCount }}</span>
+        </div>
+      </TooltipUI>
 
-    <!-- Average Time -->
-    <div :class="ui.statWrapper">
-      <VueIcon
-        :width="ui.statIconSize"
-        :height="ui.statIconSize"
-        :class="ui.statIcon"
-        name="lucide:clock"
-      />
-      <span :class="ui.statText">{{ formatTime(time) }}</span>
+      <TooltipUI text="Average time" :options="{ side: 'top' }">
+        <div :class="ui.statWrapper">
+          <VueIcon
+            :width="ui.statIconSize"
+            :height="ui.statIconSize"
+            :class="ui.statIcon"
+            name="lucide:clock"
+          />
+          <span :class="ui.statText">{{ formatTime(time) }}</span>
+        </div>
+      </TooltipUI>
     </div>
   </div>
 </template>
@@ -66,12 +72,13 @@ const props = defineProps<{
   score: number;
   time: number;
   rank: number;
+  puzzleCount: number;
   isCurrentUser?: boolean;
 }>();
 
 const ui = {
   card: [
-    "grid grid-cols-[0.5fr_2fr_1fr_1fr] items-center gap-3 rounded-lg",
+    "grid grid-cols-[0.5fr_2fr_1fr] items-center gap-3 rounded-lg",
     "sm:p-1 p-0.5 px-2",
     "bg-dTheme-light/10 hover:bg-dTheme-light/20",
     "transition-colors duration-200",
@@ -84,11 +91,14 @@ const ui = {
   currentUserIconSize: "20",
 
   score:
-    "text-amber-400 font-bold text-lg line-height-none sm:line-height-normal text-right",
-  statWrapper: "flex items-center justify-center gap-1",
-  statIcon: "text-dTheme-font/60",
+    "text-amber-400 font-bold text-lg line-height-none sm:line-height-normal text-right pr-6 ",
+  scorePts: "text-dTheme-light/80 text-xs sm:text-sm",
+
+  statsBlock: "flex max-sm:flex-col gap-1 justify-between sm:pr-2",
+  statWrapper: "flex items-center max-sm:pl-2 gap-2 sm:gap-1",
+  statIcon: "text-dTheme-light",
   statIconSize: "14",
-  statText: "text-dTheme-font/80 text-xs sm:text-sm",
+  statText: "text-dTheme-light text-xs sm:text-sm",
 
   medalIcon: "text-amber-400",
   medalIconSize: "20",
