@@ -8,6 +8,7 @@ export const useApi = () => {
   const buildFetchOptions = (
     endpoint: ApiEndpoint,
     token: string | null,
+    signal?: AbortSignal,
   ): RequestInit => {
     const { method } = endpoint;
     const body = "body" in endpoint ? endpoint.body : undefined;
@@ -22,6 +23,7 @@ export const useApi = () => {
       method,
       credentials: "include",
       headers,
+      signal,
     };
 
     if (body && method !== "GET") {
@@ -62,8 +64,11 @@ export const useApi = () => {
 
     const url = buildUrl(payload, apiUrl);
 
+    const signal =
+      "signal" in payload ? (payload.signal as AbortSignal) : undefined;
+
     const makeRequest = async (token: string | null) => {
-      const options = buildFetchOptions(payload, token);
+      const options = buildFetchOptions(payload, token, signal);
       return fetch(url, options);
     };
 
