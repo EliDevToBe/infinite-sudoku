@@ -75,7 +75,7 @@
             leave-to-class="opacity-0 transform -translate-y-2 scale-95"
           >
             <LoginRegisterForm
-              class="absolute max-sm:w-45 sm:w-90"
+              class="absolute"
               ref="LoginRegisterFormRef"
               v-if="showForm"
               v-model:form="form"
@@ -132,12 +132,12 @@ const loginRegisterFormRef = useTemplateRef<
 // Handles animations
 watch(showForm, () => {
   if (showForm.value) {
-    verticalAnimation.value.push("max-sm:translate-y-58 translate-y-66");
+    verticalAnimation.value.push("max-sm:translate-y-61 translate-y-70");
 
     isFormAppearing.value = true;
     setTimeout(() => {
-      lateralRightAnimation.value.push("translate-x-30 max-sm:translate-x-10");
-      lateralLeftAnimation.value.push("translate-x--32 max-sm:translate-x--13");
+      lateralRightAnimation.value.push("translate-x-31 max-sm:translate-x-12");
+      lateralLeftAnimation.value.push("translate-x--33 max-sm:translate-x--15");
 
       setTimeout(() => {
         isMenuOpen.value = true;
