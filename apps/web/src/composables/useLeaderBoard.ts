@@ -1,3 +1,4 @@
+import { throwFrontError } from "@/utils/error";
 import { useApi } from "./useApi";
 
 export type LeaderboardPlayer = {
@@ -17,31 +18,28 @@ export type CurrentPlayerPosition = {
   puzzleCount: number;
 };
 
+export type TabType = "daily" | "weekly" | "monthly";
+
 export const useLeaderBoard = () => {
   const { fetchApi } = useApi();
 
-  const fetchLeaderboard = async (period: "daily" | "weekly" | "monthly") => {
-    try {
-      const { data, error } = await fetchApi({
-        path: "/leaderboard/:period",
-        method: "GET",
-        params: { period },
-      });
+  const fetchLeaderboard = async (period: TabType, signal?: AbortSignal) => {
+    const { data, error } = await fetchApi({
+      path: "/leaderboard/:period",
+      method: "GET",
+      params: { period },
+      signal,
+    });
 
-      if (error) {
-        throw new Error("Failed to fetch leaderboard data");
-      }
-
-      return data;
-    } catch (error) {
-      console.error(error);
+    if (error) {
+      throwFrontError(error.message, { period, error });
     }
+
+    return data;
   };
 
   // Mock data generator
-  const generateMockLeaderboard = async (
-    period: "daily" | "weekly" | "monthly",
-  ) => {
+  const generateMockLeaderboard = async (period: TabType) => {
     const players: LeaderboardPlayer[] = [];
     const currentUserId = "YOU-id";
 

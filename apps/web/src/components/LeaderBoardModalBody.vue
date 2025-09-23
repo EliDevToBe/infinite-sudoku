@@ -67,21 +67,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onUnmounted } from "vue";
 import { TabBarUI } from "./ui";
 import type { Tab } from "./ui/TabBar.UI.vue";
 import type {
   LeaderboardPlayer,
   CurrentPlayerPosition,
+  TabType,
 } from "@/composables/useLeaderBoard";
-import { useLeaderBoard } from "@/composables";
+import { useLeaderBoard, usePresetToast } from "@/composables";
 
 const { fetchLeaderboard } = useLeaderBoard();
+const { toastError } = usePresetToast();
 
-const activeTab = ref<"daily" | "weekly" | "monthly">("daily");
+const activeTab = ref<TabType>("daily");
 const isLoading = ref(false);
 const leaderboardData = ref<LeaderboardPlayer[]>([]);
 const currentPlayerPosition = ref<CurrentPlayerPosition | null>(null);
+
+let abortController: AbortController | null = null;
 
 const tabs: Tab[] = [
   { value: "daily", label: "Daily", icon: "lucide:calendar" },
@@ -123,21 +127,43 @@ const isEmptyState = computed(() => {
 watch(
   activeTab,
   async () => {
-    isLoading.value = true;
-    const data = await fetchLeaderboard(activeTab.value);
+    abortController && abortController.abort();
+    abortController = new AbortController();
 
-    if (!data) {
-      leaderboardData.value = [];
-      currentPlayerPosition.value = null;
-    } else {
-      currentPlayerPosition.value = data.currentPlayer ?? null;
-      leaderboardData.value = data.players;
+    try {
+      isLoading.value = true;
+      const data = await fetchLeaderboard(
+        activeTab.value,
+        abortController.signal
+      );
+
+      // If request is aborted, early return
+      if (abortController.signal.aborted) return;
+
+      if (!data) {
+        leaderboardData.value = [];
+        currentPlayerPosition.value = null;
+      } else {
+        currentPlayerPosition.value = data.currentPlayer ?? null;
+        leaderboardData.value = data.players;
+      }
+    } catch (error) {
+      if (!abortController.signal.aborted) {
+        toastError(error, {
+          description: "An error occurred accessing the leaderboard",
+        });
+      }
     }
 
     isLoading.value = false;
   },
   { immediate: true }
 );
+
+// Cleanup
+onUnmounted(() => {
+  abortController && abortController.abort();
+});
 </script>
 
 <style scoped lang=""></style>
