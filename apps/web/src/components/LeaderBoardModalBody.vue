@@ -24,6 +24,7 @@
         <!-- Top Players -->
         <div :class="ui.playersList">
           <PlayerCardUI
+            :puzzle-count="player.puzzleCount"
             :rank="index"
             v-for="(player, index) in leaderboardData"
             :key="player.id"
@@ -38,6 +39,7 @@
         <div v-if="currentPlayerPosition && currentPlayerPosition.rank > 20">
           <div :class="ui.separator"></div>
           <PlayerCardUI
+            :puzzle-count="999"
             :rank="currentPlayerPosition.rank"
             :pseudo="currentPlayerPosition.pseudo"
             :score="currentPlayerPosition.score"
@@ -93,7 +95,8 @@ const tabs: Tab[] = [
 
 const ui = {
   mainWrapper: "flex flex-col sm:gap-4 grow gap-2",
-  contentWrapper: "flex flex-col flex-1 gap-4 overflow-visible pb-8 px-10",
+  contentWrapper:
+    "flex flex-col flex-1 gap-4 overflow-visible pb-8 px-6 sm:px-10",
 
   tabWrapper: "p-3 sm:px-4 sticky top-0 bg-transparent backdrop-blur-sm",
 
