@@ -31,6 +31,9 @@ export default defineConfig({
               },
             },
           },
+          slots: {
+            body: "p-0 sm:p-0",
+          },
         },
         tooltip: {
           slots: {

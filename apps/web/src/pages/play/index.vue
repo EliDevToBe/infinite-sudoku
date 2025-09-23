@@ -54,13 +54,15 @@
           @on-secondary-action="showNewSudokuModal = false"
           secondary-action-label="Cancel"
         >
-          <div class="flex flex-col gap-2">
-            <span class="inline-block">
-              The new sudoku will <span class="text-red-500">erase</span> your
-              current progress.
-            </span>
-            <span class="inline-block">Continue ?</span>
-          </div>
+          <ModalBodyWrapperUI>
+            <div class="flex flex-col gap-2">
+              <span class="inline-block">
+                The new sudoku will <span class="text-red-500">erase</span> your
+                current progress.
+              </span>
+              <span class="inline-block">Continue ?</span>
+            </div>
+          </ModalBodyWrapperUI>
         </LazyActionModal>
 
         <NumberBar @on-select="setNumber"></NumberBar>
@@ -91,7 +93,7 @@
           @on-click-login="showLoginModal"
         />
 
-        <div v-else :class="ui.fromWrapper">
+        <div v-else :class="uiComputed.fromWrapper">
           <LoginRegisterForm
             ref="LoginRegisterFormRef"
             v-model:form="form"
@@ -121,6 +123,16 @@
           :current-difficulty="currentDifficulty"
         />
       </LazyActionModal>
+
+      <LazyActionModal
+        title=" Leaderboard"
+        description="🧠 See who's crushing it!"
+        v-model:show="showLeaderboardModal"
+        close
+        :class="ui.leaderboardModal"
+      >
+        <LeaderBoardModalBody />
+      </LazyActionModal>
     </MainContent>
   </MainWrapper>
 </template>
@@ -140,7 +152,6 @@ import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import {
   useSudoku,
   usePresetToast,
-  useScore,
   useMoveStack,
   useState,
   useAuth,
@@ -163,12 +174,7 @@ const {
   getSudokuSave,
   updateSudokuSave,
 } = useState();
-const {
-  hardSave,
-  loadHardSave,
-  checkAndDeleteHardSave,
-  checkHardSavesToLocal,
-} = useSave();
+const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
 const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 const {
@@ -181,13 +187,15 @@ const {
   pauseTimer,
 } = useTimer();
 
-const isLoading = ref(false);
-const isPuzzleFetched = ref(false);
 const showPreventDifficultyModal = ref(false);
 const showUnauthenticatedModal = ref(false);
 const showFeatureModalBody = ref(true);
 const showNewSudokuModal = ref(false);
 const showVictoryModal = ref(false);
+const showLeaderboardModal = ref(false);
+
+const isLoading = ref(false);
+const isPuzzleFetched = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
@@ -202,12 +210,16 @@ const loginRegisterFormRef = useTemplateRef<
   InstanceType<typeof LoginRegisterForm>
 >("LoginRegisterFormRef");
 
-const ui = computed(() => ({
+const uiComputed = computed(() => ({
   fromWrapper: [
     "flex place-self-center max-sm:w-45 sm:w-full",
     isRegisterMode.value ? "h-75" : "h-45",
   ],
 }));
+
+const ui = {
+  leaderboardModal: "sm:w-full sm:h-150 h-125",
+};
 
 const form = ref({
   email: "",
@@ -324,7 +336,7 @@ const handleDifficultySwitch = async () => {
 };
 const handleDifficultySwitchDebounced = useDebounceFn(
   handleDifficultySwitch,
-  400
+  300
 );
 
 /**
@@ -452,11 +464,7 @@ const handleLeaderboard = async () => {
     return;
   }
 
-  console.log("SHOW LEADERBOARD");
-  if (!currentUser.value) return;
-
-  const test = await loadHardSave(currentUser.value.id);
-  console.log(test);
+  showLeaderboardModal.value = true;
 };
 
 const handleSave = async () => {

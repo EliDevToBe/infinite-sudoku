@@ -41,10 +41,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
 
 type Props = {
-  value: DifficultyOptions;
+  value: string;
   radioGroup: string;
   label: string;
 };
@@ -53,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {});
 const model = defineModel<string>();
 
 const ui = {
-  base: "flex grow box-border p-0.5 sm:p-1 justify-center cursor-pointer gap-1",
+  base: "flex grow box-border p-0.5 sm:p-1 justify-center items-center cursor-pointer gap-2",
   active: "bg-dTheme-surface rounded-md",
 };
 

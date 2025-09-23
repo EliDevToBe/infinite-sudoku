@@ -31,6 +31,14 @@ export const usePresetToast = () => {
     });
   };
 
+  /**
+   * Toast error with custom error logging.
+   * - Add errored toast
+   * - Log appropriately the error (custom or unknown)
+   *
+   * @param error - The error to toast
+   * @param params - The parameters to toast
+   */
   const toastError = (
     error: unknown,
     params: { description: string; title?: string },
@@ -53,6 +61,14 @@ export const usePresetToast = () => {
   return {
     toastInfo,
     toastSuccess,
+
+    /**
+     * Toast error with custom error logging.
+     * - Add errored toast
+     * - Log appropriately the error (custom or unknown)
+     *
+     * @param error - The error to toast
+     */
     toastError,
   };
 };

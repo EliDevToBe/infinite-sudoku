@@ -1,44 +1,46 @@
 <template>
-  <div :class="ui.wrapper">
-    <ul :class="ui.listWrapper">
-      <li :class="ui.list">
-        <VueIcon
-          :width="ui.iconSize"
-          :height="ui.iconSize"
-          :class="ui.icon"
-          name="lucide:crown"
-        ></VueIcon>
-        <span>
-          {{ isAuthenticated ? "Score: " : "Potential score: " }}
-          <span :class="ui.goldenText">{{ score }}</span>
+  <ModalBodyWrapperUI>
+    <div :class="ui.wrapper">
+      <ul :class="ui.listWrapper">
+        <li :class="ui.list">
+          <VueIcon
+            :width="ui.iconSize"
+            :height="ui.iconSize"
+            :class="ui.icon"
+            name="lucide:crown"
+          ></VueIcon>
+          <span>
+            {{ isAuthenticated ? "Score: " : "Potential score: " }}
+            <span :class="ui.goldenText">{{ score }}</span>
+          </span>
+        </li>
+        <li :class="ui.list">
+          <VueIcon
+            :width="ui.iconSize"
+            :height="ui.iconSize"
+            :class="ui.icon"
+            name="lucide:clock"
+          ></VueIcon>
+          <span>
+            Finished in: <span :class="ui.goldenText">{{ display }}</span>
+          </span>
+        </li>
+      </ul>
+      <div
+        v-if="!isAuthenticated"
+        role="link"
+        @click="emit('onClickLogin')"
+        :class="ui.nonAuthWrapper"
+      >
+        <span>Tips: </span>
+        <span :class="ui.loginText">
+          You could've
+          <span class="text-green-400">saved</span>
+          this score while logged in !
         </span>
-      </li>
-      <li :class="ui.list">
-        <VueIcon
-          :width="ui.iconSize"
-          :height="ui.iconSize"
-          :class="ui.icon"
-          name="lucide:clock"
-        ></VueIcon>
-        <span>
-          Finished in: <span :class="ui.goldenText">{{ display }}</span>
-        </span>
-      </li>
-    </ul>
-    <div
-      v-if="!isAuthenticated"
-      role="link"
-      @click="emit('onClickLogin')"
-      :class="ui.nonAuthWrapper"
-    >
-      <span>Tips: </span>
-      <span :class="ui.loginText">
-        You could've
-        <span class="text-green-400">saved</span>
-        this score while logged in !
-      </span>
+      </div>
     </div>
-  </div>
+  </ModalBodyWrapperUI>
 </template>
 
 <script setup lang="ts">

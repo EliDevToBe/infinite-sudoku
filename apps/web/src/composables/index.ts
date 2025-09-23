@@ -2,6 +2,7 @@ import { usePresetToast } from "./toast";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
 import { useForm } from "./useForm";
+import { useLeaderBoard } from "./useLeaderBoard";
 import { Logger } from "./useLogger";
 import { useMoveStack } from "./useMoveStack";
 import { useNavigation } from "./useNavigation";
@@ -28,4 +29,5 @@ export {
   useSave,
   useScore,
   useTimer,
+  useLeaderBoard,
 };
