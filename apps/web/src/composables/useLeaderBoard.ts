@@ -31,8 +31,13 @@ export const useLeaderBoard = () => {
       signal,
     });
 
+    if (error && error.name === "AbortError") {
+      throw error;
+    }
+
     if (error) {
       throwFrontError(error.message, { period, error });
+      return;
     }
 
     return data;

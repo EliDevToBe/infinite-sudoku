@@ -148,9 +148,14 @@ watch(
         leaderboardData.value = data.players;
       }
     } catch (error) {
+      // Nothing special if request is aborted on purpose
+      if (error instanceof Error && error.name === "AbortError") {
+        return;
+      }
+
       if (!abortController.signal.aborted) {
         toastError(error, {
-          description: "An error occurred accessing the leaderboard",
+          description: "An error occurred accessing the leaderboard YOLO",
         });
       }
     }
