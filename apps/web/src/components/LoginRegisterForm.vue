@@ -1,132 +1,134 @@
 <template>
-  <ModalBodyWrapperUI>
-    <form :class="ui.formWrapper">
-      <div :class="ui.formContent">
-        <Transition
-          enter-active-class="transition-all duration-600 ease-out"
-          enter-from-class="opacity-0 transform translate-y-3 translate-x-2 scale-95"
-          enter-to-class="opacity-100 transform translate-y-0 scale-100"
-        >
-          <FormField
-            v-if="modeRegister"
-            name="pseudo"
-            type="text"
-            placeholder="Pseudo"
-            :size="inputSize"
-            label="Pseudo"
-            v-model="form.pseudo"
-            :hasError="fieldsError.pseudo"
-            @input="validatePseudo(form.pseudo)"
-            :disabled="isFormLocked"
-            required
-            :horizontal="isHorizontal"
-          />
-        </Transition>
-
-        <FormField
-          name="email"
-          type="email"
-          placeholder="Email"
-          :size="inputSize"
-          label="Email"
-          v-model="form.email"
-          :hasError="fieldsError.email"
-          :required="modeRegister"
-          @input="validateEmailInput"
-          :disabled="isFormLocked"
-          :horizontal="isHorizontal"
-        />
-
-        <div class="flex flex-col gap-2 sm:gap-3 w-full max-sm:items-center">
-          <div>
+  <div class="w-58 sm:w-100">
+    <ModalBodyWrapperUI>
+      <form :class="ui.formWrapper">
+        <div :class="ui.formContent">
+          <Transition
+            enter-active-class="transition-all duration-600 ease-out"
+            enter-from-class="opacity-0 transform translate-y-3 translate-x-2 scale-95"
+            enter-to-class="opacity-100 transform translate-y-0 scale-100"
+          >
             <FormField
-              name="password"
-              type="password"
-              placeholder="Password"
+              v-if="modeRegister"
+              name="pseudo"
+              type="text"
+              placeholder="Pseudo"
               :size="inputSize"
-              label="Password"
-              v-model="form.password"
-              :hasError="fieldsError.password"
-              @input="validatePasswordInput"
+              label="Pseudo"
+              v-model="form.pseudo"
+              :hasError="fieldsError.pseudo"
+              @input="validatePseudo(form.pseudo)"
               :disabled="isFormLocked"
-              :required="modeRegister"
+              required
               :horizontal="isHorizontal"
             />
+          </Transition>
+
+          <FormField
+            name="email"
+            type="email"
+            placeholder="Email"
+            :size="inputSize"
+            label="Email"
+            v-model="form.email"
+            :hasError="fieldsError.email"
+            :required="modeRegister"
+            @input="validateEmailInput"
+            :disabled="isFormLocked"
+            :horizontal="isHorizontal"
+          />
+
+          <div class="flex flex-col gap-2 sm:gap-3 w-full max-sm:items-center">
+            <div>
+              <FormField
+                name="password"
+                type="password"
+                placeholder="Password"
+                :size="inputSize"
+                label="Password"
+                v-model="form.password"
+                :hasError="fieldsError.password"
+                @input="validatePasswordInput"
+                :disabled="isFormLocked"
+                :required="modeRegister"
+                :horizontal="isHorizontal"
+              />
+              <Transition
+                :appear="true"
+                enter-active-class="transition-all duration-1500 ease-out"
+                enter-from-class="opacity-25 transform -translate-y-4 scale-90"
+                enter-to-class="opacity-100 transform translate-y-0 scale-100"
+              >
+                <div
+                  v-if="!modeRegister"
+                  role="link"
+                  :class="[ui.forgotPasswordClass]"
+                  @click="
+                    console.warn('Forgotten password flow not yet implemented')
+                  "
+                >
+                  Forgot password?
+                </div>
+              </Transition>
+            </div>
+
             <Transition
-              :appear="true"
-              enter-active-class="transition-all duration-1500 ease-out"
-              enter-from-class="opacity-25 transform -translate-y-4 scale-90"
+              enter-active-class="transition-all duration-600 ease-out"
+              enter-from-class="opacity-50 transform -translate-y-3 translate-x-2 scale-95"
               enter-to-class="opacity-100 transform translate-y-0 scale-100"
             >
-              <div
-                v-if="!modeRegister"
-                role="link"
-                :class="[ui.forgotPasswordClass]"
-                @click="
-                  console.warn('Forgotten password flow not yet implemented')
-                "
-              >
-                Forgot password?
+              <div v-if="modeRegister">
+                <FormField
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm password"
+                  :size="inputSize"
+                  label="Confirm password"
+                  v-model="form.confirmPassword"
+                  :hasError="fieldsError.confirmPassword"
+                  @input="confirmPasswords(form.password, form.confirmPassword)"
+                  :disabled="isFormLocked"
+                  :horizontal="isHorizontal"
+                  required
+                />
+                <div :class="[ui.fontSize, 'text-lTheme-font']">
+                  <span class="text-lTheme-danger">*</span>Required
+                </div>
               </div>
             </Transition>
           </div>
 
-          <Transition
-            enter-active-class="transition-all duration-600 ease-out"
-            enter-from-class="opacity-50 transform -translate-y-3 translate-x-2 scale-95"
-            enter-to-class="opacity-100 transform translate-y-0 scale-100"
+          <div
+            v-if="!modeRegister && !hideRegisterLink"
+            role="link"
+            :class="[ui.fontSize, ui.linkClass]"
+            @click="modeRegister = true"
           >
-            <div v-if="modeRegister">
-              <FormField
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm password"
-                :size="inputSize"
-                label="Confirm password"
-                v-model="form.confirmPassword"
-                :hasError="fieldsError.confirmPassword"
-                @input="confirmPasswords(form.password, form.confirmPassword)"
-                :disabled="isFormLocked"
-                :horizontal="isHorizontal"
-                required
-              />
-              <div :class="[ui.fontSize, 'text-lTheme-font']">
-                <span class="text-lTheme-danger">*</span>Required
-              </div>
-            </div>
-          </Transition>
+            Don't have an account? Register
+          </div>
         </div>
 
-        <div
-          v-if="!modeRegister && !hideRegisterLink"
-          role="link"
-          :class="[ui.fontSize, ui.linkClass]"
-          @click="modeRegister = true"
-        >
-          Don't have an account? Register
+        <!-- ERRORS -->
+        <div class="flex flex-col">
+          <span
+            v-for="(error, index) in sortedErrors"
+            :key="error.field + error.type"
+            :style="{ opacity: (100 - 30 * index) / 100 }"
+            :class="ui.errorTextClass"
+            >{{ error.message }}</span
+          >
+
+          <span
+            v-if="errors.length > 2"
+            style="opacity: 40%"
+            :class="ui.errorTextClass"
+          >
+            {{ `+${errors.length - 1} more` }}</span
+          >
         </div>
-      </div>
-
-      <!-- ERRORS -->
-      <div class="flex flex-col">
-        <span
-          v-for="(error, index) in sortedErrors"
-          :key="error.field + error.type"
-          :style="{ opacity: (100 - 30 * index) / 100 }"
-          :class="ui.errorTextClass"
-          >{{ error.message }}</span
-        >
-
-        <span
-          v-if="errors.length > 2"
-          style="opacity: 40%"
-          :class="ui.errorTextClass"
-        >
-          {{ `+${errors.length - 1} more` }}</span
-        >
-      </div>
-    </form>
-  </ModalBodyWrapperUI>
+      </form>
+    </ModalBodyWrapperUI>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -212,7 +212,7 @@ const loginRegisterFormRef = useTemplateRef<
 
 const uiComputed = computed(() => ({
   fromWrapper: [
-    "flex place-self-center max-sm:w-45 sm:w-full",
+    "flex justify-center w-full",
     isRegisterMode.value ? "h-75" : "h-45",
   ],
 }));
