@@ -37,12 +37,16 @@ export const useLeaderBoard = () => {
   };
 
   // Mock data generator
-  const generateMockLeaderboard = () => {
+  const generateMockLeaderboard = async (
+    period: "daily" | "weekly" | "monthly",
+  ) => {
     const players: LeaderboardPlayer[] = [];
     const currentUserId = "YOU-id";
 
+    const limit = period === "daily" ? 2 : period === "weekly" ? 5 : 20;
+
     // Generate top 20 players
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < limit; i++) {
       const isCurrentUser = i === 5; // Simulate current user at position 6
 
       players.push({
@@ -64,6 +68,9 @@ export const useLeaderBoard = () => {
       score: Math.floor(Math.random() * 2000) + 500,
       time: Math.floor(Math.random() * 600000) + 120000, // 2-10 minutes
     };
+
+    // Simulate request/response latency
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     return {
       players,
