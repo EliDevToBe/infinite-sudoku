@@ -15,7 +15,7 @@ export const bulkNewSudokuTask = task({
   id: "bulk-new-sudoku",
   maxDuration: 1800, // Stop executing after 1800 secs (30 mins) of compute
   run: async (payload: {
-    difficulty: DifficultyOptions;
+    difficulty: DifficultyOptions | number;
     priorityType: "pattern" | "gaussian";
     count: number;
   }) => {

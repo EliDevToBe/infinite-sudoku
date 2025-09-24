@@ -14,12 +14,20 @@ export const newSudokuTask = task({
   id: "new-sudoku",
   maxDuration: 1200, // Stop executing after 1200 secs (20 mins) of compute
   run: async (payload: {
-    difficulty: DifficultyOptions;
+    difficulty: DifficultyOptions | number;
     priorityType: "pattern" | "gaussian";
   }) => {
     try {
-      const range = getRangeFromDifficulty(payload.difficulty);
-      const difficulty = range[Math.floor(Math.random() * range.length)];
+      let difficulty: number;
+
+      if (typeof payload.difficulty === "string") {
+        const range = getRangeFromDifficulty(payload.difficulty);
+        difficulty = range[Math.floor(Math.random() * range.length)];
+      } else if (typeof payload.difficulty === "number") {
+        difficulty = payload.difficulty;
+      } else {
+        throw new Error("Invalid difficulty");
+      }
 
       const priorityAlgorithm =
         payload.priorityType === "pattern" ? patternPriority : gaussianPriority;
