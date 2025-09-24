@@ -567,6 +567,9 @@ export class SudokuV2 {
       return;
     }
 
+    // At any time, we must keep at least a cell with exactly one candidate, else puzzle is humanly not solvable
+    if (bestCellCandidates.length !== 1) return;
+
     const { row, col } = emptyCells[bestCellIndex];
     const nextEmptyCells = emptyCells.filter(
       (_, index) => index !== bestCellIndex,
