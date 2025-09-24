@@ -12,7 +12,7 @@ import {
 
 export const newSudokuTask = task({
   id: "new-sudoku",
-  maxDuration: 900, // Stop executing after 900 secs (15 mins) of compute
+  maxDuration: 1200, // Stop executing after 1200 secs (20 mins) of compute
   run: async (payload: {
     difficulty: DifficultyOptions;
     priorityType: "pattern" | "gaussian";
@@ -26,6 +26,7 @@ export const newSudokuTask = task({
 
       const generator = new SudokuV2(difficulty, priorityAlgorithm, {
         logging: false,
+        generatorTimeoutSeconds: 1200,
       });
       generator.generate();
 
