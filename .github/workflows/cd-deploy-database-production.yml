@@ -1,4 +1,4 @@
-name: Deploy database schema (production)
+name: CD - Deploy database schema (production)
 
 on:
   push:

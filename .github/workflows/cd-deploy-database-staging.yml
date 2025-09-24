@@ -1,4 +1,4 @@
-name: Deploy database schema (staging)
+name: CD - Deploy database schema (staging)
 
 on:
   pull_request:
