@@ -1,6 +1,6 @@
 <template>
   <div class="w-58 sm:w-100">
-    <ModalBodyWrapperUI>
+    <ModalBodyWrapperUI class="pb-2 sm:pb-4">
       <form :class="ui.formWrapper">
         <div :class="ui.formContent">
           <Transition
@@ -211,7 +211,9 @@ watch(modeRegister, () => {
 });
 
 const isHorizontal = computed(() => width.value > 640);
-const inputSize = computed(() => (width.value > 640 ? "md" : "sm"));
+const inputSize = computed<"md" | "sm">(() =>
+  width.value > 640 ? "md" : "md"
+);
 
 /**
  * Handles the password input
