@@ -425,7 +425,7 @@ const eraseCell = (event: { x: number; y: number }) => {
 
   startTimer();
 
-  setSelectedCell(null);
+  setSelectedCell(puzzle.value[event.y][event.x]);
 };
 
 const handleUndo = () => {
