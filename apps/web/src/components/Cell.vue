@@ -1,15 +1,15 @@
 <template>
-  <div :class="ui.cell">
+  <div :class="ui.cell" @click="modularSelectCell">
     <input
       :id="`cell-${currentCell.x}x-${currentCell.y}y`"
       :disabled="!currentCell.isEditable"
-      :class="inputClass"
+      :class="[inputClass, currentCell.isEditable ? '' : 'pointer-events-none']"
       type="text"
       :value="displayValue"
       @input="handleInput"
-      @focus="setSelectedCell(currentCell)"
+      @focus="modularSelectCell"
       @beforeinput="handleBeforeInput"
-      v-bind:class="{ 'bg-dTheme-accent/50': isSelected }"
+      v-bind:class="{ [backgroundSelectedClass]: isSelected }"
       autocomplete="off"
       inputmode="none"
     />
@@ -26,7 +26,7 @@ import { computed, ref } from "vue";
 import { useState, useTimer, useMoveStack } from "@/composables";
 import { throwFrontError } from "@/utils/error";
 
-const { setSelectedCell } = useState();
+const { setSelectedCell, getSelectedCell } = useState();
 const { pushMove } = useMoveStack();
 const { startTimer } = useTimer();
 
@@ -45,6 +45,12 @@ const inputValue = defineModel<number>({ required: true });
 
 const displayValue = computed(() => {
   return inputValue.value === 0 ? "" : inputValue.value;
+});
+
+const backgroundSelectedClass = computed(() => {
+  return props.currentCell.isEditable
+    ? "bg-dTheme-accent/50"
+    : "bg-dTheme-accent/40";
 });
 
 const ui = {
@@ -93,6 +99,7 @@ const handleInput = (event: Event) => {
     const newCell = { ...cellBeforeUpdate.value, value: 0 };
     if (newCell.value !== cellBeforeUpdate.value.value) {
       pushMove(cellBeforeUpdate.value, newCell);
+      setSelectedCell(newCell);
     }
 
     startTimer();
@@ -112,11 +119,22 @@ const handleInput = (event: Event) => {
   const newCell = { ...cellBeforeUpdate.value, value: Number(input) };
   if (newCell.value !== cellBeforeUpdate.value.value) {
     pushMove(cellBeforeUpdate.value, newCell);
+    setSelectedCell(newCell);
   }
 
   startTimer();
 
   inputElement.value = input;
   emit("update:cell", Number(input));
+};
+
+const modularSelectCell = () => {
+  const inMemoryCell = getSelectedCell();
+  if (
+    props.currentCell.x !== inMemoryCell?.x ||
+    props.currentCell.y !== inMemoryCell?.y
+  ) {
+    setSelectedCell(props.currentCell);
+  }
 };
 </script>
