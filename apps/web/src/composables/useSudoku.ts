@@ -43,6 +43,42 @@ export const useSudoku = () => {
     );
   };
 
+  const hintCell = (puzzle: Cell[][]) => {
+    const emptyCells = puzzle.flat().filter((cell) => cell.value === 0);
+    const possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const possibleCells = [];
+
+    for (const cell of emptyCells) {
+      const rowCells = puzzle[cell.y];
+      const colCells = puzzle.map((row) => row[cell.x]);
+
+      const boxRow = Math.floor(cell.y / 3) * 3;
+      const boxCol = Math.floor(cell.x / 3) * 3;
+      const boxCells = [];
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          boxCells.push(puzzle[boxRow + i][boxCol + j]);
+        }
+      }
+
+      const forbiddenValues = new Set(
+        [...rowCells, ...colCells, ...boxCells]
+          .filter((cell) => cell.value !== 0)
+          .map((cell) => cell.value),
+      );
+
+      const cellCandidates = possibleValues.filter(
+        (value) => !forbiddenValues.has(value),
+      );
+
+      if (cellCandidates.length === 1) {
+        possibleCells.push({ ...cell, value: cellCandidates[0] });
+      }
+    }
+
+    return possibleCells;
+  };
+
   const getRandomPuzzle = async (difficulty: DifficultyOptions) => {
     const { data, error } = await fetchApi({
       path: "/grid/difficulty/:difficulty",
@@ -97,5 +133,6 @@ export const useSudoku = () => {
     isPuzzleCompleted,
     isPuzzleSolved,
     insertVictory,
+    hintCell,
   };
 };
