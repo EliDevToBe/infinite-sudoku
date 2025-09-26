@@ -61,8 +61,7 @@ const ui = {
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
   ],
-  disabled:
-    "cursor-not-allowed bg-gray-400 text-gray-700 border box-border border-transparent",
+  disabled: "cursor-not-allowed bg-gray-400 text-gray-700",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
