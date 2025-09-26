@@ -1,19 +1,16 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div
-        class="mt-3 sm:mt-4 sm:grid sm:grid-cols-[1fr_auto_1fr] flex justify-center sm:h-13 h-11"
-      >
-        <div class="w-1 h-1"></div>
+      <div :class="ui.subHeaderWrapper">
+        <!-- Keep this to regulate the grid display -->
+        <div class="w-10 h-10 max-md:hidden"></div>
 
         <OptionBar
           v-model="currentDifficulty"
           @on-select="handleDifficultySwitchDebounced"
         />
 
-        <Menu
-          class="z-1 max-sm:fixed max-sm:top-150 max-md:fixed max-md:top-35 max-md:right-10 max-sm:right-1/2 max-sm:translate-x-1/2"
-        ></Menu>
+        <Menu :class="ui.menu"></Menu>
       </div>
     </template>
 
@@ -228,6 +225,16 @@ const uiComputed = computed(() => ({
 
 const ui = {
   leaderboardModal: "sm:w-full sm:h-150 h-125",
+  subHeaderWrapper: [
+    "flex justify-center",
+    "md:grid md:grid-cols-[1fr_auto_1fr]",
+    "mt-3 sm:mt-4 sm:h-13 h-11",
+  ],
+  menu: [
+    "z-1",
+    "max-sm:fixed max-sm:top-150 max-sm:right-1/2 max-sm:translate-x-1/2",
+    "max-md:fixed max-md:top-35 max-md:right-10",
+  ],
 };
 
 const form = ref({
