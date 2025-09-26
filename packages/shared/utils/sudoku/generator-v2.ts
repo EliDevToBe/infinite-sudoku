@@ -1,5 +1,3 @@
-// import { patternPriority } from "./priority-algorithm";
-
 export type SudokuGrid = number[][];
 export type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
 type Position = { row: number; col: number };
@@ -123,6 +121,7 @@ export class SudokuV2 {
   getStats() {
     const readableStats = {
       ...this.stats,
+      difficultyLevel: this.config.difficultyLevel,
 
       generatorCreatedAt: new Intl.DateTimeFormat("fr-FR", {
         hour: "2-digit",
@@ -162,10 +161,8 @@ export class SudokuV2 {
 
   private logProgress = (
     startTime: number,
-    _maxCells?: number,
-    _maxCellsRemovedAt?: number,
-    _attempts?: number,
-    _resets?: number,
+    attempts?: number,
+    resets?: number,
   ) => {
     const elapsedMs = Date.now() - startTime;
     const date = new Date(elapsedMs);
@@ -178,39 +175,31 @@ export class SudokuV2 {
       timeZone: "UTC",
     }).format(date);
 
-    // const formattedRemovedAt = new Intl.DateTimeFormat("fr-FR", {
-    //   hour: "2-digit",
-    //   minute: "2-digit",
-    //   second: "2-digit",
-    //   hour12: false,
-    //   timeZone: "UTC",
-    // }).format(new Date(maxCellsRemovedAt ?? 0));
-
     const ms = (elapsedMs - startTime).toString().slice(-3);
 
-    // if (this.config.logging) {
-    //   process.stdout.write("\x1b[1A\x1b[2K");
-    //   process.stdout.write("\x1b[1A\x1b[2K");
-    //   const hours = [
-    //     "🕛",
-    //     "🕐",
-    //     "🕑",
-    //     "🕒",
-    //     "🕓",
-    //     "🕔",
-    //     "🕕",
-    //     "🕖",
-    //     "🕗",
-    //     "🕘",
-    //     "🕙",
-    //     "🕚",
-    //   ];
-    //   console.info(
-    //     `${
-    //       hours[Number(formatted.split(":")[2]) % hours.length]
-    //     } Elapsed time: ${formatted}.${ms}ms - Max cells: ${maxCells} (${formattedRemovedAt}) - Attempts: ${attempts} - Resets: ${resets}`,
-    //   );
-    // }
+    if (this.config.logging) {
+      process.stdout.write("\x1b[1A\x1b[2K");
+      process.stdout.write("\x1b[1A\x1b[2K");
+      const hours = [
+        "🕛",
+        "🕐",
+        "🕑",
+        "🕒",
+        "🕓",
+        "🕔",
+        "🕕",
+        "🕖",
+        "🕗",
+        "🕘",
+        "🕙",
+        "🕚",
+      ];
+      console.info(
+        `${
+          hours[Number(formatted.split(":")[2]) % hours.length]
+        } Elapsed time: ${formatted}.${ms}ms - Attempts: ${attempts} - Resets: ${resets}`,
+      );
+    }
 
     return `${formatted}.${ms}ms`;
   };
@@ -319,13 +308,6 @@ export class SudokuV2 {
     ) {
       this.attemptTimeoutMs = Date.now();
 
-      // this.logProgress(
-      //   this.stats.generatorCreatedAt,
-      //   this.stats.counter.maxCellsRemoved,
-      //   this.stats.counter.removeNumAttempt,
-      //   this.stats.counter.hardReset
-      // );
-
       // Get a new list of positions, prioritized for removal.
       const positions = this.priorityAlgorithm();
       this.stats.counter.priorityAttempt++;
@@ -383,18 +365,15 @@ export class SudokuV2 {
       emptyCells,
     );
 
-    // if (this.config.logging) {
-    //   posIndex % 10 === 0
-    //     ? this.logProgress(
-    //         this.stats.generatorCreatedAt,
-    //         this.stats.counter.maxCellsRemoved,
-    //         this.stats.counter.maxCellsRemovedAt -
-    //           this.stats.generatorCreatedAt,
-    //         this.stats.counter.removeNumAttempt,
-    //         this.stats.counter.hardReset,
-    //       )
-    //     : null;
-    // }
+    if (this.config.logging) {
+      posIndex % 10 === 0
+        ? this.logProgress(
+            this.stats.generatorCreatedAt,
+            this.stats.counter.removeNumAttempt,
+            this.stats.counter.hardReset,
+          )
+        : null;
+    }
 
     if (emptyCells === targetEmpty) {
       this.stats.success = true;
@@ -601,18 +580,3 @@ export class SudokuV2 {
     }
   }
 }
-
-// const options = { logging: true, generatorTimeoutSeconds: 1200 };
-// const generator = new SudokuV2(61, patternPriority, options);
-// const config = generator.getConfig();
-
-// console.log("Starting generator with config:", config, "\n\n\n");
-// setTimeout(() => {
-//   generator.generate();
-
-//   const { data } = generator.getPuzzleAndSolution();
-//   const stats = generator.getStats();
-
-//   logDisplayBoard(data.puzzle);
-//   console.log(stats, config);
-// }, 1000);
