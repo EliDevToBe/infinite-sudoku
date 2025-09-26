@@ -36,3 +36,11 @@
   white-space: nowrap;
   border: 0;
 }
+
+.dTheme-gradientBackground {
+  background: linear-gradient(
+    to bottom,
+    rgba(50, 71, 83, 1) 0%,
+    rgba(32, 47, 55, 1) 100%
+  );
+}

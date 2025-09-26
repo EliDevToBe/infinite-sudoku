@@ -36,10 +36,12 @@ const props = withDefaults(
 );
 
 const ui = {
-  overlay:
-    "bg-[linear-gradient(to_bottom,rgba(50,71,83,0.6)_0%,rgba(32,47,55,0.6)_100%)] backdrop-blur-[4px]",
+  overlay: [
+    "bg-[linear-gradient(to_bottom,rgba(50,71,83,0.6)_0%,rgba(32,47,55,0.6)_100%)]",
+    "backdrop-blur-[4px]",
+  ],
   content: [
-    "bg-[linear-gradient(to_bottom,rgba(50,71,83,1)_0%,rgba(32,47,55,1)_100%)]  shadow-xs shadow-dTheme-accent",
+    "dTheme-gradientBackground  shadow-xs shadow-dTheme-accent",
     "border-t-1 border-t-dTheme-light",
     "border-l-1 border-l-dTheme-light/80 ",
     "border-r-1 border-r-dTheme-light/80",

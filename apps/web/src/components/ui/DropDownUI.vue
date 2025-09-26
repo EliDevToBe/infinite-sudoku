@@ -25,7 +25,8 @@ const props = defineProps<{
 
 const ui = {
   content: [
-    "bg-[linear-gradient(to_bottom,rgba(50,71,83,1)_0%,rgba(32,47,55,1)_100%)]  shadow-xs shadow-dTheme-accent",
+    "dTheme-gradientBackground",
+    "shadow-xs shadow-dTheme-accent",
     "border-t-1 border-t-dTheme-light",
     "border-l-1 border-l-dTheme-light/80 ",
     "border-r-1 border-r-dTheme-light/80",

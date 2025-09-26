@@ -35,7 +35,7 @@ const { width } = useWindowSize();
 const toastConfig: ToasterProps = {
   position: width.value < 768 ? "top-center" : "top-right",
   ui: {
-    base: "bg-[linear-gradient(to_bottom,rgba(50,71,83,1)_0%,rgba(32,47,55,1)_100%)]",
+    base: "dTheme-gradientBackground",
     viewport: "max-w-[300px] w-[75%]",
   },
   expand: false,
