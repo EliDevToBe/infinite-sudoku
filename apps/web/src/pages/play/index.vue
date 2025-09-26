@@ -8,6 +8,7 @@
         />
       </div>
     </template>
+
     <MainContent class="gap-3 relative">
       <Timer :difficulty="currentDifficulty" :grid="puzzle" />
       <SudokuGrid
