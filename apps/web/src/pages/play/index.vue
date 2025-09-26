@@ -10,7 +10,7 @@
           @on-select="handleDifficultySwitchDebounced"
         />
 
-        <Menu :class="ui.menu"></Menu>
+        <Menu :class="ui.menu" @on-select="handleMenuSelect"></Menu>
       </div>
     </template>
 
@@ -181,7 +181,7 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login } = useAuth();
+const { isAuthenticated, register, login, logout } = useAuth();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -622,6 +622,42 @@ const showLoginModal = () => {
   showFeatureModalBody.value = false;
   isRegisterMode.value = false;
   showUnauthenticatedModal.value = true;
+};
+
+const handleMenuSelect = (
+  select: "login" | "logout" | "account" | "settings"
+) => {
+  switch (select) {
+    case "login":
+      showLoginModal();
+      break;
+    case "logout":
+      logoutFlow();
+      break;
+  }
+};
+
+const logoutFlow = async () => {
+  try {
+    const success = await logout();
+    if (!success) {
+      throwFrontError("Failed to logout", {
+        user: currentUser.value?.id,
+      });
+      return;
+    }
+
+    toastInfo({
+      title: "Logout successful",
+      description: "See you soon !",
+    });
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  }
 };
 </script>
 

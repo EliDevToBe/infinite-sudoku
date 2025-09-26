@@ -6,7 +6,7 @@
         iconSize="25"
         :class="ui.button"
         variant="ghost"
-        leadingIcon="lucide:menu"
+        :leadingIcon="isAuthenticated ? 'lucide:user' : 'lucide:menu'"
       >
       </ButtonUI>
     </DropDownUI>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { computed } from "vue";
 import { DropDownUI } from "@/components/ui";
 import type { DropdownMenuItem } from "@nuxt/ui";
 import { useAuth } from "@/composables/useAuth";
@@ -34,26 +34,24 @@ const ui = {
   button: "text-dTheme-font sm:w-10! sm:h-10! w-8! h-8! border-none",
 };
 
+type Select = "login" | "logout" | "account" | "settings";
+
 const emit = defineEmits<{
-  onLogin: [];
-  onLogout: [];
-  onMyAccount: [];
-  onSettings: [];
+  onSelect: [Select];
 }>();
 
 const { isAuthenticated } = useAuth();
 
-const items = ref<DropdownMenuItem[]>([]);
+const items = computed<DropdownMenuItem[]>(() => {
+  const list: DropdownMenuItem[] = [];
 
-onMounted(() => {
   if (isAuthenticated.value) {
-    items.value.push(
+    list.push(
       /* WORK IN PROGRESS */
 
       // {
       //   label: "My Account",
       //   icon: "lucide:user",
-      //   value: "item1",
       //   onSelect: () => {
       //     emit("onMyAccount");
       //   },
@@ -61,7 +59,6 @@ onMounted(() => {
       // {
       //   label: "Settings",
       //   icon: "lucide:settings",
-      //   value: "item2",
       //   onSelect: () => {
       //     emit("onSettings");
       //   },
@@ -72,21 +69,22 @@ onMounted(() => {
       {
         label: "Logout",
         icon: "lucide:log-out",
-        value: "item3",
         onSelect: () => {
-          emit("onLogout");
+          emit("onSelect", "logout");
         },
       }
     );
   } else {
-    items.value.push({
+    list.push({
       label: "Login",
       icon: "lucide:log-in",
       onSelect: () => {
-        emit("onLogin");
+        emit("onSelect", "login");
       },
     });
   }
+
+  return list;
 });
 </script>
 
