@@ -15,7 +15,6 @@
       <FeatureArea
         :has-user-input="hasUserInput"
         :is-saving="isSaving"
-        class="mt-1 w-full"
         @on-leaderboard="handleLeaderboard"
         @on-save="handleSave"
       >

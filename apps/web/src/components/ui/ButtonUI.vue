@@ -66,7 +66,8 @@ const ui = {
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
   ],
-  disabled: "cursor-not-allowed bg-gray-400 text-gray-700",
+  disabled:
+    "cursor-not-allowed bg-gray-400 text-gray-700 border box-border border-transparent",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
@@ -120,7 +121,7 @@ const ui = {
     //   " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
     // ],
     ghost: [
-      "bg-transparent text-dTheme-font border-none border-dTheme-surfaceOther outline-none shadow-none",
+      "bg-transparent text-dTheme-font border-1 box-border border-dTheme-surfaceOther outline-none shadow-none",
       "sm:hover:bg-dTheme-light/10 sm:hover:border-dTheme-accent sm:hover:text-dTheme-font",
       "disabled:bg-transparent disabled:text-dTheme-light disabled:border-dTheme-light/50 disabled:cursor-not-allowed",
     ],

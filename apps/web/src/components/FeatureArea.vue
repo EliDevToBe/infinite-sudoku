@@ -45,18 +45,14 @@ import { useElementHover, useWindowSize, useFocus } from "@vueuse/core";
 import { LazyTooltipUI } from "@/components";
 
 const ui = {
-  wrapper: [
-    "flex items-end gap-2 md:gap-5 justify-center",
-    "w-full",
-    "p-1 px-0",
-  ],
+  wrapper: ["flex items-end gap-2 md:gap-5 justify-center", "w-full"],
   leftButton: [
     "max-sm:fixed max-sm:top-150 max-sm:left-[10%]",
-    "max-md:fixed max-md:top-159 max-md:left-[2%]",
+    "max-md:fixed max-md:top-[626px] max-md:left-[2%]",
   ],
   rightButton: [
     "max-sm:fixed max-sm:top-150 max-sm:right-[10%]",
-    "max-md:fixed max-md:top-159 max-md:right-[2%]",
+    "max-md:fixed max-md:top-[626px] max-md:right-[2%]",
   ],
 };
 
