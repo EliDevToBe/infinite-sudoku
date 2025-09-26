@@ -1,11 +1,13 @@
 <template>
   <button :class="buttonClass" :disabled="disabled || isLoading">
-    <VueIcon
-      v-if="leadingIcon"
-      :name="leadingIcon"
-      :width="iconSize"
-      :height="iconSize"
-    />
+    <div>
+      <VueIcon
+        v-if="leadingIcon"
+        :name="leadingIcon"
+        :width="iconSize"
+        :height="iconSize"
+      />
+    </div>
     <slot></slot>
     <Transition
       enter-active-class="transition-all duration-150 ease-in-out"

@@ -11,13 +11,22 @@
 
     <MainContent class="gap-3 relative">
       <Timer :difficulty="currentDifficulty" :grid="puzzle" />
-      <SudokuGrid
-        :is-initializing="!isPuzzleFetched"
-        v-model="puzzle"
-        :is-loading="isLoading"
-        :difficulty="currentDifficulty"
-        @on-puzzle-completed="showVictoryModal = true"
-      ></SudokuGrid>
+
+      <FeatureArea
+        :has-user-input="hasUserInput"
+        :is-saving="isSaving"
+        class="mt-1 w-full"
+        @on-leaderboard="handleLeaderboard"
+        @on-save="handleSave"
+      >
+        <SudokuGrid
+          :is-initializing="!isPuzzleFetched"
+          v-model="puzzle"
+          :is-loading="isLoading"
+          :difficulty="currentDifficulty"
+          @on-puzzle-completed="showVictoryModal = true"
+        ></SudokuGrid>
+      </FeatureArea>
 
       <LazyActionModal
         v-if="!isAuthenticated"
@@ -68,14 +77,6 @@
 
         <NumberBar @on-select="setNumber"></NumberBar>
       </div>
-
-      <FeatureArea
-        :has-user-input="hasUserInput"
-        :is-saving="isSaving"
-        class="mt-1"
-        @on-leaderboard="handleLeaderboard"
-        @on-save="handleSave"
-      ></FeatureArea>
 
       <LazyActionModal
         :title="actionModalProps.title"
