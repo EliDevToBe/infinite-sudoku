@@ -1,11 +1,19 @@
 <template>
   <MainWrapper>
     <template #sub-header>
-      <div class="mt-4 flex justify-center sm:h-13 h-11">
+      <div
+        class="mt-3 sm:mt-4 sm:grid sm:grid-cols-[1fr_auto_1fr] flex justify-center sm:h-13 h-11"
+      >
+        <div class="w-1 h-1"></div>
+
         <OptionBar
           v-model="currentDifficulty"
           @on-select="handleDifficultySwitchDebounced"
         />
+
+        <Menu
+          class="z-1 max-sm:fixed max-sm:top-150 max-md:fixed max-md:top-35 max-md:right-10 max-sm:right-1/2 max-sm:translate-x-1/2"
+        ></Menu>
       </div>
     </template>
 

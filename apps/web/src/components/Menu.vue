@@ -1,6 +1,6 @@
 <template>
   <div :class="ui.wrapper">
-    <DropDownUI v-model="items" :offset="10" side="top" align="center">
+    <DropDownUI v-model="items" :offset="10" side="bottom" align="center">
       <ButtonUI
         size="icon"
         iconSize="25"
@@ -31,7 +31,7 @@ const ui = {
     "border-r-1 sm:border-r-0.5 border-r-dTheme-light/80",
     "border-b-1 sm:border-b-0.5 border-b-dTheme-light/70",
   ],
-  button: "text-dTheme-font sm:w-10! sm:h-10! w-8! h-8!",
+  button: "text-dTheme-font sm:w-10! sm:h-10! w-8! h-8! border-none",
 };
 
 const emit = defineEmits<{

@@ -30,6 +30,7 @@
       >
         <label
           :class="{ 'cursor-not-allowed': isSaving || !hasUserInput }"
+          class="min-w-fit"
           for="save-button"
           >Save progress</label
         >
