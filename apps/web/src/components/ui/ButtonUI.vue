@@ -93,7 +93,7 @@ const ui = {
   },
   dark: {
     primary: [
-      "bg-dTheme-surfaceOther text-dTheme-font",
+      "bg-dTheme-surfaceOther text-dTheme-font border-transparent border",
       "active:bg-dTheme-surface active:text-dTheme-light",
       "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
