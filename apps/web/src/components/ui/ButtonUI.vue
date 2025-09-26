@@ -1,12 +1,7 @@
 <template>
   <button :class="buttonClass" :disabled="disabled || isLoading">
-    <div>
-      <VueIcon
-        v-if="leadingIcon"
-        :name="leadingIcon"
-        :width="iconSize"
-        :height="iconSize"
-      />
+    <div v-if="leadingIcon">
+      <VueIcon :name="leadingIcon" :width="iconSize" :height="iconSize" />
     </div>
     <slot></slot>
     <Transition
