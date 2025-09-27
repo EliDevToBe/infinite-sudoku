@@ -77,6 +77,7 @@
 
       <section class="flex justify-center">
         <SudokuGrid
+          difficulty="hardcore"
           :is-initializing="false"
           v-model="formattedPuzzle"
           :is-loading="false"
@@ -174,10 +175,10 @@
 import { useSudoku, useUser, usePresetToast } from "@/composables";
 import { ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
-import type { Cell } from "@/utils";
-import type { DifficultyOptions } from "@shared/utils/sudoku/helper";
+import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import { LazyTooltipUI } from "@/components";
 import { LazyActionModal } from "@/components";
+
 definePage({ meta: { requiresAuth: true, roles: ["admin"] } });
 
 const ui = {
