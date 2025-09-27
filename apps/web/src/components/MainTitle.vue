@@ -2,7 +2,7 @@
   <div :class="ui.wrapper">
     <div :class="[ui.titleLeft, ui.titleSize]" label="title">Infinite</div>
 
-    <div :class="ui.logo" label="logo" @click="navigateTo('/')" alt="logo">
+    <div :class="ui.logo" label="logo" @click="navigateTo('/play/')" alt="logo">
       <LogoUI class="absolute -translate-x-[43.5%] -top-2" />
     </div>
 

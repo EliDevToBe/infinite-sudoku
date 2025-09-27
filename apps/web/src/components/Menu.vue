@@ -54,11 +54,17 @@ const items = computed<DropdownMenuItem[]>(() => {
     if (isAdmin.value) {
       list.push(
         {
-          label: "Design",
-          icon: "lucide:palette",
-          onSelect: () => {
-            return navigateTo("/design/");
-          },
+          label: "Admin",
+          icon: "lucide:shield",
+          children: [
+            {
+              label: "Design",
+              icon: "lucide:palette",
+              onSelect: () => {
+                return navigateTo("/design/");
+              },
+            },
+          ],
         },
         {
           type: "separator",
