@@ -642,12 +642,16 @@ const resetPasswordFlow = async () => {
   }
 
   try {
-    resetPassword(email);
+    const success = await resetPassword(email);
+    if (!success) {
+      return;
+    }
 
     toastInfo({
       title: "Password reset email sent",
-      description: `An email has been sent if an account exists with this email`,
+      description: `An email has been sent`,
     });
+    closeLoginRegisterModal();
   } catch (error) {
     if (isFrontError(error)) {
       toastError(error, { description: error.message });
@@ -655,7 +659,6 @@ const resetPasswordFlow = async () => {
       toastError(error, { description: "An error occurred" });
     }
   } finally {
-    closeLoginRegisterModal();
     isButtonLoading.value = false;
   }
 };
@@ -680,12 +683,13 @@ const openRegisterModal = () => {
   showLoginRegisterModal.value = true;
 };
 const closeLoginRegisterModal = () => {
-  isRecoveryMode.value = false;
   showLoginRegisterModal.value = false;
 
   // Due to modal fade out animation
   // Delay the reset of the form to avoid seeing the form reset
   setTimeout(() => {
+    isRecoveryMode.value = false;
+
     form.value = {
       email: "",
       password: "",

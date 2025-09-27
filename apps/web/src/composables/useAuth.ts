@@ -171,9 +171,8 @@ export const useAuth = () => {
     const message = data.clientMessage;
 
     if (!response.ok && message) {
-      throwFrontError("Failed to reset password", {
+      throwFrontError(message, {
         email,
-        message,
       });
     }
 
