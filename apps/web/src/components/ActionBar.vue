@@ -137,7 +137,7 @@ const dataEraseTooltip = computed(() => {
 
 const animateSpin = computed(() => {
   return isRefreshingGrid.value
-    ? "animate-spin animate-count-1 animate-duration-300"
+    ? "animate-spin animate-count-1 animate-duration-500"
     : "";
 });
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-58 sm:w-100">
+  <div class="w-fit sm:w-100">
     <ModalBodyWrapperUI class="pb-2 pt-2 sm:pb-4">
       <form :class="ui.formWrapper">
         <div :class="ui.formContent">
