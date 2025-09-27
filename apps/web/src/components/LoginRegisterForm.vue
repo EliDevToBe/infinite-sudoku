@@ -206,9 +206,7 @@ watch(modeRegister, () => {
 });
 
 const isHorizontal = computed(() => width.value > 640);
-const inputSize = computed<"md" | "sm">(() =>
-  width.value > 640 ? "md" : "md"
-);
+const inputSize = "md";
 
 /**
  * Handles the password input
