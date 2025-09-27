@@ -122,6 +122,7 @@
             v-model:mode-register="isRegisterMode"
             :is-form-locked="isButtonLoading"
             v-model:has-error="hasFormError"
+            v-model:mode-recovery="isRecoveryMode"
           />
         </div>
       </LazyActionModal>
@@ -198,7 +199,7 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login } = useAuth();
+const { isAuthenticated, register, login, resetPassword } = useAuth();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -223,6 +224,7 @@ const isPuzzleFetched = ref(false);
 const hasFormError = ref(false);
 const isButtonLoading = ref(false);
 const isRegisterMode = ref(true);
+const isRecoveryMode = ref(false);
 const isSaving = ref(false);
 
 const oldDifficulty = ref<DifficultyOptions>("medium");
@@ -283,6 +285,17 @@ const featuresModalProps = computed(() => {
 });
 
 const loginRegisterModalProps = computed(() => {
+  if (isRecoveryMode.value) {
+    return {
+      title: "😱 Forgot your password ?",
+      description: "Enter your account email to reset your password",
+      mainActionLabel: "Reset password",
+      secondaryActionLabel: "Cancel",
+      mainFunction: resetPasswordFlow,
+      secondaryFunction: closeLoginRegisterModal,
+    };
+  }
+
   return {
     title: isRegisterMode.value ? "Register" : "Login",
     description: isRegisterMode.value
@@ -616,6 +629,37 @@ const loginFlow = async () => {
   }
 };
 
+const resetPasswordFlow = async () => {
+  isButtonLoading.value = true;
+
+  const email = normalize(form.value.email);
+
+  const isValid = loginRegisterFormRef.value?.validateForm();
+
+  if (hasFormError.value || !isValid) {
+    isButtonLoading.value = false;
+    return;
+  }
+
+  try {
+    resetPassword(email);
+
+    toastInfo({
+      title: "Password reset email sent",
+      description: `An email has been sent if an account exists with this email`,
+    });
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  } finally {
+    closeLoginRegisterModal();
+    isButtonLoading.value = false;
+  }
+};
+
 const handleCompletion = () => {
   showVictoryModal.value = false;
 
@@ -625,13 +669,18 @@ const handleCompletion = () => {
 
 const openLoginModal = () => {
   isRegisterMode.value = false;
+  isRecoveryMode.value = false;
+
   showLoginRegisterModal.value = true;
 };
 const openRegisterModal = () => {
   isRegisterMode.value = true;
+  isRecoveryMode.value = false;
+
   showLoginRegisterModal.value = true;
 };
 const closeLoginRegisterModal = () => {
+  isRecoveryMode.value = false;
   showLoginRegisterModal.value = false;
 
   // Due to modal fade out animation
