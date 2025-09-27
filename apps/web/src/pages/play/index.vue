@@ -633,12 +633,17 @@ const openRegisterModal = () => {
 };
 const closeLoginRegisterModal = () => {
   showLoginRegisterModal.value = false;
-  form.value = {
-    email: "",
-    password: "",
-    pseudo: "",
-    confirmPassword: "",
-  };
+
+  // Due to modal fade out animation
+  // Delay the reset of the form to avoid seeing the form reset
+  setTimeout(() => {
+    form.value = {
+      email: "",
+      password: "",
+      pseudo: "",
+      confirmPassword: "",
+    };
+  }, 300);
 };
 </script>
 
