@@ -1,6 +1,11 @@
 <template>
   <div :class="ui.wrapper">
-    <DropDownUI v-model="items" :offset="10" side="bottom" align="center">
+    <DropDownUI
+      v-model="items"
+      :offset="10"
+      :side="width < 640 ? 'top' : 'bottom'"
+      align="center"
+    >
       <ButtonUI
         size="icon"
         iconSize="25"
@@ -20,6 +25,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import { useUser, useAuth, useNavigation } from "@/composables";
 import { isFrontError, throwFrontError } from "@/utils/error";
 import { usePresetToast } from "@/composables/toast";
+import { useWindowSize } from "@vueuse/core";
 
 const ui = {
   wrapper: [
@@ -41,6 +47,7 @@ const emit = defineEmits<{
 }>();
 
 const { isAdmin } = useUser();
+const { width } = useWindowSize();
 const { isAuthenticated } = useAuth();
 const { navigateTo } = useNavigation();
 const { toastError, toastInfo } = usePresetToast();
