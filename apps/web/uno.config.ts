@@ -12,7 +12,6 @@ export default defineConfig({
     presetWebFonts({
       provider: "fontshare",
       fonts: {
-        amaranth: ["Amaranth:400,700"],
         nunito: "Nunito",
         supreme: "Supreme",
       },
