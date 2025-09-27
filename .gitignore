@@ -60,3 +60,4 @@ pgdata/
 *.old 
 
 .trigger
+.generated/
