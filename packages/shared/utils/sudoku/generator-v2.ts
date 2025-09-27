@@ -2,24 +2,6 @@ export type SudokuGrid = number[][];
 export type SudokuComplete = { puzzle: SudokuGrid; solution: SudokuGrid };
 type Position = { row: number; col: number };
 
-// const logDisplayBoard = (board: SudokuGrid) => {
-//   process.stdout.write("\x1b[0;0H\x1b[2J");
-//   console.log("=====================");
-
-//   board.forEach((row, i) => {
-//     console.log(
-//       row
-//         .map((col, i) => {
-//           const cell = col === 0 ? "•" : col;
-//           if ((i + 1) % 3 === 0 && i !== 8) return `${cell} |`;
-//           return cell;
-//         })
-//         .join(" "),
-//     );
-//     if ((i + 1) % 3 === 0 && i !== 8) console.log("---------------------");
-//   });
-// };
-
 /**
  * Sudoku puzzle generator that creates a complete, valid Sudoku board
  * and then removes cells to create a puzzle of a specified difficulty
@@ -71,9 +53,14 @@ export class SudokuV2 {
   constructor(
     difficulty: number,
     priorityAlgorithm: () => Position[],
-    config: { logging?: boolean; generatorTimeoutSeconds?: number } = {
+    config: {
+      logging?: boolean;
+      generatorTimeoutSeconds?: number;
+      resetThreshold?: number;
+    } = {
       logging: false,
       generatorTimeoutSeconds: 300,
+      resetThreshold: 10,
     },
   ) {
     this.stats.generatorCreatedAt = Date.now();
@@ -84,10 +71,10 @@ export class SudokuV2 {
     this.config = { ...this.config, ...config };
 
     // Scale with difficulty, longer time for harder puzzles
-    this.config.resetThreshold = Math.max(
-      5,
-      Math.floor(60 - this.config.difficultyLevel),
-    );
+    // this.config.resetThreshold = Math.max(
+    //   5,
+    //   Math.floor(60 - this.config.difficultyLevel),
+    // );
 
     this.config.maxBacktrackTimeoutMs = this.calculateBacktrackTimeout(
       this.config.difficultyLevel,
