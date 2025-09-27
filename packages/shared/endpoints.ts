@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { ForgotPasswordBody } from "../../apps/api/src/services/email.interface";
 import { Cell, DifficultyOptions } from "./utils/sudoku/helper";
 
 type Endpoint = {
@@ -82,6 +83,11 @@ export type ApiEndpoint = ValidateEndpoint<
       params: {
         period: "daily" | "weekly" | "monthly";
       };
+    }
+  | {
+      path: "/email/forgot-password";
+      method: "POST";
+      body: ForgotPasswordBody;
     }
 >;
 
