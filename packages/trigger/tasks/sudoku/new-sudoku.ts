@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { SudokuV2 } from "../../../../packages/shared/utils/sudoku/generator-v2";
 import {
@@ -9,11 +10,24 @@ import { patternMap } from "../../../../packages/shared/utils/sudoku/priority-al
 
 export const newSudokuTask = task({
   id: "new-sudoku",
-  maxDuration: 1200, // Stop executing after 1200 secs (20 mins) of compute
+  maxDuration: 2100, // Stop executing after 2100 secs (35 mins) of compute
+  retry: {
+    outOfMemory: {
+      machine: "large-2x",
+    },
+  },
   run: async (payload: {
     difficulty: DifficultyOptions | number;
     priorityType: "pattern" | "patternV2" | "gaussian";
   }) => {
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: process.env.DATABASE_URL,
+        },
+      },
+    });
+
     try {
       let difficulty: number;
 
@@ -43,12 +57,17 @@ export const newSudokuTask = task({
       const preparedData = prepareForDatabase(data, difficulty);
       logger.log("Sudoku level generated", { difficulty });
 
-      return {
-        preparedData,
-      };
+      await prisma.grid.create({
+        data: preparedData,
+      });
+
+      return { difficulty, success: true };
     } catch (error) {
       logger.error("Error generating Sudoku", { error });
-      throw error;
+
+      return { difficulty: payload.difficulty, success: false };
+    } finally {
+      await prisma.$disconnect();
     }
   },
 });

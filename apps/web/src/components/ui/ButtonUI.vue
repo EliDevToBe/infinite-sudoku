@@ -1,25 +1,19 @@
 <template>
   <button :class="buttonClass" :disabled="disabled || isLoading">
-    <div v-if="leadingIcon">
+    <div v-if="leadingIcon && !isLoading">
       <VueIcon :name="leadingIcon" :width="iconSize" :height="iconSize" />
     </div>
-    <slot></slot>
-    <Transition
-      enter-active-class="transition-all duration-150 ease-in-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition-all duration-150 ease-in-out"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
+
+    <div v-if="isLoading">
       <VueIcon
-        v-if="isLoading"
         name="svg-spinners:ring-resize"
         :color="COLORS.lTheme.accent"
         :width="iconSize"
         :height="iconSize"
       />
-    </Transition>
+    </div>
+
+    <slot></slot>
   </button>
 </template>
 
@@ -61,7 +55,8 @@ const ui = {
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
   ],
-  disabled: "cursor-not-allowed bg-gray-400 text-gray-700",
+  disabled:
+    "cursor-not-allowed bg-gray-400 text-gray-700 box-border border-transparent border",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
@@ -93,7 +88,7 @@ const ui = {
   },
   dark: {
     primary: [
-      "bg-dTheme-surfaceOther text-dTheme-font border-transparent border",
+      "bg-dTheme-surfaceOther text-dTheme-font border-transparent border box-border",
       "active:bg-dTheme-surface active:text-dTheme-light",
       "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
