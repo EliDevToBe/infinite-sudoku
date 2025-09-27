@@ -4,8 +4,7 @@
     :class="{
       'bg-[linear-gradient(to_bottom,rgba(245,246,244,1)_0%,rgba(214,218,210,1)_100%)] ':
         isLightTheme,
-      'bg-[linear-gradient(to_bottom,rgba(50,71,83,1)_0%,rgba(32,47,55,1)_100%)]':
-        !isLightTheme,
+      'dTheme-gradientBackground': !isLightTheme,
     }"
   >
     <header class="flex justify-center items-center">
@@ -29,7 +28,6 @@ const { isLightTheme } = useTheme();
 
 const ui = {
   test: "bg-[linear-gradient(to_bottom,rgba(65,86,98,1)_0%,rgba(47,62,70,1)_100%)]",
-  test2:
-    "bg-[linear-gradient(to_bottom,rgba(50,71,83,1)_0%,rgba(32,47,55,1)_100%)]",
+  test2: "dTheme-gradientBackground",
 };
 </script>

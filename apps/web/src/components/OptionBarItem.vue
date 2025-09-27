@@ -14,10 +14,7 @@
         leave-from-class="opacity-100"
         leave-to-class="opacity-0 -translate-y-3 scale-50"
       >
-        <span
-          class="line-height-[11px] text-[11px] text-dTheme-light/80 flex justify-center items-center gap-1"
-          v-if="completionRate > 0"
-        >
+        <span :class="ui.completionRate" v-if="completionRate > 0">
           <VueIcon name="lucide:puzzle"></VueIcon>
           {{ completionRate }}%</span
         >
@@ -39,6 +36,11 @@ const props = defineProps<{
   value: DifficultyOptions;
   group: string;
 }>();
+
+const ui = {
+  completionRate:
+    "line-height-[11px] text-[11px] text-dTheme-light/80 flex justify-center items-center gap-1",
+};
 
 const labelMap: Record<DifficultyOptions, string> = {
   easy: "Easy",

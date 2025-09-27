@@ -8,10 +8,13 @@
         :variant="isAuthenticated ? 'primary' : 'ghost'"
         @click="emit('onLeaderboard')"
         id="leaderboard-button"
+        :class="ui.leftButton"
       >
         <label for="leaderboard-button">Leaderboard</label>
       </ButtonUI>
     </LazyTooltipUI>
+
+    <slot></slot>
 
     <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
       <ButtonUI
@@ -23,9 +26,11 @@
         id="save-button"
         :isLoading="isSaving"
         :disabled="isSaving || !hasUserInput"
+        :class="ui.rightButton"
       >
         <label
           :class="{ 'cursor-not-allowed': isSaving || !hasUserInput }"
+          class="min-w-fit"
           for="save-button"
           >Save progress</label
         >
@@ -41,7 +46,15 @@ import { useElementHover, useWindowSize, useFocus } from "@vueuse/core";
 import { LazyTooltipUI } from "@/components";
 
 const ui = {
-  wrapper: ["flex items-center justify-between", "w-68 sm:w-100 p-1 px-0"],
+  wrapper: ["flex items-end gap-2 md:gap-5 justify-center", "w-full"],
+  leftButton: [
+    "max-sm:fixed max-sm:top-150 max-sm:left-[10%]",
+    "max-md:fixed max-md:top-[626px] max-md:left-[2%]",
+  ],
+  rightButton: [
+    "max-sm:fixed max-sm:top-150 max-sm:right-[10%]",
+    "max-md:fixed max-md:top-[626px] max-md:right-[2%]",
+  ],
 };
 
 const emit = defineEmits<{

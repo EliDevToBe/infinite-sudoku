@@ -21,7 +21,6 @@ declare module 'vue-router/auto-routes' {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/design/': RouteRecordInfo<'/design/', '/design', Record<never, never>, Record<never, never>>,
     '/play/': RouteRecordInfo<'/play/', '/play', Record<never, never>, Record<never, never>>,
-    '/play/[id]': RouteRecordInfo<'/play/[id]', '/play/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 
   /**
@@ -45,10 +44,6 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/play/index.vue': {
       routes: '/play/'
-      views: never
-    }
-    'src/pages/play/[id].vue': {
-      routes: '/play/[id]'
       views: never
     }
   }

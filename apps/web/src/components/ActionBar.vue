@@ -60,7 +60,7 @@
       >
         <VueIcon
           :class="noteClass"
-          name="lucide:pencil"
+          :name="noteModeIcon"
           aria-hidden="true"
         ></VueIcon>
       </button>
@@ -72,10 +72,10 @@
         :class="[ui.icon, ui.active]"
         :aria-label="`New sudoku`"
         id="new-sudoku-button"
-        @click="emit('onNewSudoku')"
+        @click="handleNewSudoku"
       >
         <VueIcon
-          :class="[ui.icon, ui.active]"
+          :class="[ui.icon, ui.active, animateSpin]"
           name="lucide:refresh-cw"
           aria-hidden="true"
         ></VueIcon>
@@ -101,12 +101,11 @@ const ui = {
     "w-60 sm:w-75 p-1 pl-2 pr-2",
     "bg-dTheme-surfaceOther",
   ],
-  icon: ["w-6 h-6 sm:w-7 sm:h-7 rounded-md"],
+  icon: ["w-6 h-6 sm:w-7 sm:h-7 rounded-md", "sm:hover:bg-dTheme-light/10"],
   active: "active:text-dTheme-accent",
   toggle: "text-green-500",
   noMove: "text-gray-500",
   hasMove: "sm:hover:bg-dTheme-light/10",
-  // danger: "text-red-500",
 };
 
 const emit = defineEmits<{
@@ -118,6 +117,7 @@ const emit = defineEmits<{
 }>();
 
 const isNoteMode = ref<boolean>(false);
+const isRefreshingGrid = ref<boolean>(false);
 
 const undoClass = computed(() => {
   return [ui.icon, ui.active, canUndo.value ? ui.hasMove : ui.noMove];
@@ -135,8 +135,19 @@ const dataEraseTooltip = computed(() => {
   return `(${selectedCell?.x}, ${selectedCell?.y})`;
 });
 
+const animateSpin = computed(() => {
+  return isRefreshingGrid.value
+    ? "animate-spin animate-count-1 animate-duration-300"
+    : "";
+});
+
+const noteModeIcon = computed(() => {
+  return isNoteMode.value ? "lucide:pencil-line" : "lucide:pencil";
+});
+
 const handleEraser = () => {
   const selectedCell = getSelectedCell();
+
   if (!selectedCell || selectedCell.value === 0 || !selectedCell.isEditable) {
     return;
   }
@@ -146,6 +157,15 @@ const handleEraser = () => {
 const toggleNote = () => {
   // isNoteMode.value = !isNoteMode.value;
   emit("onNote", isNoteMode.value);
+};
+
+const handleNewSudoku = () => {
+  isRefreshingGrid.value = true;
+  emit("onNewSudoku");
+
+  setTimeout(() => {
+    isRefreshingGrid.value = false;
+  }, 300);
 };
 </script>
 

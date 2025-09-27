@@ -31,7 +31,7 @@ export class UserFactory {
   async createAdmin(): Promise<User> {
     const existingAdmin = await this.prisma.user.findUnique({
       where: {
-        email: "admin@rncp.com",
+        email: "admin@admin.com",
       },
     });
     if (existingAdmin) {
@@ -41,7 +41,7 @@ export class UserFactory {
     return this.prisma.user.create({
       data: {
         ...this.create(),
-        email: "admin@rncp.com",
+        email: "admin@admin.com",
         password:
           "$argon2id$v=19$m=65536,t=3,p=1$Cfx7JE/kt9xtXcAbEj5XyQ$Zxror4jXxDGGrBzA4cc2s5aR0JolsRxxTP1lHRSX/Cw",
         role: "admin",

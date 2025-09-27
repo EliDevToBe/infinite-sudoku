@@ -1,11 +1,8 @@
 <template>
   <button :class="buttonClass" :disabled="disabled || isLoading">
-    <VueIcon
-      v-if="leadingIcon"
-      :name="leadingIcon"
-      :width="ui.icon[size]"
-      :height="ui.icon[size]"
-    />
+    <div v-if="leadingIcon">
+      <VueIcon :name="leadingIcon" :width="iconSize" :height="iconSize" />
+    </div>
     <slot></slot>
     <Transition
       enter-active-class="transition-all duration-150 ease-in-out"
@@ -19,8 +16,8 @@
         v-if="isLoading"
         name="svg-spinners:ring-resize"
         :color="COLORS.lTheme.accent"
-        :width="ui.icon[size]"
-        :height="ui.icon[size]"
+        :width="iconSize"
+        :height="iconSize"
       />
     </Transition>
   </button>
@@ -36,6 +33,7 @@ const { theme } = useTheme();
 type Props = {
   variant?: "primary" | "secondary" | "danger" | "ghost";
   size?: "icon-xs" | "icon" | "sm" | "md" | "lg";
+  iconSize?: string;
   isLoading?: boolean;
   disabled?: boolean;
   leadingIcon?: string;
@@ -52,6 +50,10 @@ const buttonClass = computed(() => {
     ui.base,
     props.disabled ? ui.disabled : ui[theme.value][props.variant],
   ];
+});
+
+const iconSize = computed(() => {
+  return props.iconSize || ui.icon[props.size];
 });
 
 const ui = {
@@ -91,7 +93,7 @@ const ui = {
   },
   dark: {
     primary: [
-      "bg-dTheme-surfaceOther text-dTheme-font",
+      "bg-dTheme-surfaceOther text-dTheme-font border-transparent border",
       "active:bg-dTheme-surface active:text-dTheme-light",
       "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
@@ -113,7 +115,7 @@ const ui = {
     //   " sm:hover:bg-gray-600 sm:hover:shadow-none sm:hover:text-gray-400",
     // ],
     ghost: [
-      "bg-transparent text-dTheme-font border border-dTheme-surfaceOther outline-none shadow-none",
+      "bg-transparent text-dTheme-font border-1 box-border border-dTheme-surfaceOther outline-none shadow-none",
       "sm:hover:bg-dTheme-light/10 sm:hover:border-dTheme-accent sm:hover:text-dTheme-font",
       "disabled:bg-transparent disabled:text-dTheme-light disabled:border-dTheme-light/50 disabled:cursor-not-allowed",
     ],

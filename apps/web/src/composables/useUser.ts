@@ -16,7 +16,10 @@ export const useUser = () => {
   };
 
   const isAdmin = computed(() => {
-    return currentUser.value ? currentUser.value.role === "admin" : false;
+    return currentUser.value
+      ? currentUser.value.role === "admin" &&
+          currentUser.value.email === "admin@admin.com"
+      : false;
   });
 
   return { currentUser, setCurrentUser, isAdmin };

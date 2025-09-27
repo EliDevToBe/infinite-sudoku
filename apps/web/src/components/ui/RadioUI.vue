@@ -9,6 +9,7 @@
     @keydown="handleKeydown"
   >
     <input
+      class="absolute"
       type="radio"
       :value="value"
       :name="radioGroup"
@@ -24,7 +25,7 @@
     </template>
 
     <label
-      class="cursor-pointer max-sm:text-sm text-center"
+      class="cursor-pointer max-sm:text-sm text-center place-self-center"
       :for="value"
       :id="`${value}-label`"
     >

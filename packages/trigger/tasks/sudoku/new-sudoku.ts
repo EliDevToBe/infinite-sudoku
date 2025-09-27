@@ -5,17 +5,14 @@ import {
   getRangeFromDifficulty,
   prepareForDatabase,
 } from "../../../../packages/shared/utils/sudoku/helper";
-import {
-  gaussianPriority,
-  patternPriority,
-} from "../../../../packages/shared/utils/sudoku/priority-algorithm";
+import { patternMap } from "../../../../packages/shared/utils/sudoku/priority-algorithm";
 
 export const newSudokuTask = task({
   id: "new-sudoku",
   maxDuration: 1200, // Stop executing after 1200 secs (20 mins) of compute
   run: async (payload: {
     difficulty: DifficultyOptions | number;
-    priorityType: "pattern" | "gaussian";
+    priorityType: "pattern" | "patternV2" | "gaussian";
   }) => {
     try {
       let difficulty: number;
@@ -29,8 +26,11 @@ export const newSudokuTask = task({
         throw new Error("Invalid difficulty");
       }
 
-      const priorityAlgorithm =
-        payload.priorityType === "pattern" ? patternPriority : gaussianPriority;
+      const priorityAlgorithm = patternMap[payload.priorityType];
+
+      if (typeof priorityAlgorithm !== "function") {
+        throw new Error("Invalid priority algorithm");
+      }
 
       const generator = new SudokuV2(difficulty, priorityAlgorithm, {
         logging: false,
