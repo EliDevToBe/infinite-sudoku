@@ -61,7 +61,8 @@ const ui = {
     "gap-1 flex items-center justify-center cursor-pointer text-center box-border",
     "transition-all duration-150 ease-in-out",
   ],
-  disabled: "cursor-not-allowed bg-gray-400 text-gray-700",
+  disabled:
+    "cursor-not-allowed bg-gray-400 text-gray-700 box-border border-transparent border",
   size: {
     "icon-xs": "w-4 h-4 text-xs rounded-full",
     icon: "w-6 h-6 text-xs rounded-md ",
@@ -93,7 +94,7 @@ const ui = {
   },
   dark: {
     primary: [
-      "bg-dTheme-surfaceOther text-dTheme-font border-transparent border",
+      "bg-dTheme-surfaceOther text-dTheme-font border-transparent border box-border",
       "active:bg-dTheme-surface active:text-dTheme-light",
       "shadow-xs shadow-gray-900",
       "sm:hover:shadow-sm sm:hover:shadow-dTheme-accent",
