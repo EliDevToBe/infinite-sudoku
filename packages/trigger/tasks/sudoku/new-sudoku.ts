@@ -28,6 +28,10 @@ export const newSudokuTask = task({
 
       const priorityAlgorithm = patternMap[payload.priorityType];
 
+      if (typeof priorityAlgorithm !== "function") {
+        throw new Error("Invalid priority algorithm");
+      }
+
       const generator = new SudokuV2(difficulty, priorityAlgorithm, {
         logging: false,
         generatorTimeoutSeconds: 1200,
