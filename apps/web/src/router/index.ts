@@ -19,12 +19,12 @@ if (import.meta.hot) {
 let authInitialized = false;
 
 router.beforeEach(async (to, _from) => {
+  if (to.name === "/") {
+    return { name: "/play/" };
+  }
+
   // If not authenticated, try to initialize auth once
-  if (
-    !authInitialized &&
-    !isAuthenticated.value
-    // && to.name !== "/"
-  ) {
+  if (!authInitialized && !isAuthenticated.value) {
     const success = await initializeAuth();
 
     if (success && currentUser.value) {
