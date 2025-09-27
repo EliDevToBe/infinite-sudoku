@@ -198,7 +198,7 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login, logout } = useAuth();
+const { isAuthenticated, register, login } = useAuth();
 const { currentUser } = useUser();
 const {
   startTimer,
