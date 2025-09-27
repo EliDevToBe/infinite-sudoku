@@ -1,25 +1,19 @@
 <template>
   <button :class="buttonClass" :disabled="disabled || isLoading">
-    <div v-if="leadingIcon">
+    <div v-if="leadingIcon && !isLoading">
       <VueIcon :name="leadingIcon" :width="iconSize" :height="iconSize" />
     </div>
-    <slot></slot>
-    <Transition
-      enter-active-class="transition-all duration-150 ease-in-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition-all duration-150 ease-in-out"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
+
+    <div v-if="isLoading">
       <VueIcon
-        v-if="isLoading"
         name="svg-spinners:ring-resize"
         :color="COLORS.lTheme.accent"
         :width="iconSize"
         :height="iconSize"
       />
-    </Transition>
+    </div>
+
+    <slot></slot>
   </button>
 </template>
 

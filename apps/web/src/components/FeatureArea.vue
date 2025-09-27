@@ -1,41 +1,45 @@
 <template>
   <div :class="ui.wrapper">
-    <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
-      <ButtonUI
-        ref="leaderboardButton"
-        :size="size"
-        :leadingIcon="leaderboardIcon"
-        :variant="isAuthenticated ? 'primary' : 'ghost'"
-        @click="emit('onLeaderboard')"
-        id="leaderboard-button"
-        :class="ui.leftButton"
-      >
-        <label for="leaderboard-button">Leaderboard</label>
-      </ButtonUI>
-    </LazyTooltipUI>
+    <div class="w-40 flex justify-end">
+      <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
+        <ButtonUI
+          ref="leaderboardButton"
+          :size="size"
+          :leadingIcon="leaderboardIcon"
+          :variant="isAuthenticated ? 'primary' : 'ghost'"
+          @click="emit('onLeaderboard')"
+          id="leaderboard-button"
+          :class="ui.leftButton"
+        >
+          <label for="leaderboard-button">Leaderboard</label>
+        </ButtonUI>
+      </LazyTooltipUI>
+    </div>
 
     <slot></slot>
 
-    <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
-      <ButtonUI
-        ref="saveButton"
-        :size="size"
-        :leadingIcon="saveIcon"
-        :variant="isAuthenticated ? 'primary' : 'ghost'"
-        @click="emit('onSave')"
-        id="save-button"
-        :isLoading="isSaving"
-        :disabled="isSaving || !hasUserInput"
-        :class="ui.rightButton"
-      >
-        <label
-          :class="{ 'cursor-not-allowed': isSaving || !hasUserInput }"
-          class="min-w-fit"
-          for="save-button"
-          >Save progress</label
+    <div class="w-40 flex justify-start">
+      <LazyTooltipUI :disabled="isAuthenticated" text="Login to unlock">
+        <ButtonUI
+          ref="saveButton"
+          :size="size"
+          :leadingIcon="saveIcon"
+          :variant="isAuthenticated ? 'primary' : 'ghost'"
+          @click="emit('onSave')"
+          id="save-button"
+          :isLoading="isSaving"
+          :disabled="isSaving || !hasUserInput"
+          :class="ui.rightButton"
         >
-      </ButtonUI>
-    </LazyTooltipUI>
+          <label
+            :class="{ 'cursor-not-allowed': isSaving || !hasUserInput }"
+            class="min-w-fit"
+            for="save-button"
+            >Save progress</label
+          >
+        </ButtonUI>
+      </LazyTooltipUI>
+    </div>
   </div>
 </template>
 
