@@ -1,6 +1,6 @@
 <template>
   <div class="w-58 sm:w-100">
-    <ModalBodyWrapperUI class="pb-2 sm:pb-4">
+    <ModalBodyWrapperUI class="pb-2 pt-2 sm:pb-4">
       <form :class="ui.formWrapper">
         <div :class="ui.formContent">
           <Transition
@@ -113,14 +113,14 @@
           <span
             v-for="(error, index) in sortedErrors"
             :key="error.field + error.type"
-            :style="{ opacity: (100 - 30 * index) / 100 }"
+            :style="{ opacity: (100 - 15 * index) / 100 }"
             :class="ui.errorTextClass"
             >{{ error.message }}</span
           >
 
           <span
             v-if="errors.length > 2"
-            style="opacity: 40%"
+            style="opacity: 45%"
             :class="ui.errorTextClass"
           >
             {{ `+${errors.length - 1} more` }}</span
@@ -166,22 +166,17 @@ const { width } = useWindowSize();
 const modeRegister = defineModel<boolean>("modeRegister", { required: true });
 
 const ui = computed(() => ({
-  formWrapper: [
-    "flex flex-col z-1 items-center",
-    // "w-45 sm:w-90",
-    "w-full",
-  ],
+  formWrapper: ["flex flex-col z-1 items-center", "w-full"],
   formContent: [
     "flex flex-col w-full p-2 sm:p-3 gap-2 sm:gap-4 items-center",
     " bg-dTheme-light rounded-xl",
-    // modeRegister.value ? "sm:h-80 h-70" : "sm:h-45 h-50",
   ],
-  fontSize: "text-[8px] sm:text-[10px]",
+  fontSize: "text-[10px] sm:text-[12px]",
   linkClass:
     "text-lTheme-font place-self-center hover:underline hover:cursor-pointer",
   errorTextClass: "text-lTheme-danger text-[9px] sm:text-[11px] text-center",
   forgotPasswordClass: [
-    "text-[8px] sm:text-[10px]",
+    "text-[9px] sm:text-[10px]",
     "text-lTheme-font place-self-center",
     "hover:underline hover:cursor-pointer",
     "sm:place-self-start place-self-center",
