@@ -17,7 +17,9 @@
 import { computed } from "vue";
 import { DropDownUI } from "@/components/ui";
 import type { DropdownMenuItem } from "@nuxt/ui";
-import { useAuth } from "@/composables/useAuth";
+import { useUser, useAuth, useNavigation } from "@/composables";
+import { isFrontError, throwFrontError } from "@/utils/error";
+import { usePresetToast } from "@/composables/toast";
 
 const ui = {
   wrapper: [
@@ -34,18 +36,36 @@ const ui = {
   button: "text-dTheme-font sm:w-10! sm:h-10! w-8! h-8! border-none",
 };
 
-type Select = "login" | "logout" | "account" | "settings";
-
 const emit = defineEmits<{
-  onSelect: [Select];
+  onLogin: [];
 }>();
 
+const { isAdmin } = useUser();
 const { isAuthenticated } = useAuth();
+const { navigateTo } = useNavigation();
+const { toastError, toastInfo } = usePresetToast();
+const { logout } = useAuth();
+const { currentUser } = useUser();
 
 const items = computed<DropdownMenuItem[]>(() => {
   const list: DropdownMenuItem[] = [];
 
   if (isAuthenticated.value) {
+    if (isAdmin.value) {
+      list.push(
+        {
+          label: "Design",
+          icon: "lucide:palette",
+          onSelect: () => {
+            return navigateTo("/design/");
+          },
+        },
+        {
+          type: "separator",
+        }
+      );
+    }
+
     list.push(
       /* WORK IN PROGRESS */
 
@@ -70,7 +90,7 @@ const items = computed<DropdownMenuItem[]>(() => {
         label: "Logout",
         icon: "lucide:log-out",
         onSelect: () => {
-          emit("onSelect", "logout");
+          return logoutFlow();
         },
       }
     );
@@ -79,13 +99,36 @@ const items = computed<DropdownMenuItem[]>(() => {
       label: "Login",
       icon: "lucide:log-in",
       onSelect: () => {
-        emit("onSelect", "login");
+        emit("onLogin");
       },
     });
   }
 
   return list;
 });
+
+const logoutFlow = async () => {
+  try {
+    const success = await logout();
+    if (!success) {
+      throwFrontError("Failed to logout", {
+        user: currentUser.value?.id,
+      });
+      return;
+    }
+
+    toastInfo({
+      title: "Logout successful",
+      description: "See you soon !",
+    });
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  }
+};
 </script>
 
 <style scoped lang=""></style>
