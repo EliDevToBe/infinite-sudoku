@@ -5,6 +5,10 @@
       "destination": "https://infinite-sudoku-api.vercel.app/$1"
     },
     {
+      "source": "/api-dev/(.*)",
+      "destination": "https://infinite-sudoku-api-git-dev-elidevtobes-projects.vercel.app/$1"
+    },
+    {
       "source": "/((?!api).*)",
       "destination": "/index.html"
     }
@@ -12,6 +16,23 @@
   "headers": [
     {
       "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, access-token"
+        }
+      ]
+    },
+    {
+      "source": "/api-dev/(.*)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
