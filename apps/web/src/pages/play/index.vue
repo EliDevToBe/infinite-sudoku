@@ -10,7 +10,7 @@
           @on-select="handleDifficultySwitchDebounced"
         />
 
-        <Menu :class="ui.menu" @on-select="handleMenuSelect"></Menu>
+        <Menu :class="ui.menu" @on-login="openLoginModal()"></Menu>
       </div>
     </template>
 
@@ -82,35 +82,51 @@
         <NumberBar @on-select="setNumber"></NumberBar>
       </div>
 
+      <!-- FEATURES MODAL -->
       <LazyActionModal
-        :title="actionModalProps.title"
-        :description="actionModalProps.description"
-        v-model:show="showUnauthenticatedModal"
-        :main-action-label="actionModalProps.mainActionLabel"
-        @on-main-action="actionModalProps.mainFunction"
-        :secondary-action-label="actionModalProps.secondaryActionLabel"
-        @on-secondary-action="actionModalProps.secondaryFunction"
+        :title="featuresModalProps.title"
+        :description="featuresModalProps.description"
+        v-model:show="showFeaturesModal"
+        :main-action-label="featuresModalProps.mainActionLabel"
+        @on-main-action="featuresModalProps.mainFunction"
+        :secondary-action-label="featuresModalProps.secondaryActionLabel"
+        @on-secondary-action="featuresModalProps.secondaryFunction"
         special-main-action
         :is-main-action-loading="isButtonLoading"
       >
         <UnlockFeatureModalBody
-          v-if="showFeatureModalBody"
-          :context="unlockFeatureModalContext"
-          @on-click-login="showLoginModal"
+          :context="featuresModalContext"
+          @on-click-login="
+            closeFeaturesModal();
+            openLoginModal();
+          "
         />
+      </LazyActionModal>
 
-        <div v-else :class="uiComputed.fromWrapper">
+      <!-- LOGIN REGISTER MODAL -->
+      <LazyActionModal
+        :title="loginRegisterModalProps.title"
+        :description="loginRegisterModalProps.description"
+        v-model:show="showLoginRegisterModal"
+        :main-action-label="loginRegisterModalProps.mainActionLabel"
+        :secondary-action-label="loginRegisterModalProps.secondaryActionLabel"
+        @on-main-action="loginRegisterModalProps.mainFunction"
+        @on-secondary-action="loginRegisterModalProps.secondaryFunction"
+        :is-main-action-loading="isButtonLoading"
+        special-main-action
+      >
+        <div :class="uiComputed.fromWrapper">
           <LoginRegisterForm
             ref="LoginRegisterFormRef"
             v-model:form="form"
-            :mode-register="isRegisterMode"
+            v-model:mode-register="isRegisterMode"
             :is-form-locked="isButtonLoading"
             v-model:has-error="hasFormError"
-            :hide-register-link="!isRegisterMode"
           />
         </div>
       </LazyActionModal>
 
+      <!-- VICTORY MODAL -->
       <LazyActionModal
         description="You have completed the puzzle!"
         title="🎉 Congratulations 🥳"
@@ -123,13 +139,14 @@
         <VictoryModalBody
           @on-click-login="
             handleCompletion();
-            showLoginModal();
+            openLoginModal();
           "
           :puzzle="puzzle"
           :current-difficulty="currentDifficulty"
         />
       </LazyActionModal>
 
+      <!-- LEADERBOARD MODAL -->
       <LazyActionModal
         title=" Leaderboard"
         description="🧠 See who's crushing it!"
@@ -194,11 +211,12 @@ const {
 } = useTimer();
 
 const showPreventDifficultyModal = ref(false);
-const showUnauthenticatedModal = ref(false);
-const showFeatureModalBody = ref(true);
+const showFeaturesModal = ref(false);
 const showNewSudokuModal = ref(false);
 const showVictoryModal = ref(false);
 const showLeaderboardModal = ref(false);
+
+const showLoginRegisterModal = ref(false);
 
 const isLoading = ref(false);
 const isPuzzleFetched = ref(false);
@@ -210,7 +228,7 @@ const isSaving = ref(false);
 const oldDifficulty = ref<DifficultyOptions>("medium");
 const currentDifficulty = ref<DifficultyOptions>("medium");
 const puzzle = ref<Cell[][]>(createEmptyPuzzle());
-const unlockFeatureModalContext = ref<"leaderboard" | "save">();
+const featuresModalContext = ref<"leaderboard" | "save">();
 
 const loginRegisterFormRef = useTemplateRef<
   InstanceType<typeof LoginRegisterForm>
@@ -219,7 +237,7 @@ const loginRegisterFormRef = useTemplateRef<
 const uiComputed = computed(() => ({
   fromWrapper: [
     "flex justify-center w-full",
-    isRegisterMode.value ? "h-75" : "h-45",
+    isRegisterMode.value ? "h-88" : "h-60",
   ],
 }));
 
@@ -250,31 +268,30 @@ const hasUserInput = computed(() => {
   );
 });
 
-const actionModalProps = computed(() => {
-  const normal = showFeatureModalBody.value;
-
-  if (normal) {
-    // Normal modal props
-    return {
-      title: "✨ Unlock all features ! ✨",
-      description: "Register to unlock exclusive features",
-      mainActionLabel: "I want it !",
-      secondaryActionLabel: "Cancel",
-      mainFunction: () => {
-        showFeatureModalBody.value = false;
-      },
-      secondaryFunction: closeUnauthenticatedModal,
-    };
-  }
-
-  // Register modal props
+const featuresModalProps = computed(() => {
   return {
-    title: isRegisterMode.value ? "✨ Register ✨" : "✨ Login ✨",
-    description: "Just a few steps away... ",
+    title: "✨ Unlock all features ! ✨",
+    description: "Register to unlock exclusive features",
+    mainActionLabel: "I want it !",
+    secondaryActionLabel: "Cancel",
+    mainFunction: () => {
+      closeFeaturesModal();
+      openRegisterModal();
+    },
+    secondaryFunction: closeFeaturesModal,
+  };
+});
+
+const loginRegisterModalProps = computed(() => {
+  return {
+    title: isRegisterMode.value ? "Register" : "Login",
+    description: isRegisterMode.value
+      ? "Just a few steps away... "
+      : "Usual stuff eh",
     mainActionLabel: isRegisterMode.value ? "Register" : "Login",
     secondaryActionLabel: "Cancel",
     mainFunction: isRegisterMode.value ? registerFlow : loginFlow,
-    secondaryFunction: closeUnauthenticatedModal,
+    secondaryFunction: closeLoginRegisterModal,
   };
 });
 
@@ -475,8 +492,8 @@ const setNumber = (number: number) => {
 
 const handleLeaderboard = async () => {
   if (!isAuthenticated.value) {
-    unlockFeatureModalContext.value = "leaderboard";
-    showUnauthenticatedModal.value = true;
+    featuresModalContext.value = "leaderboard";
+    showFeaturesModal.value = true;
     return;
   }
 
@@ -485,8 +502,8 @@ const handleLeaderboard = async () => {
 
 const handleSave = async () => {
   if (!isAuthenticated.value) {
-    unlockFeatureModalContext.value = "save";
-    showUnauthenticatedModal.value = true;
+    featuresModalContext.value = "save";
+    showFeaturesModal.value = true;
     return;
   }
 
@@ -508,21 +525,8 @@ const handleSave = async () => {
   }
 };
 
-const closeUnauthenticatedModal = () => {
-  showUnauthenticatedModal.value = false;
-
-  form.value = {
-    email: "",
-    password: "",
-    pseudo: "",
-    confirmPassword: "",
-  };
-
-  // Due to the modal animation
-  setTimeout(() => {
-    showFeatureModalBody.value = true;
-    isRegisterMode.value = true;
-  }, 300);
+const closeFeaturesModal = () => {
+  showFeaturesModal.value = false;
 };
 
 const registerFlow = async () => {
@@ -541,7 +545,7 @@ const registerFlow = async () => {
 
     const success = await register({ email, password, pseudo });
     if (success) {
-      closeUnauthenticatedModal();
+      closeLoginRegisterModal();
       toastSuccess({ description: "Successfully registered 🎉" });
 
       setTimeout(() => {
@@ -580,7 +584,8 @@ const loginFlow = async () => {
         });
       }
 
-      closeUnauthenticatedModal();
+      closeLoginRegisterModal();
+
       toastSuccess({
         title: "Login successful",
         description: `Welcome ${currentUser.value.pseudo} !`,
@@ -618,46 +623,22 @@ const handleCompletion = () => {
   resetSudoku();
 };
 
-const showLoginModal = () => {
-  showFeatureModalBody.value = false;
+const openLoginModal = () => {
   isRegisterMode.value = false;
-  showUnauthenticatedModal.value = true;
+  showLoginRegisterModal.value = true;
 };
-
-const handleMenuSelect = (
-  select: "login" | "logout" | "account" | "settings"
-) => {
-  switch (select) {
-    case "login":
-      showLoginModal();
-      break;
-    case "logout":
-      logoutFlow();
-      break;
-  }
+const openRegisterModal = () => {
+  isRegisterMode.value = true;
+  showLoginRegisterModal.value = true;
 };
-
-const logoutFlow = async () => {
-  try {
-    const success = await logout();
-    if (!success) {
-      throwFrontError("Failed to logout", {
-        user: currentUser.value?.id,
-      });
-      return;
-    }
-
-    toastInfo({
-      title: "Logout successful",
-      description: "See you soon !",
-    });
-  } catch (error) {
-    if (isFrontError(error)) {
-      toastError(error, { description: error.message });
-    } else {
-      toastError(error, { description: "An error occurred" });
-    }
-  }
+const closeLoginRegisterModal = () => {
+  showLoginRegisterModal.value = false;
+  form.value = {
+    email: "",
+    password: "",
+    pseudo: "",
+    confirmPassword: "",
+  };
 };
 </script>
 
