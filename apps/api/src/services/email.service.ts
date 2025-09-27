@@ -33,13 +33,13 @@ export class EmailService implements IEmailService {
 
     const url = new URL(process.env.FRONTEND_URL);
     url.pathname = "/user/password-reset";
-    url.searchParams.set("token", payload.token);
+    url.searchParams.set("t", payload.token);
 
     if (!this.config.canSend) {
       console.warn(
         "[EmailService] Sending email is disabled in pre-production environment",
       );
-      return { success: true, messageIds: [] };
+      return { success: false, messageIds: ["xxx"] };
     }
 
     const result = await this.client.send({
