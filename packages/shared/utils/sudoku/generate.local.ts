@@ -34,7 +34,10 @@ const main = () => {
 
   const { data } = generator.getPuzzleAndSolution();
 
-  if (generator.getConfig().difficultyLevel >= 60) {
+  if (
+    generator.getConfig().difficultyLevel >= 60 &&
+    generator.getStats().success
+  ) {
     const level = generator.getConfig().difficultyLevel;
 
     const readyToDb = prepareForDatabase(data, level);
