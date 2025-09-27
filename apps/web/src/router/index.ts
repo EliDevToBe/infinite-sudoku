@@ -39,7 +39,7 @@ router.beforeEach(async (to, _from) => {
   // - If route need auth
   // - User is not authenticated
   if (to.meta.requiresAuth && !isAuthenticated.value) {
-    return { name: "/" };
+    return { name: "/play/" };
   }
 
   // - If route need auth
@@ -50,7 +50,7 @@ router.beforeEach(async (to, _from) => {
     (to.meta.roles &&
       !(to.meta.roles as string[]).includes(currentUser.value?.role || ""))
   ) {
-    return { name: "/" };
+    return { name: "/play/" };
   }
 });
 
