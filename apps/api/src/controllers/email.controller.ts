@@ -51,7 +51,7 @@ export const EmailController = () => {
     } catch (error) {
       return reply
         .status(500)
-        .send({ clientMessage: "Failed to send email", error });
+        .send({ clientMessage: "An unexpected error occurred", error });
     }
   };
 
