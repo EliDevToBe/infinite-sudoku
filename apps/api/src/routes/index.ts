@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyPluginOptions } from "fastify";
 import fp from "fastify-plugin";
 import authRoutes from "./auth/auth.routes.js";
+import emailRoutes from "./email.routes.js";
 import gridRoutes from "./grid.routes.js";
 import leaderboardRoutes from "./leaderboard.routes.js";
 import userRoutes from "./user.routes.js";
@@ -13,6 +14,7 @@ export default fp(
     server.register(gridRoutes);
     server.register(userGridRoutes);
     server.register(leaderboardRoutes);
+    server.register(emailRoutes);
     done();
   },
 );

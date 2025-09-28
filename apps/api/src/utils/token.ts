@@ -11,7 +11,7 @@ type AugmentedJwtPayload = JwtPayload & {
   email: string;
 };
 
-type TokenType = "access" | "refresh";
+type TokenType = "access" | "refresh" | "password-reset";
 
 type VerifyTokenPayload = {
   token: string;
@@ -37,6 +37,12 @@ export const useToken = () => {
         expiresIn: "2d",
       });
     }
+    if (params.type === "password-reset") {
+      return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+        expiresIn: "12h",
+      });
+    }
+
     throw new Error(`[generateToken] Invalid token type: ${params.type}`);
   };
 
@@ -48,7 +54,7 @@ export const useToken = () => {
     let secret: string;
     if (payload.type === "refresh") {
       secret = process.env.JWT_REFRESH_SECRET;
-    } else if (payload.type === "access") {
+    } else if (payload.type === "access" || payload.type === "password-reset") {
       secret = process.env.JWT_ACCESS_SECRET;
     } else {
       throw new Error(`[verifyToken] Invalid token type: ${payload.type}`);

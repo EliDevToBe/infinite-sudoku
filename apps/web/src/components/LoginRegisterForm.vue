@@ -38,7 +38,10 @@
             :horizontal="isHorizontal"
           />
 
-          <div class="flex flex-col gap-2 sm:gap-3 w-full max-sm:items-center">
+          <div
+            class="flex flex-col gap-2 sm:gap-3 w-full max-sm:items-center"
+            v-if="!modeRecovery"
+          >
             <div>
               <FormField
                 name="password"
@@ -63,9 +66,7 @@
                   v-if="!modeRegister"
                   role="link"
                   :class="[ui.forgotPasswordClass]"
-                  @click="
-                    console.warn('Forgotten password flow not yet implemented')
-                  "
+                  @click="modeRecovery = true"
                 >
                   Forgot password?
                 </div>
@@ -102,7 +103,10 @@
             v-if="!modeRegister && !hideRegisterLink"
             role="link"
             :class="[ui.fontSize, ui.linkClass]"
-            @click="modeRegister = true"
+            @click="
+              modeRecovery = false;
+              modeRegister = true;
+            "
           >
             Don't have an account? Register
           </div>
@@ -164,6 +168,7 @@ const {
 const { width } = useWindowSize();
 
 const modeRegister = defineModel<boolean>("modeRegister", { required: true });
+const modeRecovery = defineModel<boolean>("modeRecovery");
 
 const ui = computed(() => ({
   formWrapper: ["flex flex-col z-1 items-center", "w-full"],
@@ -277,10 +282,13 @@ const validateForm = () => {
       validateEmail(email);
       validatePassword(password);
       confirmPasswords(password, confirmPassword);
-    } else {
+    } else if (!modeRecovery.value && !modeRegister.value) {
       // Login validation less annoying, more UX friendly
       validateEmail(email, { required: true, invalid: true });
       validatePassword(password, { required: true, length: true });
+    } else {
+      // Password recovery validation
+      validateEmail(email, { required: true, invalid: true });
     }
 
     if (!hasAnyError.value) {

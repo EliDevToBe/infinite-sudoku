@@ -1,0 +1,59 @@
+import { FastifyReply, FastifyRequest } from "fastify";
+import { ForgotPasswordBody } from "../services/email.interface.js";
+import { EmailService } from "../services/email.service.js";
+import { isProduction } from "../utils/isProduction.js";
+import { useToken } from "../utils/token.js";
+
+export const EmailController = () => {
+  const sendEmail = async (
+    request: FastifyRequest<{ Body: ForgotPasswordBody }>,
+    reply: FastifyReply,
+  ) => {
+    const { email } = request.body;
+    const prisma = request.server.prisma;
+    const { generateToken } = useToken();
+    const emailClient = new EmailService({ canSend: isProduction() });
+
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        return reply.status(404).send({ clientMessage: "User not found" });
+      }
+
+      const token = generateToken(
+        { id: user.id, email: user.email },
+        { type: "password-reset" },
+      );
+
+      const emailPayload = {
+        user_email: user.email,
+        user_pseudo: user.pseudo,
+        token,
+      };
+
+      const result = await emailClient.sendRecoveryPassword(emailPayload);
+
+      if (!result.success) {
+        const isPreProductionTest = result.messageIds.includes("xxx");
+        const message = isPreProductionTest
+          ? "[DEV] Emails are disabled in pre-production environment"
+          : "Failed to send email";
+
+        return reply.status(500).send({ clientMessage: message });
+      }
+
+      return reply
+        .status(200)
+        .send({ clientMessage: "Email sent successfully" });
+    } catch (error) {
+      return reply
+        .status(500)
+        .send({ clientMessage: "An unexpected error occurred", error });
+    }
+  };
+
+  return { sendEmail };
+};

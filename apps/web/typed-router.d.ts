@@ -22,6 +22,7 @@ declare module 'vue-router/auto-routes' {
     '/[...all]': RouteRecordInfo<'/[...all]', '/:all(.*)', { all: ParamValue<true> }, { all: ParamValue<false> }>,
     '/design/': RouteRecordInfo<'/design/', '/design', Record<never, never>, Record<never, never>>,
     '/play/': RouteRecordInfo<'/play/', '/play', Record<never, never>, Record<never, never>>,
+    '/user/password-reset': RouteRecordInfo<'/user/password-reset', '/user/password-reset', Record<never, never>, Record<never, never>>,
   }
 
   /**
@@ -49,6 +50,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/play/index.vue': {
       routes: '/play/'
+      views: never
+    }
+    'src/pages/user/password-reset.vue': {
+      routes: '/user/password-reset'
       views: never
     }
   }

@@ -155,6 +155,30 @@ export const useAuth = () => {
     return false;
   };
 
+  const resetPassword = async (email: string) => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/email/forgot-password`,
+      {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    const data = await response.json();
+    const message = data.clientMessage;
+
+    if (!response.ok && message) {
+      throwFrontError(message, {
+        email,
+      });
+    }
+
+    return true;
+  };
+
   return {
     login,
     isAuthenticated,
@@ -163,5 +187,6 @@ export const useAuth = () => {
     logout,
     initializeAuth,
     register,
+    resetPassword,
   };
 };
