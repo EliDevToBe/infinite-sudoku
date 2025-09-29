@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { ForgotPasswordBody } from "../services/email.interface.js";
 import { EmailService } from "../services/email.service.js";
+import { notificationUseCase, userTokenUseCase } from "../use-cases/index.js";
 import { isProduction } from "../utils/isProduction.js";
 import { useToken } from "../utils/token.js";
 
@@ -14,6 +15,9 @@ export const EmailController = () => {
     const { generateToken } = useToken();
     const emailClient = new EmailService({ canSend: isProduction() });
 
+    const { recordNotification } = notificationUseCase();
+    const { recordUserToken } = userTokenUseCase();
+
     try {
       const user = await prisma.user.findUnique({
         where: { email },
@@ -25,7 +29,7 @@ export const EmailController = () => {
 
       const token = generateToken(
         { id: user.id, email: user.email },
-        { type: "password-reset" },
+        { type: "temporary" },
       );
 
       const emailPayload = {
@@ -44,6 +48,16 @@ export const EmailController = () => {
 
         return reply.status(500).send({ clientMessage: message });
       }
+
+      await recordNotification(
+        { userId: user.id, type: "password_reset", transport: "email" },
+        prisma,
+      );
+
+      await recordUserToken(
+        { userId: user.id, type: "password_reset", token: token },
+        prisma,
+      );
 
       return reply
         .status(200)

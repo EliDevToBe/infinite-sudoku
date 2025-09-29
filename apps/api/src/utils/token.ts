@@ -11,7 +11,7 @@ type AugmentedJwtPayload = JwtPayload & {
   email: string;
 };
 
-type TokenType = "access" | "refresh" | "password-reset";
+type TokenType = "access" | "refresh" | "temporary";
 
 type VerifyTokenPayload = {
   token: string;
@@ -19,6 +19,12 @@ type VerifyTokenPayload = {
 };
 
 export const useToken = () => {
+  /**
+   *  3 types of tokens:
+   *  - access: 5 minutes
+   *  - refresh: 2 days
+   *  - temporary: 12 hours
+   */
   const generateToken = (
     payload: TokenPayload,
     params: { type: TokenType },
@@ -37,7 +43,7 @@ export const useToken = () => {
         expiresIn: "2d",
       });
     }
-    if (params.type === "password-reset") {
+    if (params.type === "temporary") {
       return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
         expiresIn: "12h",
       });
@@ -54,7 +60,7 @@ export const useToken = () => {
     let secret: string;
     if (payload.type === "refresh") {
       secret = process.env.JWT_REFRESH_SECRET;
-    } else if (payload.type === "access" || payload.type === "password-reset") {
+    } else if (payload.type === "access" || payload.type === "temporary") {
       secret = process.env.JWT_ACCESS_SECRET;
     } else {
       throw new Error(`[verifyToken] Invalid token type: ${payload.type}`);
