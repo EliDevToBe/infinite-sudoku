@@ -14,7 +14,7 @@ type ErrorType =
   | "number"
   | "mismatch";
 
-type FormError = {
+export type FormError = {
   field: ErrorField;
   type: ErrorType;
   message: string;
