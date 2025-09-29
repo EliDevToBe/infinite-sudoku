@@ -199,7 +199,7 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login, resetPassword } = useAuth();
+const { isAuthenticated, register, login, forgotPassword } = useAuth();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -642,7 +642,7 @@ const resetPasswordFlow = async () => {
   }
 
   try {
-    const success = await resetPassword(email);
+    const success = await forgotPassword(email);
     if (!success) {
       return;
     }

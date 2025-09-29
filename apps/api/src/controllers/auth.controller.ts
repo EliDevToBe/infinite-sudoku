@@ -21,6 +21,10 @@ type LoginInput = {
   email: string;
   password: string;
 };
+export type ResetPasswordInput = {
+  password: string;
+  token: string;
+};
 
 const { hashPassword, verifyPassword } = useHash();
 const { generateToken, verifyToken, isJwtExpired } = useToken();
@@ -195,5 +199,74 @@ export const AuthController = () => {
     return reply.status(200).send({ clientMessage: "Logged out" });
   };
 
-  return { register, login, refresh, logout };
+  /**
+   * Reset the password of a user.
+   *
+   * Workflow:
+   * - Verify the token
+   * - Check if the token is expired
+   * - Check if there is a user associated
+   * - Check if there is a password reset request associated
+   */
+  const resetPassword = async (
+    request: FastifyRequest<{ Body: ResetPasswordInput }>,
+    reply: FastifyReply,
+  ) => {
+    const { password, token } = request.body;
+    const prisma = request.server.prisma;
+
+    try {
+      const decoded = verifyToken({ token, type: "temporary" });
+      const hasExpired = isJwtExpired(decoded);
+
+      if (hasExpired) {
+        return reply.status(401).send({ clientMessage: "Invalid token" });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.id, email: decoded.email },
+      });
+
+      if (!user) {
+        return reply.status(403).send({ clientMessage: "Forbidden" });
+      }
+
+      const hasRequestedResetPassword = await prisma.user_token.findUnique({
+        where: {
+          token,
+          type: "password_reset",
+          user_id: user.id,
+          used_at: null,
+        },
+      });
+
+      if (!hasRequestedResetPassword) {
+        return reply
+          .status(404)
+          .send({ clientMessage: "Password reset request not found" });
+      }
+      if (hasRequestedResetPassword.expires_at < new Date()) {
+        return reply
+          .status(401)
+          .send({ clientMessage: "Password reset request expired" });
+      }
+
+      const hashedPassword = await hashPassword(password);
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword },
+      });
+      await prisma.user_token.update({
+        where: { id: hasRequestedResetPassword.id },
+        data: { used_at: new Date() },
+      });
+
+      return reply.status(200).send({ email: user.email });
+    } catch (_error) {
+      return reply.status(401).send({ clientMessage: "Unauthorized" });
+    }
+  };
+
+  return { register, login, refresh, logout, resetPassword };
 };
