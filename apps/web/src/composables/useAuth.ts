@@ -155,7 +155,7 @@ export const useAuth = () => {
     return false;
   };
 
-  const resetPassword = async (email: string) => {
+  const forgotPassword = async (email: string) => {
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/email/forgot-password`,
       {
@@ -179,6 +179,33 @@ export const useAuth = () => {
     return true;
   };
 
+  const resetPassword = async (payload: {
+    password: string;
+    token: string;
+  }) => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/auth/reset-password`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    const data = await response.json();
+    const message = data.clientMessage;
+
+    if (!response.ok && message) {
+      throwFrontError(message, {
+        token: `${payload.token.slice(0, 8)}...`,
+      });
+    }
+
+    return data as { email: string };
+  };
+
   return {
     login,
     isAuthenticated,
@@ -187,6 +214,7 @@ export const useAuth = () => {
     logout,
     initializeAuth,
     register,
+    forgotPassword,
     resetPassword,
   };
 };

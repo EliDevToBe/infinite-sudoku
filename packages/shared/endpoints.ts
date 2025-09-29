@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { ResetPasswordInput } from "../../apps/api/src/controllers/auth.controller";
 import { ForgotPasswordBody } from "../../apps/api/src/services/email.interface";
 import { Cell, DifficultyOptions } from "./utils/sudoku/helper";
 
@@ -89,6 +90,11 @@ export type ApiEndpoint = ValidateEndpoint<
       method: "POST";
       body: ForgotPasswordBody;
     }
+  | {
+      path: "/auth/reset-password";
+      method: "POST";
+      body: ResetPasswordInput;
+    }
 >;
 
 export type EndpointResponse = {
@@ -138,5 +144,8 @@ export type EndpointResponse = {
       time: number;
       puzzleCount: number;
     };
+  };
+  "/auth/reset-password": {
+    email: string;
   };
 };

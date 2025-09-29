@@ -113,23 +113,7 @@
         </div>
 
         <!-- ERRORS -->
-        <div class="flex flex-col">
-          <span
-            v-for="(error, index) in sortedErrors"
-            :key="error.field + error.type"
-            :style="{ opacity: (100 - 15 * index) / 100 }"
-            :class="ui.errorTextClass"
-            >{{ error.message }}</span
-          >
-
-          <span
-            v-if="errors.length > 2"
-            style="opacity: 45%"
-            :class="ui.errorTextClass"
-          >
-            {{ `+${errors.length - 1} more` }}</span
-          >
-        </div>
+        <FormErrorText :sorted-errors="sortedErrors" :errors="errors" />
       </form>
     </ModalBodyWrapperUI>
   </div>
@@ -179,7 +163,6 @@ const ui = computed(() => ({
   fontSize: "text-[10px] sm:text-[12px]",
   linkClass:
     "text-lTheme-font place-self-center hover:underline hover:cursor-pointer",
-  errorTextClass: "text-lTheme-danger text-[9px] sm:text-[11px] text-center",
   forgotPasswordClass: [
     "text-[9px] sm:text-[10px]",
     "text-lTheme-font place-self-center",

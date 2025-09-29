@@ -47,6 +47,8 @@ export default fp(
 
     server.get("/auth/refresh", AuthController().refresh);
 
+    server.post("/auth/reset-password", AuthController().resetPassword);
+
     done();
   },
 );
