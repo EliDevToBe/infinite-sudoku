@@ -9,7 +9,7 @@ export type ForgotPasswordBody = {
 };
 
 export type PasswordRecoveryPayload = {
-  user_email: string;
-  user_pseudo: string;
+  userEmail: string;
+  userPseudo: string;
   token: string;
 };

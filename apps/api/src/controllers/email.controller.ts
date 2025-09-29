@@ -29,8 +29,8 @@ export const EmailController = () => {
       );
 
       const emailPayload = {
-        user_email: user.email,
-        user_pseudo: user.pseudo,
+        userEmail: user.email,
+        userPseudo: user.pseudo,
         token,
       };
 

@@ -24,7 +24,7 @@ export class EmailService implements IEmailService {
       throw new Error("FRONTEND_URL is not defined");
     }
 
-    const { user_email, user_pseudo } = payload;
+    const { userEmail, userPseudo } = payload;
 
     const sender = {
       email: process.env.MAILTRAP_SENDER_EMAIL,
@@ -44,10 +44,10 @@ export class EmailService implements IEmailService {
 
     const result = await this.client.send({
       from: sender,
-      to: [{ email: user_email, name: user_pseudo }],
+      to: [{ email: userEmail, name: userPseudo }],
       template_variables: {
-        user_pseudo,
-        user_email,
+        user_pseudo: userPseudo,
+        user_email: userEmail,
         recovery_link: url.toString(),
       },
       template_uuid: "bd35d936-e239-4004-8553-c9d6bb1917aa",
