@@ -207,6 +207,13 @@ export const AuthController = () => {
    * - Check if the token is expired
    * - Check if there is a user associated
    * - Check if there is a password reset request associated
+   * - Check if the request associated is expired
+   *
+   * Then:
+   * - Update the user's password
+   * - Update the request associated to set the `used_at` field to the current date
+   * - Return the user's email
+   *    - Will be used to auto-login the user
    */
   const resetPassword = async (
     request: FastifyRequest<{ Body: ResetPasswordInput }>,

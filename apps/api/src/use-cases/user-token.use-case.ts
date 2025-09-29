@@ -12,13 +12,15 @@ export const userTokenUseCase = () => {
 
   /**
    * Record a user token request.
-   * There is only 1 valid token request at a time.
+   * There is only 1 valid token per request type at a time.
    *
    * Workflow:
    * - Verify the token
-   * - Check if there is already a request associated
+   * - Check if there is already one or more request associated
    *    - If there is, invalidate the old requests with `used_at` set to the current date
    * - Create the new request token
+   *
+   * @returns Promise<UserToken> - The created user token record.
    */
   const recordUserToken = async (payload: Payload, client: PrismaClient) => {
     try {
