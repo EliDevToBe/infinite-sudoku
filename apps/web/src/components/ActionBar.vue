@@ -98,10 +98,10 @@ const ui = {
   wrapper: [
     "flex items-center justify-between rounded-t-md",
     "transition-all duration-200 ease-in-out",
-    "w-60 sm:w-75 p-1 pl-2 pr-2",
+    "w-85 sm:w-75 p-1 px-2",
     "bg-dTheme-surfaceOther",
   ],
-  icon: ["w-6 h-6 sm:w-7 sm:h-7 rounded-md", "sm:hover:bg-dTheme-light/10"],
+  icon: ["w-7 h-7 rounded-md", "sm:hover:bg-dTheme-light/10"],
   active: "active:text-dTheme-accent",
   toggle: "text-green-500",
   noMove: "text-gray-500",

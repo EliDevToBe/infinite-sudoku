@@ -56,7 +56,7 @@ const main = () => {
     const fileName = `level-${level}-${date}.json`;
 
     fs.writeFileSync(
-      `./generated/${fileName}`,
+      `./.generated/${fileName}`,
       JSON.stringify(readyToDb, null, 2),
     );
   }
