@@ -1,5 +1,5 @@
 {
-  "name": "rncp-sudoku",
+  "name": "infinite-sudoku",
   "type": "module",
   "version": "1.0.0",
   "packageManager": "npm@11.4.0",
@@ -11,13 +11,13 @@
     "packages/trigger"
   ],
   "description": "",
-  "homepage": "https://github.com/EliDevToBe/sudoking#readme",
+  "homepage": "https://github.com/EliDevToBe/infinite-sudoku#readme",
   "bugs": {
-    "url": "https://github.com/EliDevToBe/sudoking/issues"
+    "url": "https://github.com/EliDevToBe/infinite-sudoku/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EliDevToBe/sudoking.git"
+    "url": "git+https://github.com/EliDevToBe/infinite-sudoku.git"
   },
   "license": "ISC",
   "author": "",
