@@ -65,7 +65,7 @@ const ui = {
   ],
   input: [
     "cursor-default caret-transparent outline-none text-center w-full h-full",
-    "sm:text-2xl text-lg",
+    "sm:text-2xl text-xl",
   ],
   blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
   disabled: "font-semibold text-dTheme-accentDarker",
