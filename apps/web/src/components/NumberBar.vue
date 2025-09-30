@@ -19,12 +19,12 @@
 <script setup lang="ts">
 const ui = {
   wrapper: [
-    "flex items-center justify-between rounded-md",
+    "flex items-center justify-between rounded-md max-sm:rounded-t-none",
     "transition-all duration-200 ease-in-out",
-    "w-75 sm:w-100 p-1 pl-2 pr-2",
+    "w-85 sm:w-100 p-1 sm:px-2",
     "bg-dTheme-surfaceOther",
   ],
-  icon: ["w-8 h-8 sm:w-9 sm:h-9 ", "sm:hover:bg-dTheme-light/10 rounded-md"],
+  icon: ["w-9 h-9", "sm:hover:bg-dTheme-light/10 rounded-md"],
 };
 
 const emit = defineEmits<{
