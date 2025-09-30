@@ -7,7 +7,7 @@ export default fp(
     server.register(FastifySwagger, {
       openapi: {
         info: {
-          title: "Sudoking API",
+          title: "Infinite Sudoku API",
           version: "1.0.0",
         },
         components: {
