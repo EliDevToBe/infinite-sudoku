@@ -248,7 +248,7 @@ const ui = {
   subHeaderWrapper: [
     "flex justify-center",
     "md:grid md:grid-cols-[1fr_auto_1fr]",
-    "mt-3 sm:mt-4 sm:h-13 h-11",
+    "mt-1 sm:mt-4 sm:h-13 h-11",
   ],
   menu: [
     "z-1",
