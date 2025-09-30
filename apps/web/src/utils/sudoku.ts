@@ -5,6 +5,7 @@ export type CellData = {
   cell: Cell;
   position: { x: number; y: number };
   isSelected: boolean;
+  isErrored: boolean;
 };
 
 export type CellRow = {

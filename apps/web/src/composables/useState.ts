@@ -7,6 +7,7 @@ type Save = { value: Cell[][]; id: string; time: number };
 type SudokuSave = Partial<Record<DifficultyOptions, Save>>;
 
 const selectedCell = ref<Cell | null>(null);
+const erroredCells = ref<Cell[] | null>(null);
 
 const sudokuSave = useStorage<SudokuSave>("infinite-sudoku-save", {});
 const currentSudokuSave = ref<Save | null>(null);
@@ -20,6 +21,18 @@ export const useState = () => {
 
   const getSelectedCell = () => {
     return selectedCell.value;
+  };
+
+  const setErroredCells = (cells: Cell[] | null) => {
+    erroredCells.value = cells;
+  };
+
+  const getErroredCells = () => {
+    return erroredCells.value;
+  };
+
+  const hasErroredCells = () => {
+    return erroredCells.value ? !!erroredCells.value.length : false;
   };
 
   const setSudokuSave = (difficulty: DifficultyOptions, save: Save) => {
@@ -68,5 +81,8 @@ export const useState = () => {
     hasSudokuSave,
     currentSudokuSave,
     updateSudokuSave,
+    getErroredCells,
+    setErroredCells,
+    hasErroredCells,
   };
 };
