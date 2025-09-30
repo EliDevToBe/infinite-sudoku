@@ -43,6 +43,55 @@ export const useSudoku = () => {
     );
   };
 
+  const hasErrorCells = (puzzle: Cell[][]): Cell[] | null => {
+    const cellsToCheck = puzzle.flat().filter((cell) => cell.value !== 0);
+
+    const errorCells = [];
+
+    for (const currentCell of cellsToCheck) {
+      const row = puzzle[currentCell.y].filter((c) => c.x !== currentCell.x);
+
+      const col = puzzle
+        .map((row) => row[currentCell.x])
+        .filter((c) => c.y !== currentCell.y);
+
+      const boxRow = Math.floor(currentCell.y / 3) * 3;
+      const boxCol = Math.floor(currentCell.x / 3) * 3;
+
+      const box = puzzle
+        .slice(boxRow, boxRow + 3)
+        .flatMap((row) => row.slice(boxCol, boxCol + 3))
+        .filter((c) => c.x !== currentCell.x && c.y !== currentCell.y);
+
+      const forbiddenValues = new Set(
+        [...row, ...col, ...box]
+          .map((c) => c.value)
+          .filter((value) => value !== 0),
+      );
+
+      if (forbiddenValues.has(currentCell.value)) {
+        errorCells.push(currentCell);
+
+        const erroredRowCell = row.find((c) => c.value === currentCell.value);
+        const erroredColCell = col.find((c) => c.value === currentCell.value);
+        const erroredBoxCell = box.find((c) => c.value === currentCell.value);
+
+        if (erroredRowCell) {
+          errorCells.push(erroredRowCell);
+        }
+        if (erroredColCell) {
+          errorCells.push(erroredColCell);
+        }
+        if (erroredBoxCell) {
+          errorCells.push(erroredBoxCell);
+        }
+
+        return errorCells;
+      }
+    }
+    return null;
+  };
+
   const hintCell = (puzzle: Cell[][]) => {
     const emptyCells = puzzle.flat().filter((cell) => cell.value === 0);
     const possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -134,5 +183,6 @@ export const useSudoku = () => {
     isPuzzleSolved,
     insertVictory,
     hintCell,
+    hasErrorCells,
   };
 };
