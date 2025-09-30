@@ -31,6 +31,10 @@ export const useState = () => {
     return erroredCells.value;
   };
 
+  const hasErroredCells = () => {
+    return erroredCells.value ? !!erroredCells.value.length : false;
+  };
+
   const setSudokuSave = (difficulty: DifficultyOptions, save: Save) => {
     if (!sudokuSave.value) return;
 
@@ -79,5 +83,6 @@ export const useState = () => {
     updateSudokuSave,
     getErroredCells,
     setErroredCells,
+    hasErroredCells,
   };
 };
