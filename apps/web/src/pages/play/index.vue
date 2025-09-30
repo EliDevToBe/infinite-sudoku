@@ -14,7 +14,7 @@
       </div>
     </template>
 
-    <MainContent class="gap-3 relative">
+    <MainContent class="sm:gap-3 gap-2 relative">
       <Timer :difficulty="currentDifficulty" :grid="puzzle" />
 
       <FeatureArea
@@ -48,7 +48,7 @@
         />
       </LazyActionModal>
 
-      <div class="flex flex-col items-center h-17 sm:h-21">
+      <div class="flex flex-col items-center h-fit sm:h-21">
         <ActionBar
           @on-undo="handleUndo"
           @on-eraser="eraseCell"
