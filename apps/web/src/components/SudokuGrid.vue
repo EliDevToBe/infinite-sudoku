@@ -35,6 +35,7 @@
                 "
                 :is-loading="isLoading"
                 :is-selected="cellData.isSelected"
+                :is-errored="cellData.isErrored"
               />
             </div>
           </div>
@@ -80,10 +81,12 @@ const props = defineProps<{
 const { getSelectedCell } = useState();
 const { isAuthenticated } = useAuth();
 const { currentUser } = useUser();
-const { isPuzzleCompleted, isPuzzleSolved, insertVictory } = useSudoku();
-const { currentSudokuSave } = useState();
+const { isPuzzleCompleted, isPuzzleSolved, insertVictory, hasErrorCells } =
+  useSudoku();
+const { currentSudokuSave, setErroredCells, getErroredCells, hasErroredCells } =
+  useState();
 const { fetchApi } = useApi();
-const { toastError } = usePresetToast();
+const { toastError, toastInfo } = usePresetToast();
 const { calculateScore } = useScore();
 const { getTimerActiveTime, pauseTimer } = useTimer();
 
@@ -116,6 +119,8 @@ const blockStructure = computed((): BlockRow[] => {
     ? `${selectedCell.x}-${selectedCell.y}`
     : null;
 
+  const erroredCells = getErroredCells();
+
   const structure: BlockRow[] = [];
 
   for (let blockRowIndex = 0; blockRowIndex < 3; blockRowIndex++) {
@@ -141,11 +146,16 @@ const blockStructure = computed((): BlockRow[] => {
           const y = blockRowIndex * 3 + cellRowIndex;
           const cellKey = `${x}-${y}`;
 
+          const isErrored =
+            erroredCells &&
+            erroredCells.some((cell) => cell.x === x && cell.y === y);
+
           const cellData: CellData = {
             key: `cell-${cellKey}`,
             cell: grid.value[y][x],
             position: { x, y },
             isSelected: selectedKey === cellKey,
+            isErrored: isErrored ?? false,
           };
 
           cellRow.cells.push(cellData);
@@ -167,11 +177,20 @@ const handleCellUpdate = (
   grid.value[position.y][position.x].value = value;
 };
 
+const checkForErrors = () => {
+  const erroredCells = hasErrorCells(grid.value);
+  if (erroredCells && erroredCells.length) {
+    setErroredCells(erroredCells);
+  }
+};
+
 const isPuzzleFilled = computed(() => isPuzzleCompleted(grid.value));
 
 /**
- * This is the main watcher for the puzzle completion
- * - On completion, call API to fetch solution
+ * This is the main watcher for the puzzle on completion
+ * - Checks if there are any error cells
+ *   - Early return if there are + display change on errored cell
+ * - Calls API to fetch solution
  * - Compare solution with current grid
  *
  * When solved:
@@ -181,7 +200,19 @@ const isPuzzleFilled = computed(() => isPuzzleCompleted(grid.value));
 watch(
   isPuzzleFilled,
   async () => {
-    if (!currentSudokuSave.value) return;
+    if (!currentSudokuSave.value || !isPuzzleFilled.value) {
+      setErroredCells(null);
+      return;
+    }
+
+    checkForErrors();
+    if (hasErroredCells()) {
+      toastInfo({
+        title: "Oops!",
+        description: "It seems there are some errors 😉",
+      });
+      return;
+    }
 
     try {
       const { data, error } = await fetchApi({
