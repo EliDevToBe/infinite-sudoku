@@ -9,7 +9,10 @@
       @input="handleInput"
       @focus="modularSelectCell"
       @beforeinput="handleBeforeInput"
-      v-bind:class="{ [backgroundSelectedClass]: isSelected }"
+      v-bind:class="{
+        [backgroundSelectedClass]: isSelected,
+        [ui.errored]: isErrored,
+      }"
       autocomplete="off"
       inputmode="none"
     />
@@ -34,6 +37,7 @@ const props = defineProps<{
   currentCell: Cell;
   isLoading: boolean;
   isSelected: boolean;
+  isErrored: boolean;
 }>();
 
 type Emits = {
@@ -65,6 +69,7 @@ const ui = {
   ],
   blur: "transition-all duration-200 blur-[2px] sm:blur-[3px] pointer-events-none",
   disabled: "font-semibold text-dTheme-accentDarker",
+  errored: "bg-dTheme-danger/40",
 };
 
 const inputClass = computed(() => {
