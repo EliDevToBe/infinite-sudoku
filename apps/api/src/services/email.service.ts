@@ -71,7 +71,7 @@ export class EmailService implements IEmailService {
     const { userEmail, userPseudo, token } = payload;
 
     const url = new URL(process.env.FRONTEND_URL);
-    url.pathname = "/user/confirm-email";
+    url.pathname = "/play";
     url.searchParams.set("t", token);
 
     if (!this.config.canSend) {

@@ -195,6 +195,7 @@ import { isFrontError, throwFrontError } from "@/utils/error";
 import { useDebounceFn } from "@vueuse/core";
 import { useTimer } from "@/composables";
 import { vConfetti } from "@neoconfetti/vue";
+import { useRoute, useRouter } from "vue-router";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
@@ -207,7 +208,8 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login, forgotPassword } = useAuth();
+const { isAuthenticated, register, login, forgotPassword, confirmEmail } =
+  useAuth();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -218,6 +220,8 @@ const {
   removeTimerEvent,
   pauseTimer,
 } = useTimer();
+const route = useRoute();
+const router = useRouter();
 
 const showPreventDifficultyModal = ref(false);
 const showFeaturesModal = ref(false);
@@ -317,6 +321,8 @@ const loginRegisterModalProps = computed(() => {
 });
 
 onMounted(async () => {
+  confirmEmailFlow();
+
   addTimerEvent();
 
   // Get hard & local save for authenticated users
@@ -570,8 +576,10 @@ const registerFlow = async () => {
       toastSuccess({ description: "Successfully registered 🎉" });
 
       setTimeout(() => {
-        toastInfo({ description: `Welcome ${currentUser.value?.pseudo} !` });
-      }, 1000);
+        toastInfo({
+          description: `Welcome ${currentUser.value?.pseudo} ! Please confirm your email`,
+        });
+      }, 2000);
     }
   } catch (error) {
     if (isFrontError(error)) {
@@ -705,6 +713,36 @@ const closeLoginRegisterModal = () => {
       confirmPassword: "",
     };
   }, 300);
+};
+
+const confirmEmailFlow = async () => {
+  const route = useRoute();
+  const router = useRouter();
+
+  const token = route.query.t as string;
+  router.replace({
+    query: {},
+  });
+  if (!token) {
+    return;
+  }
+
+  try {
+    const response = await confirmEmail(token);
+    if (!response.success) {
+      throw new Error("Could not confirm email");
+    }
+
+    toastSuccess({
+      description: "Email confirmed successfully",
+    });
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  }
 };
 </script>
 

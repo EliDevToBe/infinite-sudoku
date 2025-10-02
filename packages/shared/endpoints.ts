@@ -95,6 +95,11 @@ export type ApiEndpoint = ValidateEndpoint<
       method: "POST";
       body: ResetPasswordInput;
     }
+  | {
+      path: "/auth/confirm-email";
+      method: "POST";
+      body: { token: string };
+    }
 >;
 
 export type EndpointResponse = {
@@ -147,5 +152,8 @@ export type EndpointResponse = {
   };
   "/auth/reset-password": {
     email: string;
+  };
+  "/auth/confirm-email": {
+    success: boolean;
   };
 };

@@ -24,8 +24,6 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import MainWrapper from "@/components/MainWrapper.vue";
-import MainContent from "@/components/MainContent.vue";
 
 const ui = {
   contentWrapper: "flex flex-col items-center justify-center text-center pb-10",

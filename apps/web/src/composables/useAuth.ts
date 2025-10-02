@@ -206,6 +206,30 @@ export const useAuth = () => {
     return data as { email: string };
   };
 
+  const confirmEmail = async (token: string) => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/auth/confirm-email`,
+      {
+        method: "POST",
+        body: JSON.stringify({ token }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    const data = await response.json();
+    const message = data.clientMessage;
+
+    if (!response.ok && message) {
+      throwFrontError(message, {
+        token: `${token.slice(0, 8)}...`,
+      });
+    }
+
+    return data as { success: boolean };
+  };
+
   return {
     login,
     isAuthenticated,
@@ -216,5 +240,6 @@ export const useAuth = () => {
     register,
     forgotPassword,
     resetPassword,
+    confirmEmail,
   };
 };
