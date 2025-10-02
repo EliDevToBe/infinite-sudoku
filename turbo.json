@@ -17,6 +17,9 @@
     },
     "db:start": {
       "cache": false
+    },
+    "check:ts": {
+      "cache": false
     }
   }
 }
