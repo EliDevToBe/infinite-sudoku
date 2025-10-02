@@ -1,3 +1,4 @@
+import { TokenType } from "@prisma/client";
 import type { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 
@@ -11,62 +12,55 @@ type AugmentedJwtPayload = JwtPayload & {
   email: string;
 };
 
-type TokenType = "access" | "refresh" | "temporary";
+type TokenTypeExtended = "access" | "refresh" | TokenType;
+type ExpiresInOptions = "12h" | "2d" | "5m" | "7d";
 
 type VerifyTokenPayload = {
   token: string;
-  type: TokenType;
+  type: TokenTypeExtended;
 };
 
 export const useToken = () => {
-  /**
-   *  3 types of tokens:
-   *  - access: 5 minutes
-   *  - refresh: 2 days
-   *  - temporary: 12 hours
-   */
+  if (!process.env.JWT_REFRESH_SECRET || !process.env.JWT_ACCESS_SECRET) {
+    throw new Error("JWT SECRETs are not defined");
+  }
+
+  const config: Record<
+    TokenTypeExtended,
+    { expiresIn: ExpiresInOptions; secret: string }
+  > = {
+    access: {
+      expiresIn: "5m",
+      secret: process.env.JWT_ACCESS_SECRET,
+    },
+    refresh: {
+      expiresIn: "2d",
+      secret: process.env.JWT_REFRESH_SECRET,
+    },
+    password_reset: {
+      expiresIn: "12h",
+      secret: process.env.JWT_ACCESS_SECRET,
+    },
+    email_verification: {
+      expiresIn: "7d",
+      secret: process.env.JWT_ACCESS_SECRET,
+    },
+  };
+
   const generateToken = (
     payload: TokenPayload,
-    params: { type: TokenType },
+    params: { type: TokenTypeExtended },
   ) => {
-    if (!process.env.JWT_REFRESH_SECRET || !process.env.JWT_ACCESS_SECRET) {
-      throw new Error("JWT SECRETs are not defined");
-    }
-
-    if (params.type === "access") {
-      return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-        expiresIn: "5m",
-      });
-    }
-    if (params.type === "refresh") {
-      return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-        expiresIn: "2d",
-      });
-    }
-    if (params.type === "temporary") {
-      return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-        expiresIn: "12h",
-      });
-    }
-
-    throw new Error(`[generateToken] Invalid token type: ${params.type}`);
+    return jwt.sign(payload, config[params.type].secret, {
+      expiresIn: config[params.type].expiresIn,
+    });
   };
 
   const verifyToken = (payload: VerifyTokenPayload) => {
-    if (!process.env.JWT_REFRESH_SECRET || !process.env.JWT_ACCESS_SECRET) {
-      throw new Error("JWT SECRETs are not defined");
-    }
-
-    let secret: string;
-    if (payload.type === "refresh") {
-      secret = process.env.JWT_REFRESH_SECRET;
-    } else if (payload.type === "access" || payload.type === "temporary") {
-      secret = process.env.JWT_ACCESS_SECRET;
-    } else {
-      throw new Error(`[verifyToken] Invalid token type: ${payload.type}`);
-    }
-
-    return jwt.verify(payload.token, secret) as AugmentedJwtPayload;
+    return jwt.verify(
+      payload.token,
+      config[payload.type].secret,
+    ) as AugmentedJwtPayload;
   };
 
   /**
