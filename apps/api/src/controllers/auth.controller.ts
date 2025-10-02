@@ -314,5 +314,63 @@ export const AuthController = () => {
     }
   };
 
-  return { register, login, refresh, logout, resetPassword };
+  const confirmEmail = async (
+    request: FastifyRequest<{ Body: { token: string } }>,
+    reply: FastifyReply,
+  ) => {
+    const { token } = request.body;
+    const prisma = request.server.prisma;
+
+    try {
+      const decoded = verifyToken({ token, type: "email_verification" });
+      const hasExpired = isJwtExpired(decoded);
+
+      if (hasExpired) {
+        return reply.status(401).send({ clientMessage: "Invalid token" });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.id, email: decoded.email },
+      });
+
+      if (!user) {
+        return reply.status(403).send({ clientMessage: "Forbidden" });
+      }
+
+      const emailVerificationRecord = await prisma.user_token.findUnique({
+        where: {
+          token,
+          type: "email_verification",
+          user_id: user.id,
+          used_at: null,
+        },
+      });
+
+      if (!emailVerificationRecord) {
+        return reply
+          .status(404)
+          .send({ clientMessage: "Email verification not found" });
+      }
+      if (emailVerificationRecord.expires_at < new Date()) {
+        return reply
+          .status(401)
+          .send({ clientMessage: "Email verification request expired" });
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { has_confirmed_email: true },
+      });
+      await prisma.user_token.update({
+        where: { id: emailVerificationRecord.id },
+        data: { used_at: new Date() },
+      });
+
+      return reply.status(200).send({ success: true });
+    } catch (_error) {
+      return reply.status(401).send({ clientMessage: "Unauthorized" });
+    }
+  };
+
+  return { register, login, refresh, logout, resetPassword, confirmEmail };
 };

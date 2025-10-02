@@ -49,6 +49,8 @@ export default fp(
 
     server.post("/auth/reset-password", AuthController().resetPassword);
 
+    server.post("/auth/confirm-email", AuthController().confirmEmail);
+
     done();
   },
 );
