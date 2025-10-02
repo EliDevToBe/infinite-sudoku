@@ -127,7 +127,7 @@
         </div>
       </LazyActionModal>
 
-      <!-- VICTORY MODAL -->
+      <!-- VICTORY MODAL && Confetti-->
       <LazyActionModal
         description="You have completed the puzzle!"
         title="🎉 Congratulations 🥳"
@@ -136,7 +136,14 @@
         @on-main-action="handleCompletion"
         :dismissible="false"
         :close="false"
+        class="overflow-visible"
       >
+        <div
+          v-confetti="{
+            force: 0.7,
+            particleClass: 'fixed top-[-65%] left-1/2',
+          }"
+        ></div>
         <VictoryModalBody
           @on-click-login="
             handleCompletion();
@@ -187,6 +194,7 @@ import { normalize } from "@/utils";
 import { isFrontError, throwFrontError } from "@/utils/error";
 import { useDebounceFn } from "@vueuse/core";
 import { useTimer } from "@/composables";
+import { vConfetti } from "@neoconfetti/vue";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
 const { toastError, toastInfo, toastSuccess } = usePresetToast();
