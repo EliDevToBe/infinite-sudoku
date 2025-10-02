@@ -6,7 +6,7 @@ import { isProduction } from "../utils/isProduction.js";
 import { useToken } from "../utils/token.js";
 
 export const EmailController = () => {
-  const sendEmail = async (
+  const sendReset = async (
     request: FastifyRequest<{ Body: ForgotPasswordBody }>,
     reply: FastifyReply,
   ) => {
@@ -29,7 +29,7 @@ export const EmailController = () => {
 
       const token = generateToken(
         { id: user.id, email: user.email },
-        { type: "temporary" },
+        { type: "password_reset" },
       );
 
       const emailPayload = {
@@ -69,5 +69,5 @@ export const EmailController = () => {
     }
   };
 
-  return { sendEmail };
+  return { sendReset };
 };

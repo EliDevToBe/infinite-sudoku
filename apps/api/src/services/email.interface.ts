@@ -13,3 +13,9 @@ export type PasswordRecoveryPayload = {
   userPseudo: string;
   token: string;
 };
+
+export type EmailVerificationPayload = {
+  userEmail: string;
+  userPseudo: string;
+  token: string;
+};

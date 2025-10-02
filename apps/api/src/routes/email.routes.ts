@@ -23,7 +23,7 @@ export default fp(
           },
         },
       },
-      EmailController().sendEmail,
+      EmailController().sendReset,
     );
 
     done();
