@@ -87,6 +87,7 @@
       "playwright",
       "postgres",
       "postgresql",
+      "posthog",
       "preflights",
       "primeuix",
       "primevue",

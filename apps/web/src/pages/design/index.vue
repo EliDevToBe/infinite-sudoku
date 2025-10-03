@@ -167,13 +167,17 @@
           <div>BODY</div>
         </LazyActionModal>
       </section>
+
+      <section v-if="ok" class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold">Posthog integration</h1>
+      </section>
     </MainContent>
   </MainWrapper>
 </template>
 
 <script setup lang="ts">
-import { useSudoku, useUser, usePresetToast } from "@/composables";
-import { ref, watch } from "vue";
+import { useSudoku, useUser, usePresetToast, usePostHog } from "@/composables";
+import { computed, ref, watch } from "vue";
 import { Logger } from "@/composables/useLogger";
 import type { DifficultyOptions, Cell } from "@shared/utils/sudoku/helper";
 import { LazyTooltipUI } from "@/components";
@@ -254,6 +258,11 @@ watch(
   },
   { deep: true }
 );
+
+const { posthog } = usePostHog();
+const ok = computed(() => {
+  return posthog.isFeatureEnabled("test-integration");
+});
 </script>
 
 <style scoped lang=""></style>

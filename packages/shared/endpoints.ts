@@ -150,6 +150,7 @@ export type EndpointResponse = {
       puzzleCount: number;
     };
   };
+  "/email/forgot-password": { clientMessage: "Email sent successfully" };
   "/auth/reset-password": {
     email: string;
   };
