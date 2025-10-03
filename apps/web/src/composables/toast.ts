@@ -1,3 +1,4 @@
+import type { ButtonProps } from "@nuxt/ui";
 import { Logger } from "./useLogger";
 
 // The namespace useToast is already used by @nuxt/ui
@@ -58,6 +59,35 @@ export const usePresetToast = () => {
     Logger.error(error);
   };
 
+  const toastAction = (params: {
+    description?: string;
+    title: string;
+    actions: Pick<ButtonProps, "label" | "onClick" | "leadingIcon">[];
+    duration?: number;
+  }) => {
+    toast.add({
+      title: params.title,
+      description: params.description || "",
+      icon: "i-lucide-triangle-alert",
+      color: "warning",
+      ui: {
+        title: "text-yellow-400",
+        description: "text-dTheme-font",
+      },
+      duration: params.duration || 5000,
+      actions: params.actions.map((action) => ({
+        ...action,
+        variant: "outline",
+        size: "md",
+        block: true,
+        leading: true,
+        ui: {
+          base: "p-2",
+        },
+      })),
+    });
+  };
+
   return {
     toastInfo,
     toastSuccess,
@@ -70,5 +100,6 @@ export const usePresetToast = () => {
      * @param error - The error to toast
      */
     toastError,
+    toastAction,
   };
 };
