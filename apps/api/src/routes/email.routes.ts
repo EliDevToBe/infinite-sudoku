@@ -23,7 +23,12 @@ export default fp(
           },
         },
       },
-      EmailController().sendEmail,
+      EmailController().sendReset,
+    );
+
+    server.post<{ Body: { email: string } }>(
+      "/email/confirm-email",
+      EmailController().sendConfirmationEmail,
     );
 
     done();

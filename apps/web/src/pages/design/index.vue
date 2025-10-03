@@ -70,7 +70,7 @@
           :options="{ align: 'start', side: 'top', sideOffset: 10 }"
         >
           <ButtonUI size="sm" variant="danger" @click="showToast">
-            Multi Toasting (x3)
+            Multi Toasting (x4)
           </ButtonUI>
         </LazyTooltipUI>
       </section>
@@ -189,7 +189,7 @@ const ui = {
 };
 
 const { currentUser } = useUser();
-const { toastInfo, toastSuccess, toastError } = usePresetToast();
+const { toastInfo, toastSuccess, toastError, toastAction } = usePresetToast();
 const { formatPuzzle, getRandomPuzzle } = useSudoku();
 
 const difficulty = ref<DifficultyOptions>("medium");
@@ -202,6 +202,19 @@ const showToast = () => {
   toastSuccess({ description: "This is a success toast" });
   toastError(new Error("This is a new error"), {
     description: "This is a error toast",
+  });
+  toastAction({
+    // description: "This is a action toast",
+    title: "Action Toast",
+    actions: [
+      {
+        label: "Click on me",
+        onClick: () => {
+          console.log("clicked from action toast");
+        },
+        leadingIcon: "i-lucide-refresh-cw",
+      },
+    ],
   });
 };
 

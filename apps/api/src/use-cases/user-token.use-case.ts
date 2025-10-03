@@ -24,7 +24,7 @@ export const userTokenUseCase = () => {
    */
   const recordUserToken = async (payload: Payload, client: PrismaClient) => {
     try {
-      const decoded = verifyToken({ token: payload.token, type: "temporary" });
+      const decoded = verifyToken({ token: payload.token, type: payload.type });
 
       if (payload.userId !== decoded.id) {
         throw new Error("Token id does not match", {

@@ -135,8 +135,6 @@ const changePassword = async (e: Event) => {
   } finally {
     isLoading.value = false;
   }
-
-  console.log(passwordForm.value);
 };
 </script>
 

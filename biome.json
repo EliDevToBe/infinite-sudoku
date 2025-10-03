@@ -8,7 +8,9 @@
       "!**/*.svelte",
       "!**/*.astro",
       "!**/typed-router.d.ts",
-      "!**/test-results"
+      "!**/test-results",
+      "!**/.generated",
+      "!**/*.d.ts"
     ]
   },
   "formatter": {

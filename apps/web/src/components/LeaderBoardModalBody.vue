@@ -80,7 +80,7 @@ import { useLeaderBoard, usePresetToast } from "@/composables";
 const { fetchLeaderboard } = useLeaderBoard();
 const { toastError } = usePresetToast();
 
-const activeTab = ref<TabType>("daily");
+const activeTab = ref<TabType>("weekly");
 const isLoading = ref(false);
 const leaderboardData = ref<LeaderboardPlayer[]>([]);
 const currentPlayerPosition = ref<CurrentPlayerPosition | null>(null);

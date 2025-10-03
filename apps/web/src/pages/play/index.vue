@@ -127,7 +127,7 @@
         </div>
       </LazyActionModal>
 
-      <!-- VICTORY MODAL -->
+      <!-- VICTORY MODAL && Confetti-->
       <LazyActionModal
         description="You have completed the puzzle!"
         title="🎉 Congratulations 🥳"
@@ -136,7 +136,14 @@
         @on-main-action="handleCompletion"
         :dismissible="false"
         :close="false"
+        class="overflow-visible"
       >
+        <div
+          v-confetti="{
+            force: 0.7,
+            particleClass: 'fixed top-[-65%] left-1/2',
+          }"
+        ></div>
         <VictoryModalBody
           @on-click-login="
             handleCompletion();
@@ -182,14 +189,17 @@ import {
   useUser,
   useSave,
   Logger,
+  useEmail,
 } from "@/composables";
 import { normalize } from "@/utils";
 import { isFrontError, throwFrontError } from "@/utils/error";
 import { useDebounceFn } from "@vueuse/core";
 import { useTimer } from "@/composables";
+import { vConfetti } from "@neoconfetti/vue";
+import { useRoute, useRouter } from "vue-router";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
-const { toastError, toastInfo, toastSuccess } = usePresetToast();
+const { toastError, toastInfo, toastSuccess, toastAction } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const {
   setSelectedCell,
@@ -199,7 +209,8 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login, forgotPassword } = useAuth();
+const { isAuthenticated, register, login, confirmEmail } = useAuth();
+const { sendResetPasswordEmail, sendConfirmationEmail } = useEmail();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -210,6 +221,8 @@ const {
   removeTimerEvent,
   pauseTimer,
 } = useTimer();
+const route = useRoute();
+const router = useRouter();
 
 const showPreventDifficultyModal = ref(false);
 const showFeaturesModal = ref(false);
@@ -309,6 +322,8 @@ const loginRegisterModalProps = computed(() => {
 });
 
 onMounted(async () => {
+  confirmEmailFlow();
+
   addTimerEvent();
 
   // Get hard & local save for authenticated users
@@ -562,8 +577,10 @@ const registerFlow = async () => {
       toastSuccess({ description: "Successfully registered 🎉" });
 
       setTimeout(() => {
-        toastInfo({ description: `Welcome ${currentUser.value?.pseudo} !` });
-      }, 1000);
+        toastInfo({
+          description: `Welcome ${currentUser.value?.pseudo} ! Please confirm your email`,
+        });
+      }, 2000);
     }
   } catch (error) {
     if (isFrontError(error)) {
@@ -642,8 +659,29 @@ const resetPasswordFlow = async () => {
   }
 
   try {
-    const success = await forgotPassword(email);
+    const success = await sendResetPasswordEmail(email);
     if (!success) {
+      return;
+    }
+
+    if (success.clientMessage === "You must have a confirmed email") {
+      toastAction({
+        title: "You must have a confirmed email",
+        actions: [
+          {
+            leadingIcon: "i-lucide-refresh-cw",
+            label: "Resend confirmation email",
+            onClick: async () => {
+              const email = await sendConfirmationEmail(success.email);
+              if (email) {
+                toastSuccess({
+                  description: "Confirmation email sent",
+                });
+              }
+            },
+          },
+        ],
+      });
       return;
     }
 
@@ -697,6 +735,36 @@ const closeLoginRegisterModal = () => {
       confirmPassword: "",
     };
   }, 300);
+};
+
+const confirmEmailFlow = async () => {
+  const route = useRoute();
+  const router = useRouter();
+
+  const token = route.query.t as string;
+  router.replace({
+    query: {},
+  });
+  if (!token) {
+    return;
+  }
+
+  try {
+    const response = await confirmEmail(token);
+    if (!response.success) {
+      throw new Error("Could not confirm email");
+    }
+
+    toastSuccess({
+      description: "Email confirmed successfully",
+    });
+  } catch (error) {
+    if (isFrontError(error)) {
+      toastError(error, { description: error.message });
+    } else {
+      toastError(error, { description: "An error occurred" });
+    }
+  }
 };
 </script>
 
