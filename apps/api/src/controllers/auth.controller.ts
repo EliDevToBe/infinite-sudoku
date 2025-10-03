@@ -238,13 +238,6 @@ export const AuthController = () => {
         return reply.status(403).send({ clientMessage: "Forbidden" });
       }
 
-      if (!user.has_confirmed_email) {
-        return reply.status(202).send({
-          email: user.email,
-          clientMessage: "You must have a confirmed email",
-        });
-      }
-
       const hasRequestedResetPassword = await prisma.user_token.findUnique({
         where: {
           token,

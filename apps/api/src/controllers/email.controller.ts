@@ -27,6 +27,13 @@ export const EmailController = () => {
         return reply.status(404).send({ clientMessage: "User not found" });
       }
 
+      if (!user.has_confirmed_email) {
+        return reply.status(202).send({
+          email: user.email,
+          clientMessage: "You must have a confirmed email",
+        });
+      }
+
       const token = generateToken(
         { id: user.id, email: user.email },
         { type: "password_reset" },

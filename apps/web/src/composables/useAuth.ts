@@ -189,7 +189,7 @@ export const useAuth = () => {
       });
     }
 
-    return data as { email: string; clientMessage: string };
+    return data as { email: string };
   };
 
   const confirmEmail = async (token: string) => {

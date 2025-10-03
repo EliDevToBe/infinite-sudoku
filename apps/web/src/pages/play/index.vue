@@ -210,7 +210,7 @@ const {
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
 const { isAuthenticated, register, login, confirmEmail } = useAuth();
-const { sendResetPasswordEmail } = useEmail();
+const { sendResetPasswordEmail, sendConfirmationEmail } = useEmail();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -661,6 +661,27 @@ const resetPasswordFlow = async () => {
   try {
     const success = await sendResetPasswordEmail(email);
     if (!success) {
+      return;
+    }
+
+    if (success.clientMessage === "You must have a confirmed email") {
+      toastAction({
+        title: "You must have a confirmed email",
+        actions: [
+          {
+            leadingIcon: "i-lucide-refresh-cw",
+            label: "Resend confirmation email",
+            onClick: async () => {
+              const email = await sendConfirmationEmail(success.email);
+              if (email) {
+                toastSuccess({
+                  description: "Confirmation email sent",
+                });
+              }
+            },
+          },
+        ],
+      });
       return;
     }
 

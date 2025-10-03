@@ -46,7 +46,7 @@ export const useEmail = () => {
       });
     }
 
-    return true;
+    return data as { email: string; clientMessage: string };
   };
 
   return { sendConfirmationEmail, sendResetPasswordEmail };
