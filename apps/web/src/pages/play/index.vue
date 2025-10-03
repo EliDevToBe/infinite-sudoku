@@ -189,6 +189,7 @@ import {
   useUser,
   useSave,
   Logger,
+  useEmail,
 } from "@/composables";
 import { normalize } from "@/utils";
 import { isFrontError, throwFrontError } from "@/utils/error";
@@ -198,7 +199,7 @@ import { vConfetti } from "@neoconfetti/vue";
 import { useRoute, useRouter } from "vue-router";
 
 const { getRandomPuzzle, formatPuzzle, createEmptyPuzzle } = useSudoku();
-const { toastError, toastInfo, toastSuccess } = usePresetToast();
+const { toastError, toastInfo, toastSuccess, toastAction } = usePresetToast();
 const { pushMove, undoMove, redoMove, resetMoveStacks } = useMoveStack();
 const {
   setSelectedCell,
@@ -208,8 +209,8 @@ const {
   updateSudokuSave,
 } = useState();
 const { hardSave, checkAndDeleteHardSave, checkHardSavesToLocal } = useSave();
-const { isAuthenticated, register, login, forgotPassword, confirmEmail } =
-  useAuth();
+const { isAuthenticated, register, login, confirmEmail } = useAuth();
+const { sendResetPasswordEmail } = useEmail();
 const { currentUser } = useUser();
 const {
   startTimer,
@@ -658,7 +659,7 @@ const resetPasswordFlow = async () => {
   }
 
   try {
-    const success = await forgotPassword(email);
+    const success = await sendResetPasswordEmail(email);
     if (!success) {
       return;
     }

@@ -1,11 +1,13 @@
 import { computed, ref } from "vue";
 import { throwFrontError } from "@/utils/error";
+import { useEmail } from "./useEmail";
 import { useUser } from "./useUser";
 
 const accessToken = ref<string | null>(null);
 
 export const useAuth = () => {
   const { setCurrentUser } = useUser();
+  const { sendConfirmationEmail } = useEmail();
 
   const isAuthenticated = computed(() => {
     return !!accessToken.value;
@@ -57,6 +59,14 @@ export const useAuth = () => {
     }
 
     setCurrentUser(data.user);
+
+    const success = await sendConfirmationEmail(data.user.email);
+    if (!success) {
+      throwFrontError("Failed to send confirmation email", {
+        email: payload.email,
+      });
+    }
+
     return true;
   };
 
@@ -155,30 +165,6 @@ export const useAuth = () => {
     return false;
   };
 
-  const forgotPassword = async (email: string) => {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/email/forgot-password`,
-      {
-        method: "POST",
-        body: JSON.stringify({ email }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-
-    const data = await response.json();
-    const message = data.clientMessage;
-
-    if (!response.ok && message) {
-      throwFrontError(message, {
-        email,
-      });
-    }
-
-    return true;
-  };
-
   const resetPassword = async (payload: {
     password: string;
     token: string;
@@ -203,7 +189,7 @@ export const useAuth = () => {
       });
     }
 
-    return data as { email: string };
+    return data as { email: string; clientMessage: string };
   };
 
   const confirmEmail = async (token: string) => {
@@ -238,7 +224,6 @@ export const useAuth = () => {
     logout,
     initializeAuth,
     register,
-    forgotPassword,
     resetPassword,
     confirmEmail,
   };

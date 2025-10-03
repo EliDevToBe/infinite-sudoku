@@ -1,6 +1,7 @@
 import { usePresetToast } from "./toast";
 import { useApi } from "./useApi";
 import { useAuth } from "./useAuth";
+import { useEmail } from "./useEmail";
 import { useForm } from "./useForm";
 import { useLeaderBoard } from "./useLeaderBoard";
 import { Logger } from "./useLogger";
@@ -16,6 +17,7 @@ import { useUser } from "./useUser";
 
 export {
   useAuth,
+  useEmail,
   useNavigation,
   useTheme,
   useUser,

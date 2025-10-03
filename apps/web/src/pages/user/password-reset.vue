@@ -62,7 +62,13 @@
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
-import { useForm, useAuth, usePresetToast, useNavigation } from "@/composables";
+import {
+  useForm,
+  useAuth,
+  usePresetToast,
+  useNavigation,
+  useEmail,
+} from "@/composables";
 import { isFrontError } from "@/utils/error";
 
 const route = useRoute();
@@ -76,7 +82,8 @@ const {
   fieldsError,
 } = useForm();
 const { resetPassword, login } = useAuth();
-const { toastSuccess, toastError } = usePresetToast();
+const { toastSuccess, toastError, toastAction } = usePresetToast();
+const { sendConfirmationEmail } = useEmail();
 const { navigateTo } = useNavigation();
 
 const ui = {
@@ -119,6 +126,27 @@ const changePassword = async (e: Event) => {
       return;
     }
 
+    if (success.clientMessage === "You must have a confirmed email") {
+      toastAction({
+        title: "You must have a confirmed email",
+        actions: [
+          {
+            leadingIcon: "i-lucide-refresh-cw",
+            label: "Resend confirmation email",
+            onClick: async () => {
+              const email = await sendConfirmationEmail(success.email);
+              if (email) {
+                toastSuccess({
+                  description: "Confirmation email sent",
+                });
+              }
+            },
+          },
+        ],
+      });
+      return;
+    }
+
     toastSuccess({
       description: "Your password has been reset successfully",
     });
@@ -135,8 +163,6 @@ const changePassword = async (e: Event) => {
   } finally {
     isLoading.value = false;
   }
-
-  console.log(passwordForm.value);
 };
 </script>
 

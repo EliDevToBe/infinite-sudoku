@@ -1,9 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import jwt from "jsonwebtoken";
-import { EmailService } from "../services/email.service.js";
-import { notificationUseCase } from "../use-cases/notification.use-case.js";
-import { userTokenUseCase } from "../use-cases/user-token.use-case.js";
 import { useHash } from "../utils/hash.js";
 import { isProduction } from "../utils/isProduction.js";
 import { useToken } from "../utils/token.js";
@@ -83,8 +80,6 @@ export const AuthController = () => {
     try {
       const { email, password, pseudo } = request.body;
       const prisma = request.server.prisma;
-      const { recordNotification } = notificationUseCase();
-      const { recordUserToken } = userTokenUseCase();
 
       const existingUser = await prisma.user.findUnique({
         where: { email },
@@ -98,40 +93,6 @@ export const AuthController = () => {
       const user = await prisma.user.create({
         data: { email, password: hashedPassword, pseudo },
       });
-
-      const emailClient = new EmailService({ canSend: isProduction() });
-
-      const token = generateToken(
-        { id: user.id, email: user.email },
-        { type: "email_verification" },
-      );
-
-      const emailPayload = {
-        userEmail: user.email,
-        userPseudo: user.pseudo,
-        token,
-      };
-
-      const result = await emailClient.sendEmailVerification(emailPayload);
-
-      if (!result.success) {
-        const isPreProductionTest = result.messageIds.includes("xxx");
-        const message = isPreProductionTest
-          ? "[DEV] Emails are disabled in pre-production environment"
-          : "Failed to send email";
-
-        return reply.status(500).send({ clientMessage: message });
-      }
-
-      await recordNotification(
-        { userId: user.id, type: "email_verification", transport: "email" },
-        prisma,
-      );
-
-      await recordUserToken(
-        { userId: user.id, type: "email_verification", token: token },
-        prisma,
-      );
 
       const authUser = prepareAuthResponse(user, reply);
 
@@ -275,6 +236,13 @@ export const AuthController = () => {
 
       if (!user) {
         return reply.status(403).send({ clientMessage: "Forbidden" });
+      }
+
+      if (!user.has_confirmed_email) {
+        return reply.status(202).send({
+          email: user.email,
+          clientMessage: "You must have a confirmed email",
+        });
       }
 
       const hasRequestedResetPassword = await prisma.user_token.findUnique({
