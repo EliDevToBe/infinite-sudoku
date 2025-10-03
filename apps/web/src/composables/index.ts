@@ -7,6 +7,7 @@ import { useLeaderBoard } from "./useLeaderBoard";
 import { Logger } from "./useLogger";
 import { useMoveStack } from "./useMoveStack";
 import { useNavigation } from "./useNavigation";
+import { usePostHog } from "./usePosthog";
 import { useSave } from "./useSave";
 import { useScore } from "./useScore";
 import { useState } from "./useState";
@@ -32,4 +33,5 @@ export {
   useScore,
   useTimer,
   useLeaderBoard,
+  usePostHog,
 };
