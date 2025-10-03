@@ -76,7 +76,7 @@ const {
   fieldsError,
 } = useForm();
 const { resetPassword, login } = useAuth();
-const { toastSuccess, toastError, toastAction } = usePresetToast();
+const { toastSuccess, toastError } = usePresetToast();
 const { navigateTo } = useNavigation();
 
 const ui = {
