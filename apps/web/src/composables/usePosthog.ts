@@ -25,6 +25,7 @@ export function usePostHog() {
       api_host: host,
       defaults: "2025-05-24",
       person_profiles: "identified_only",
+      autocapture: false,
     });
 
     initialized.value = true;
