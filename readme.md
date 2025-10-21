@@ -128,7 +128,7 @@ The difficulty isn't just about the number of empty cells – it's about the **s
 
 ### Project Structure
 ```
-rncp-sudoku/
+infinite-sudoku/
 ├── apps/
 │   ├── web/          # Vue 3 frontend
 │   └── api/          # Fastify backend

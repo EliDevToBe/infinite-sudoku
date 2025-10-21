@@ -1,0 +1,118 @@
+{
+  "folders": [
+    {
+      "name": "🏠 Frontend",
+      "path": "apps/web"
+    },
+    {
+      "name": "🔌 Api",
+      "path": "apps/api"
+    },
+    {
+      "name": "💾 Database",
+      "path": "packages/database"
+    },
+    {
+      "name": "🤝 Shared",
+      "path": "packages/shared"
+    },
+    {
+      "name": "🤖 Trigger",
+      "path": "packages/trigger"
+    },
+    {
+      "name": "✨ Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/.turbo/**": true,
+      "**/deno.lock": true
+    },
+    "editor.tabSize": 2,
+    "cSpell.language": "en,fr",
+    "cSpell.ignorePaths": [
+      "package*.json",
+      "node_modules",
+      ".git/{info,lfs,logs,refs,objects}/**",
+      ".git/{index,*refs,*HEAD}",
+      ".vscode",
+      ".env"
+    ],
+    "cSpell.words": [
+      "adminer",
+      "asynchttp",
+      "attributify",
+      "Attributify",
+      "autologin",
+      "biome",
+      "biomejs",
+      "bitmasks",
+      "clj_http",
+      "cohttp",
+      "datasource",
+      "dracula",
+      "fastify",
+      "fillboard",
+      "fontshare",
+      "guzzle",
+      "headlessui",
+      "healthcheck",
+      "httpclient",
+      "httpie",
+      "httpx",
+      "httpx_async",
+      "httpx_sync",
+      "httr",
+      "isready",
+      "jeliebig",
+      "lefthook",
+      "libcurl",
+      "linux",
+      "maximekhantharod",
+      "nethttp",
+      "nsurlsession",
+      "Nums",
+      "nunito",
+      "Nunito",
+      "Nuxt",
+      "ofetch",
+      "okhttp",
+      "openapi",
+      "pgsql",
+      "playwright",
+      "postgres",
+      "postgresql",
+      "posthog",
+      "preflights",
+      "primeuix",
+      "primevue",
+      "prisma",
+      "reqwest",
+      "restmethod",
+      "restsharp",
+      "rncp",
+      "scalar",
+      "Sudoking",
+      "Sudoku",
+      "swagger",
+      "turbo",
+      "undici",
+      "unirest",
+      "unocss",
+      "uuid",
+      "Uuid",
+      "vercel",
+      "vite",
+      "vitest",
+      "vue",
+      "vueuse",
+      "webrequest"
+    ],
+    "svg.preview.background": "dark-transparent"
+  }
+}
